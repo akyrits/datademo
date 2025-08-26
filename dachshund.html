@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dachshund Chase Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .game-container {
+      width: 500px;
+      height: 400px;
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .dog, .ball {
+      position: absolute;
+      font-size: 2rem;
+    }
+    .dog { transition: transform 0.1s linear; }
+    .score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container" id="game">
+    <div class="score" id="score">Score: 0</div>
+    <div class="dog" id="dog">🐕</div>
+    <div class="ball" id="ball">⚽</div>
+  </div>
+
+  <script>
+    const game = document.getElementById('game');
+    const dog = document.getElementById('dog');
+    const ball = document.getElementById('ball');
+    const scoreDisplay = document.getElementById('score');
+
+    const gameWidth = 500, gameHeight = 400;
+    let ballX = 200, ballY = 150;
+    let dogX = 50, dogY = 50;
+    let score = 0;
+
+    const step = 10; // Ball speed
+    const dogSpeed = 2; // Dog chase speed
+
+    function updatePositions() {
+      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+      dog.style.transform = `translate(${dogX}px, ${dogY}px)`;
+    }
+
+    function moveDog() {
+      const dx = ballX - dogX;
+      const dy = ballY - dogY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 5) {
+        dogX += (dx / dist) * dogSpeed;
+        dogY += (dy / dist) * dogSpeed;
+      } else {
+        score++;
+        scoreDisplay.textContent = 'Score: ' + score;
+        // Move ball to a random new location
+        ballX = Math.random() * (gameWidth - 40);
+        ballY = Math.random() * (gameHeight - 40);
+      }
+    }
+
+    function gameLoop() {
+      moveDog();
+      updatePositions();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function handleKey(e) {
+      if (e.key === 'ArrowUp' || e.key === 'w') ballY = Math.max(0, ballY - step);
+      if (e.key === 'ArrowDown' || e.key === 's') ballY = Math.min(gameHeight - 40, ballY + step);
+      if (e.key === 'Ar
