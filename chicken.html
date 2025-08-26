@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hen and Rooster Pen</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #7cfc00;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .stats {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .pen {
+    position: relative;
+    width: 500px;
+    height: 400px;
+    background: #f4f1de;
+    border: 10px solid #8b4513;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .bird, .drop {
+    position: absolute;
+    font-size: 2rem;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.5s;
+  }
+
+  .drop {
+    font-size: 1.5rem;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="stats">
+  <div>🥚 Eggs: <span id="eggCount">0</span></div>
+  <div>🪶 Feathers: <span id="featherCount">0</span></div>
+</div>
+<div class="pen" id="pen"></div>
+
+<script>
+  const pen = document.getElementById('pen');
+  const eggCountEl = document.getElementById('eggCount');
+  const featherCountEl = document.getElementById('featherCount');
+
+  let eggCount = 0;
+  let featherCount = 0;
+
+  const birdTypes = [
+    { emoji: '🐔', type: 'hen' },
+    { emoji: '🐓', type: 'rooster' }
+  ];
+
+  const birds = [];
+  const numBirds = 8;
+
+  // Create initial birds
+  for (let i = 0; i < numBirds; i++) {
+    createBird();
+  }
+
+  function createBird() {
+    const birdData = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+    const bird = document.createElement('div');
+    bird.classList.add('bird');
+    bird.textContent = birdData.emoji;
+    bird.dataset.type = birdData.type;
+    bird.style.left = Math.random() * 450 + 'px';
+    bird.style.top = Math.random() * 350 + 'px';
+    bird.dx = Math.random() < 0.5 ? 1 : -1;
+    bird.dy = Math.random() < 0.5 ? 1 : -1;
+
+    bird.addEventListener('click', () => {
+      if (bird.dataset.type === 'hen') {
+        eggCount++;
+        eggCountEl.textContent = eggCount;
+        dropThing('🥚', bird.style.left, bird.style.top);
+      } else {
+        featherCount++;
+        featherCountEl.textContent = featherCount;
+        dropThing('🪶', bird.style.left, bird.style.top);
+      }
+    });
+
+    pen.appendChild(bird);
+    birds.push(bird);
+  }
+
+  // Move birds
+  function moveBirds() {
+    birds.forEach(bird => {
+      if (bird.dataset.leaving) return; // skip if leaving
+
+      let x = parseFloat(bird.style.left);
+      let y = parseFloat(bird.style.top);
+
+      x += bird.dx;
+      y += bird.dy;
+
+      if (x <= 0 || x >= 460) bird.dx *= -1;
+      if (y <= 0 || y >= 370) bird.dy *= -1;
+
+      bird.style.left = x + 'px';
+      bird.style.top = y + 'px';
+
+      // Random chance to leave the pen
+      if (Math.random() < 0.0008) {
+        leavePen(bird);
+      }
+    });
+    requestAnimationFrame(moveBirds);
+  }
+
+  moveBirds();
+
+  function leavePen(bird) {
+    bird.dataset.leaving = true;
+    bird.style.opacity = '0';
+    setTimeout(() => {
+      pen.removeChild(bird);
+      birds.splice(birds.indexOf(bird), 1);
+      setTimeout(() => {
+        createBird(); // new bird comes in
+      }, Math.random() * 3000 + 2000); // 2-5 sec later
+    }, 500);
+  }
+
+  function dropThing(symbol, x, y) {
+    const drop = document.createElement('div');
+    drop.classList.add('drop');
+    drop.textContent = symbol;
+    drop.style.left = x;
+    drop.style.top = y;
+    pen.appendChild(drop);
+    setTimeout(() => drop.remove(), 1500);
+  }
+</script>
+</body>
+</html>
