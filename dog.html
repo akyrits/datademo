@@ -1,1 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emoji Dog Runner 🐶💨</title>
+  <style>
+    :root{
+      --game-w: 800px; /* internal logic width */
+      --game-h: 260px; /* internal logic height */
+      --ground-h: 42px;
+      --speed: 300; /* px/sec base speed; ramps up with time */
+    }
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:#f4f7fb;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:#111827;
+    }
+
+    .wrap{
+      width:min(92vw, 880px);
+      display:grid;
+      gap:14px;
+    }
+
+    h1{ margin:0; font-size:clamp(1.2rem, 2.5vw, 1.6rem); }
+
+    .game{
+      position:relative;
+      width:var(--game-w);
+      height:var(--game-h);
+      max-width:100%;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid #e5e7eb;
+      box-shadow: 0 10px 25px rgba(0,0,0,.07);
+      background: linear-gradient(#dbeafe, #e0f2fe 70%);
+      margin-inline:auto;
+      /* scale responsive: keep inner logic in 800x260, scale down to fit */
+      transform-origin: top left;
+    }
+
+    .sky { position:absolute; inset:0; pointer-events:none; }
+    .cloud{ position:absolute; top:20px; font-size:28px; opacity:.8; }
+    .cloud.small{ font-size:22px; opacity:.7; }
+
+    .ground{
+      position:absolute; left:0; right:0; bottom:0;
+      height:var(--ground-h);
+      background: #bfecc6;
+      border-top:3px solid #7cc38a;
+    }
+    .ground-tiles{
+      position:absolute; inset:auto 0 6px 0; height:24px; overflow:hidden; font-size:22px; opacity:.55; pointer-events:none; white-space:nowrap;
+      animation: tiles 20s linear infinite;
+    }
+    @keyframes tiles{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
+    /* Entities */
+    .entity{ position:absolute; will-change: transform; }
+    .dog{ font-size:40px; }
+    .obstacle{ font-size:40px; }
+    .bone{ font-size:28px; }
+
+    /* UI */
+    .hud{
+      position:absolute; inset:10px auto auto 12px; z-index:10; display:flex; gap:10px; align-items:center; font-weight:600; backdrop-filter: blur(6px); padding:6px 10px; border-radius:10px; background:rgba(255,255,255,.55);
+    }
+    .right{ inset:auto 12px 10px auto; }
+    .muted{ font-weight:500; opacity:.8; }
+
+    .overlay{
+      position:absolute; inset:0; display:grid; place-items:center; background:rgba(17,24,39,.08); text-align:center; padding:18px;
+    }
+    .card{
+      background:white; border:1px solid #e5e7eb; padding:16px 18px; border-radius:14px; box-shadow: 0 8px 20px rgba(0,0,0,.08); max-width:min(520px, 90%);
+    }
+    .btn{ border:0; background:#111827; color:white; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .btn:hover{ filter:brightness(1.05) }
+
+    .help{ font-size:.92rem; color:#4b5563; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Emoji Dog Runner <span aria-hidden="true">🐶💨</span></h1>
+
+    <div id="game" class="game" role="application" aria-label="Dog Runner Game">
+      <!-- Clouds & sky decoration -->
+      <div class="sky" aria-hidden="true">
+        <div class="cloud" style="left:40px">☁️</div>
+        <div class="cloud small" style="left:140px; top:42px">☁️</div>
+        <div class="cloud" style="left:280px; top:8px">⛅</div>
+        <div class="cloud small" style="left:520px; top:36px">☁️</div>
+      </div>
+
+      <!-- HUD -->
+      <div class="hud" id="score">Score: 0</div>
+      <div class="hud right muted" id="hi">Best: 0</div>
+
+      <!-- Entities container (dog, obstacles, bones) -->
+      <div id="entities"></div>
+
+      <!-- Ground -->
+      <div class="ground">
+        <div class="ground-tiles" aria-hidden="true" id="tiles">🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿</div>
+      </div>
+
+      <!-- Overlay (start/game over) -->
+      <div id="overlay" class="overlay">
+        <div class="card">
+          <div style="font-size:2rem">🐶💨</div>
+          <h2 style="margin:6px 0 4px">Help the dog run!</h2>
+          <p class="help">Press <strong>Space</strong> or <strong>↑</strong> to jump. On touch screens, tap anywhere.<br>Jump over trees 🌲 and logs 🪵. Grab bones 🦴 for bonus points.</p>
+          <p class="help" id="tip">Ready?</p>
+          <button class="btn" id="startBtn">Start</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="help">Built with plain HTML, CSS, and JavaScript. Emoji are the graphics. No images, no libraries.</p>
+  </div>
+
+  <script>
+    // --- Basic game state & helpers ---
+    const GAME_W = 800, GAME_H = 260, GROUND_H = 42;
+    const DOG_X = 100;             // fixed horizontal position of dog
+    const DOG_SIZE = 40;           // emoji size in px
+    const GRAVITY = 1800;          // px/s^2
+    const JUMP_V = 620;            // jump initial velocity px/s
+
+    const gameEl = document.getElementById('game');
+    const entitiesEl = document.getElementById('entities');
+    const overlayEl = document.getElementById('overlay');
+    const startBtn = document.getElementById('startBtn');
+    const scoreEl = document.getElementById('score');
+    const hiEl = document.getElementById('hi');
+
+    // Responsive scale: scale the 800x260 logic canvas to fit element width
+    function getScale(){ return gameEl.clientWidth / GAME_W; }
+
+    // Utility to create an entity element
+    function makeEntity(cls, emoji){
+      const el = document.createElement('div');
+      el.className = `entity ${cls}`;
+      el.textContent = emoji;
+      entitiesEl.appendChild(el);
+      return el;
+    }
+
+    // --- Dog ---
+    const dog = { x: DOG_X, y: groundY(), vy: 0, onGround: true, el: makeEntity('dog','🐶') };
+
+    function groundY(){ return GAME_H - GROUND_H - DOG_SIZE; }
+
+    function setPos(e){ e.el.style.transform = `translate(${e.x}px, ${e.y}px)`; }
+
+    // --- Obstacles & Bones ---
+    const obstacles = []; // {x, y, w, h, el, type}
+    const bones = [];     // {x, y, w, h, el}
+
+    function spawnObstacle(){
+      const isLog = Math.random() < 0.45;
+      const emoji = isLog ? '🪵' : '🌲';
+      const size = isLog ? 34 : 44;
+      const y = GAME_H - GROUND_H - size + (isLog ? 8 : 0);
+      const o = { x: GAME_W + 10, y, w: size, h: size, el: makeEntity('obstacle', emoji), type: isLog ? 'log' : 'tree' };
+      obstacles.push(o);
+      setPos(o);
+    }
+
+    function spawnBone(){
+      const size = 28;
+      const y = GAME_H - GROUND_H - size - (Math.random()*80 + 40);
+      const b = { x: GAME_W + 10, y, w: size, h: size, el: makeEntity('bone','🦴') };
+      bones.push(b);
+      setPos(b);
+    }
+
+    // --- Game Loop ---
+    let last = 0, anim = null, running = false, speed = 300, score = 0, hi = +localStorage.getItem('dog_hi')||0;
+    let nextObsIn = 0.8, nextBoneIn = 1.6; // seconds until next spawn
+
+    function reset(){
+      // Clear entities except dog
+      obstacles.forEach(o=>o.el.remove()); obstacles.length = 0;
+      bones.forEach(b=>b.el.remove()); bones.length = 0;
+      dog.y = groundY(); dog.vy = 0; dog.onGround = true; setPos(dog);
+      speed = 300; score = 0; nextObsIn = 0.6; nextBoneIn = 1.3;
+      updateHud();
+    }
+
+    function start(){
+      reset();
+      overlayEl.style.display = 'none';
+      running = true; last = performance.now();
+      anim = requestAnimationFrame(loop);
+    }
+
+    function gameOver(){
+      running = false; cancelAnimationFrame(anim);
+      overlayEl.querySelector('#tip').textContent = `Game over! Score: ${Math.floor(score)}`;
+      overlayEl.style.display = 'grid';
+      if (score > hi){ hi = Math.floor(score); localStorage.setItem('dog_hi', hi); }
+      updateHud();
+    }
+
+    function updateHud(){
+      scoreEl.textContent = `Score: ${Math.floor(score)}`;
+      hiEl.textContent = `Best: ${hi}`;
+    }
+
+    function loop(ts){
+      if(!running) return;
+      const dt = Math.min(0.032, (ts - last)/1000); // clamp dt for stability
+      last = ts;
+
+      // increase difficulty gradually
+      speed += dt * 6; // slowly ramps up
+      score += dt * (speed/10);
+
+      // physics: dog
+      dog.vy -= GRAVITY * dt; // vy is positive upward
+      dog.y -= dog.vy * dt;
+      if (dog.y > groundY()) { dog.y = groundY(); dog.vy = 0; dog.onGround = true; }
+      setPos(dog);
+
+      // spawn timers
+      nextObsIn -= dt; nextBoneIn -= dt;
+      if (nextObsIn <= 0){ spawnObstacle(); nextObsIn = 0.9 + Math.random()*0.9 - Math.min(speed-300,100)/500; }
+      if (nextBoneIn <= 0){ if (Math.random() < 0.7) spawnBone(); nextBoneIn = 1.2 + Math.random()*1.6; }
+
+      // move obstacles & bones
+      const vx = speed * dt;
+      for(let i=obstacles.length-1;i>=0;i--){
+        const o = obstacles[i]; o.x -= vx; setPos(o);
+        if (o.x + o.w < -20){ o.el.remove(); obstacles.splice(i,1); score += 5; }
+      }
+      for(let i=bones.length-1;i>=0;i--){
+        const b = bones[i]; b.x -= vx; setPos(b);
+        if (b.x + b.w < -20){ b.el.remove(); bones.splice(i,1); }
+      }
+
+      // collisions
+      const dogBox = { x: dog.x+6, y: dog.y+6, w: DOG_SIZE-12, h: DOG_SIZE-12 };
+      for(const o of obstacles){ if (rectsOverlap(dogBox, {x:o.x, y:o.y, w:o.w, h:o.h})) { return gameOver(); } }
+      for(let i=bones.length-1;i>=0;i--){ const b=bones[i]; if (rectsOverlap(dogBox,{x:b.x,y:b.y,w:b.w,h:b.h})) { score += 10; updateHud(); b.el.remove(); bones.splice(i,1); } }
+
+      updateHud();
+      anim = requestAnimationFrame(loop);
+    }
+
+    function rectsOverlap(a,b){ return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+
+    // Controls
+    function jump(){
+      if (!running){ start(); return; }
+      if (dog.onGround){ dog.vy = JUMP_V; dog.onGround = false; }
+    }
+    window.addEventListener('keydown', (e)=>{ if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); jump(); } });
+    gameEl.addEventListener('pointerdown', jump);
+
+    startBtn.addEventListener('click', start);
+
+    // Initial placement
+    setPos(dog);
+
+    // Scale visuals to fit box width while keeping game logic in 800x260
+    const resize = () => {
+      const s = getScale();
+      gameEl.style.transform = `scale(${s})`;
+      gameEl.style.height = `${GAME_H*s}px`;
+    };
+    const ro = new ResizeObserver(resize); ro.observe(gameEl);
+    resize();
+  </script>
+</body>
+</html>
 
