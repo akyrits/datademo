@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spinning Square Demo</title>
+  <style>
+    :root { --speed: 2s; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #f6f7fb;
+      color: #222;
+    }
+    .card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      width: min(560px, 92vw);
+    }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    p { margin: 0 0 16px; color: #555; }
+
+    .stage {
+      display: grid;
+      place-items: center;
+      height: 220px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #eef1f5, #ffffff);
+      border: 1px solid #e6e8ee;
+      margin-bottom: 16px;
+    }
+
+    /* The spinning square */
+    .square {
+      width: 140px;
+      height: 140px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7aaaff, #4cc9f0);
+      box-shadow: 0 8px 20px rgba(76, 201, 240, .35);
+      animation: spin var(--speed) linear infinite;
+      transform-origin: center;
+    }
+
+    .square.paused { animation-play-state: paused; }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      background: #111827;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.1); }
+
+    input[type="range"] { width: 200px; }
+    .label { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <div class="card" role="region" aria-label="Spinning Square Demo">
+    <h1>Spinning Square</h1>
+    <p>Pure CSS animation, with simple controls via JavaScript.</p>
+
+    <div class="stage">
+      <div id="box" class="square" aria-label="Animated square"></div>
+    </div>
+
+    <div class="controls">
+      <button id="toggle" aria-pressed="false">Pause</button>
+      <label for="speed">Speed: <span id="speedVal" class="label">2.0s</span></label>
+      <input id="speed" type="range" min="0.5" max="5" step="0.1" value="2" />
+    </div>
+
+    <p style="margin-top:12px; font-size:.95rem; color:#666">
+      Tip: The square spins because of <code>@keyframes</code> and the <code>animation</code> property.
+      Changing the speed updates a CSS variable (<code>--speed</code>), and the button toggles
+      <code>animation-play-state</code>.
+    </p>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const speed = document.getElementById('speed');
+    const speedVal = document.getElementById('speedVal');
+    const toggle = document.getElementById('toggle');
+
+    function setSpeed(seconds) {
+      document.documentElement.style.setProperty('--speed', seconds + 's');
+      speedVal.textContent = seconds.toFixed(1) + 's';
+    }
+
+    speed.addEventListener('input', () => setSpeed(parseFloat(speed.value)));
+    setSpeed(parseFloat(speed.value));
+
+    toggle.addEventListener('click', () => {
+      const paused = box.classList.toggle('paused');
+      toggle.textContent = paused ? 'Resume' : 'Pause';
+      toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>
 
