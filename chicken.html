@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Hen and Rooster Pen</title>
+<title>Hen & Rooster Pen</title>
 <style>
   :root{
     --bg:#7cfc00;
@@ -26,7 +26,15 @@
   @keyframes hurtFlash { 0%{background-color:#ffb3b3;} 100%{background-color:transparent;} }
 
   h1{ margin:12px 0 0; font-weight:800; letter-spacing:.4px; }
-  .sub { margin:0; color:#374151; opacity:.8; }
+  .sub { margin:0; color:#374151; opacity:.8; text-align:center; }
+
+  .topbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;
+  }
+  .trophy{
+    background:#fff; padding:6px 10px; border-radius:12px; box-shadow:0 6px 18px #0002;
+    font-weight:700;
+  }
 
   .hud{
     display:flex; gap:18px; align-items:center; font-size:1.05rem; flex-wrap:wrap;
@@ -48,24 +56,39 @@
       repeating-linear-gradient(#0000 0 18px, #0000000c 18px 19px);
   }
 
-  .bird, .drop{
-    position:absolute; font-size:2rem; cursor:pointer; user-select:none; transition: transform .08s, opacity .4s;
-    will-change: transform, left, top;
+  /* Actor wrapper + hit circle */
+  .actor{
+    position:absolute; width:1px; height:1px; /* size comes from children */
+    transition: opacity .35s;
   }
-  .bird:hover{ transform: scale(1.05); }
-  .drop{ font-size:1.5rem; pointer-events:none; filter: drop-shadow(0 4px 6px #0003); }
+  .emoji{
+    position:absolute; left:0; top:0;
+    font-size:2rem; transform: translate(-50%,-50%);
+    user-select:none; pointer-events:none; /* clicks handled by .hit */
+  }
+  .hit{
+    --r: 2.6rem;          /* clickable radius (bigger than emoji size) */
+    position:absolute; left:0; top:0; width:var(--r); height:var(--r);
+    transform: translate(calc(-50% + 0px), calc(-50% + 0px));
+    border-radius:50%;
+    cursor:pointer;
+    /* invisible but clickable */
+    background: rgba(0,0,0,0);
+  }
+  .actor:has(.hit:hover) .emoji{ transform: translate(-50%,-50%) scale(1.06); }
 
-  /* Menus */
+  .drop{ position:absolute; font-size:1.5rem; pointer-events:none; filter: drop-shadow(0 4px 6px #0003); }
+
+  /* Menus / overlays */
   .overlay{
     position:fixed; inset:0; display:grid; place-items:center; background:#0008; z-index:10;
     padding:20px;
   }
   .card{
-    width:min(92vw,540px); background:#fff; border-radius:16px; padding:22px; text-align:center;
+    width:min(92vw,560px); background:#fff; border-radius:16px; padding:22px; text-align:center;
     box-shadow:0 20px 50px #0006;
   }
   .row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-
   .btn{
     border:0; padding:12px 16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:1rem;
     box-shadow:0 6px 18px #0002; transition: transform .06s, box-shadow .2s, opacity .2s;
@@ -76,38 +99,64 @@
   .btn.ghost{ background:#eef2ff; color:#111827; }
   .small{ font-size:.9rem; opacity:.8; }
 
-  /* Floating toast */
+  input[type="text"]{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e5e7eb; font-size:1rem;
+    outline:none;
+  }
+
+  /* Toast */
   .toast{
     position:fixed; top:14px; right:14px; background:#111827; color:#fff; padding:8px 12px; border-radius:10px; font-size:.9rem; opacity:.95; z-index:9;
     box-shadow:0 8px 20px #0006;
   }
+
+  /* Leaderboard list */
+  .lb{
+    text-align:left; margin-top:10px; border-top:1px solid #e5e7eb; padding-top:10px; max-height:220px; overflow:auto;
+  }
+  .lb table{ width:100%; border-collapse:collapse; }
+  .lb th, .lb td{ padding:6px 8px; font-size:.95rem; }
+  .lb tr:nth-child(even){ background:#f9fafb; }
+  .lb .rank{ width:3ch; text-align:right; font-variant-numeric:tabular-nums; }
+  .lb .score{ text-align:right; font-variant-numeric:tabular-nums; }
+
 </style>
 </head>
 <body>
   <h1>Hen & Rooster Pen</h1>
+  <div class="topbar">
+    <div class="trophy" id="trophy">🏆 High Score: —</div>
+  </div>
   <p class="sub">Click only <b>hens 🐔</b> and <b>roosters 🐓</b>. Anything else costs a life!</p>
 
   <div class="hud">
     <div class="pill">🥚 Eggs: <b id="eggCount">0</b></div>
     <div class="pill">🪶 Feathers: <b id="featherCount">0</b></div>
+    <div class="pill">🔥 Streak: <b id="streak">0</b></div>
+    <div class="pill">⭐ Score: <b id="score">0</b></div>
     <div class="pill">❤️ Lives: <b class="lives" id="lives">❤️❤️❤️</b></div>
     <div class="badge">Mode: <span id="modeLabel">—</span></div>
+    <div class="badge">Player: <span id="playerLabel">—</span></div>
   </div>
 
   <div class="pen" id="pen">
     <div class="fence"></div>
   </div>
 
-  <!-- Start Menu -->
+  <!-- Start Menu + Username -->
   <div class="overlay" id="menu">
     <div class="card">
-      <h2>Choose Your Mode</h2>
-      <p class="small">Normal is cozy. Chaos is… flappy.</p>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" data-mode="normal">Normal</button>
-        <button class="btn warn" data-mode="chaos">Chaos</button>
+      <h2>Welcome to the Pen</h2>
+      <p class="small">Enter a name and pick your mode.</p>
+      <div style="margin:10px 0;">
+        <input id="nameInput" type="text" placeholder="Your name (3–16 chars)" maxlength="16" />
       </div>
-      <p class="small" style="margin-top:10px;">Score eggs and feathers. Avoid the other animals!</p>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" data-mode="normal" disabled>Normal</button>
+        <button class="btn warn" data-mode="chaos" disabled>Chaos</button>
+        <button class="btn ghost" id="viewLB">View Leaderboard</button>
+      </div>
+      <div class="lb" id="lbPreview" style="display:none;"></div>
     </div>
   </div>
 
@@ -117,10 +166,13 @@
       <h2>Game Over</h2>
       <p>You ran out of lives.</p>
       <p><b>Final Eggs:</b> <span id="finalEggs">0</span> &nbsp;•&nbsp;
-         <b>Final Feathers:</b> <span id="finalFeathers">0</span></p>
+         <b>Final Feathers:</b> <span id="finalFeathers">0</span> &nbsp;•&nbsp;
+         <b>Score:</b> <span id="finalScore">0</span></p>
       <div class="row" style="margin-top:12px;">
         <button class="btn ghost" id="restart">Play Again</button>
+        <button class="btn primary" id="seeLB">Leaderboard</button>
       </div>
+      <div class="lb" id="lbEnd" style="display:none;"></div>
     </div>
   </div>
 
@@ -133,23 +185,58 @@
   const featherCountEl = document.getElementById('featherCount');
   const livesEl = document.getElementById('lives');
   const modeLabel = document.getElementById('modeLabel');
+  const playerLabel = document.getElementById('playerLabel');
   const menu = document.getElementById('menu');
   const gameover = document.getElementById('gameover');
   const finalEggs = document.getElementById('finalEggs');
   const finalFeathers = document.getElementById('finalFeathers');
+  const finalScore = document.getElementById('finalScore');
   const restartBtn = document.getElementById('restart');
   const toast = document.getElementById('toast');
+  const trophy = document.getElementById('trophy');
+  const nameInput = document.getElementById('nameInput');
+  const menuButtons = menu.querySelectorAll('button[data-mode]');
+  const lbPreview = document.getElementById('lbPreview');
+  const viewLB = document.getElementById('viewLB');
+  const seeLB = document.getElementById('seeLB');
+  const lbEnd = document.getElementById('lbEnd');
 
   // --- Game state
-  let eggCount = 0, featherCount = 0, lives = 3;
-  let mode = null;
+  let eggCount = 0, featherCount = 0, lives = 3, score = 0, streak = 0;
+  let mode = null, playerName = 'Player';
   let running = false;
   let rafId = null;
 
-  // Pen bounds (minus emoji size padding)
+  // --- Configs
+  const CONFIGS = {
+    normal: {
+      label: 'Normal',
+      numStart: 8,
+      speedMin: 0.6, speedMax: 1.6,
+      chaosTurnChance: 0.002,
+      leaveChance: 0.0008,
+      otherSpawnRatio: 0.35,
+      maxActors: 14,
+      respawnDelay: [1200, 2600],
+      basePoint: 1
+    },
+    chaos: {
+      label: 'Chaos',
+      numStart: 12,
+      speedMin: 1.2, speedMax: 3.0,
+      chaosTurnChance: 0.015,
+      leaveChance: 0.0018,
+      otherSpawnRatio: 0.55,
+      maxActors: 20,
+      respawnDelay: [600, 1500],
+      basePoint: 1
+    }
+  };
+  let config = {};
+
+  // Pen bounds (minus emoji padding)
   function penSize() {
     const rect = pen.getBoundingClientRect();
-    // leave margin so emojis don't clip the borders
     return { w: rect.width - 60, h: rect.height - 60 };
   }
 
@@ -162,42 +249,17 @@
     '🦆','🐤','🦉','🕊️','🦅','🦢','🦎',
     '🐮','🐷','🐱','🐶','🐴','🐭','🦊','🦝','🐻','🐸','🐧'
   ];
-
   const actors = [];
-  let config = {};
 
-  const CONFIGS = {
-    normal: {
-      label: 'Normal',
-      numStart: 8,
-      speedMin: 0.6, speedMax: 1.6,
-      chaosTurnChance: 0.002,
-      leaveChance: 0.0008,
-      otherSpawnRatio: 0.35,   // chance each spawn is "other"
-      maxActors: 14,
-      respawnDelay: [1200, 2600]
-    },
-    chaos: {
-      label: 'Chaos',
-      numStart: 12,
-      speedMin: 1.2, speedMax: 3.0,
-      chaosTurnChance: 0.015,  // random jittery turns
-      leaveChance: 0.0018,
-      otherSpawnRatio: 0.55,
-      maxActors: 20,
-      respawnDelay: [600, 1500]
-    }
-  };
-
-  // --- Sounds (oscillator-only, no assets)
+  // --- Sounds (oscillator only)
   function blip(freq=880, dur=0.08, type='square', vol=0.05){
     try{
       const ctx = blip.ctx || (blip.ctx = new (window.AudioContext||window.webkitAudioContext)());
       const o = ctx.createOscillator(); const g = ctx.createGain();
       o.type = type; o.frequency.value = freq; g.gain.value = vol;
       o.connect(g).connect(ctx.destination); o.start();
-      setTimeout(()=>{ o.stop(); }, dur*1000);
-    }catch(e){/* audio blocked; ignore */}
+      setTimeout(()=>o.stop(), dur*1000);
+    }catch(e){}
   }
 
   function showToast(msg){
@@ -207,15 +269,19 @@
     showToast._t = setTimeout(()=>toast.style.display='none', 900);
   }
 
-  // --- UI state
+  // --- HUD
   function renderHUD(){
     eggCountEl.textContent = eggCount;
     featherCountEl.textContent = featherCount;
+    document.getElementById('score').textContent = score;
+    document.getElementById('streak').textContent = streak;
     livesEl.textContent = '❤️'.repeat(lives) + '🖤'.repeat(3-lives);
     modeLabel.textContent = CONFIGS[mode]?.label ?? '—';
+    playerLabel.textContent = playerName ?? '—';
+    renderHighScoreBanner();
   }
 
-  // --- Spawning
+  // --- Spawning helpers
   function randomStartPos(){
     const {w,h} = penSize();
     return { x: Math.random()*w + 30, y: Math.random()*h + 30 };
@@ -233,49 +299,62 @@
     return { emoji, type:'other' };
   }
 
+  // Create an actor with larger circular hit area
   function createActor() {
     if(actors.length >= config.maxActors) return null;
-
     const data = randomActorType();
-    const el = document.createElement('div');
-    el.className = 'bird';
-    el.textContent = data.emoji;
-    el.dataset.type = data.type;
 
-    const {x, y} = randomStartPos();
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
+    const wrap = document.createElement('div');
+    wrap.className = 'actor';
+    wrap.dataset.type = data.type;
 
-    el.dx = randomSpeed();
-    el.dy = randomSpeed();
+    const em = document.createElement('div');
+    em.className = 'emoji';
+    em.textContent = data.emoji;
 
-    el.addEventListener('click', () => {
+    const hit = document.createElement('div');
+    hit.className = 'hit';
+    hit.title = (data.type==='hen' || data.type==='rooster') ? 'Click!' : 'Do NOT click!';
+
+    const {x,y} = randomStartPos();
+    wrap.style.left = x + 'px';
+    wrap.style.top  = y + 'px';
+
+    wrap.dx = randomSpeed();
+    wrap.dy = randomSpeed();
+
+    // Shared click handler on the circular hit area
+    hit.addEventListener('click', () => {
       if(!running) return;
-      const type = el.dataset.type;
+      const type = wrap.dataset.type;
       if(type === 'hen'){
-        eggCount++; renderHUD();
-        dropThing('🥚', el.style.left, el.style.top);
+        eggCount++; addPoints(config.basePoint); increaseStreak();
+        renderHUD();
+        dropThing('🥚', wrap.style.left, wrap.style.top);
         blip(740, .06, 'square', .06);
       } else if(type === 'rooster'){
-        featherCount++; renderHUD();
-        dropThing('🪶', el.style.left, el.style.top);
+        featherCount++; addPoints(config.basePoint); increaseStreak();
+        renderHUD();
+        dropThing('🪶', wrap.style.left, wrap.style.top);
         blip(520, .06, 'square', .06);
       } else {
+        // wrong click
+        resetStreak();
         loseLife();
       }
     });
 
-    pen.appendChild(el);
-    actors.push(el);
-    return el;
+    wrap.appendChild(hit);
+    wrap.appendChild(em);
+    pen.appendChild(wrap);
+    actors.push(wrap);
+    return wrap;
   }
 
   function removeActor(el){
     if(!el || !el.parentNode) return;
     el.style.opacity='0';
-    setTimeout(()=>{
-      if(el.parentNode) el.parentNode.removeChild(el);
-    }, 280);
+    setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 280);
     const i = actors.indexOf(el);
     if(i>=0) actors.splice(i,1);
   }
@@ -298,12 +377,49 @@
     d.textContent = symbol;
     d.style.left = x; d.style.top = y;
     pen.appendChild(d);
-    // float + fade
     d.animate([
-      { transform:'translateY(0)', opacity:1 },
-      { transform:'translateY(-24px)', opacity:0 }
+      { transform:'translate(-50%,-50%)', opacity:1 },
+      { transform:'translate(-50%,-90%)', opacity:0 }
     ], { duration: 700, easing:'cubic-bezier(.2,.9,.2,1)'});
     setTimeout(()=> d.remove(), 720);
+  }
+
+  // --- Scoring & streaks
+  function addPoints(n){
+    score += n;
+  }
+  function increaseStreak(){
+    streak += 1;
+    // Every 5-in-a-row award +3 bonus
+    if(streak>0 && streak % 5 === 0){
+      showFloatingBonus('+3', '#16a34a');
+      score += 3;
+      blip(980, .12, 'triangle', .07);
+    }
+  }
+  function resetStreak(){
+    if(streak>=5){
+      // optional: show streak broken effect
+      showFloatingBonus('Streak Broken', '#ef4444');
+    }
+    streak = 0;
+  }
+  function showFloatingBonus(text, color){
+    const e = document.createElement('div');
+    e.textContent = text;
+    e.style.position='fixed';
+    e.style.left = '50%';
+    e.style.top = '70px';
+    e.style.transform='translateX(-50%)';
+    e.style.background='#fff';
+    e.style.color = color || '#111';
+    e.style.padding='6px 10px';
+    e.style.borderRadius='10px';
+    e.style.boxShadow='0 8px 18px #0003';
+    e.style.zIndex='12';
+    document.body.appendChild(e);
+    e.animate([{opacity:1, transform:'translate(-50%,0)'},{opacity:0, transform:'translate(-50%,-16px)'}], {duration:900, easing:'ease-out'});
+    setTimeout(()=>e.remove(), 920);
   }
 
   function loseLife(){
@@ -313,10 +429,7 @@
     setTimeout(()=> document.body.classList.remove('hurt'), 200);
     showToast('Life lost! Only click 🐔 or 🐓');
     blip(180, .12, 'sawtooth', .06);
-
-    if(lives<=0){
-      endGame();
-    }
+    if(lives<=0){ endGame(); }
   }
 
   // --- Movement loop
@@ -331,7 +444,6 @@
       if(Math.random() < config.chaosTurnChance){
         el.dx += (Math.random() - 0.5) * 0.8;
         el.dy += (Math.random() - 0.5) * 0.8;
-        // clamp to speed bounds
         const mag = Math.hypot(el.dx, el.dy) || 1;
         const max = config.speedMax*1.2;
         if(mag>max){ el.dx = el.dx/mag*max; el.dy = el.dy/mag*max; }
@@ -348,7 +460,6 @@
       el.style.left = x + 'px';
       el.style.top  = y + 'px';
 
-      // Random chance to leave the pen (replaced by a new spawn later)
       if(Math.random() < config.leaveChance){
         leavePen(el);
       }
@@ -359,9 +470,8 @@
 
   // --- Game flow
   function resetState(){
-    eggCount = 0; featherCount = 0; lives = 3;
+    eggCount = 0; featherCount = 0; lives = 3; score = 0; streak = 0;
     renderHUD();
-    // purge actors
     [...actors].forEach(a=>removeActor(a));
   }
 
@@ -384,30 +494,96 @@
     running = false;
     finalEggs.textContent = eggCount;
     finalFeathers.textContent = featherCount;
+    finalScore.textContent = score;
+    saveScore(playerName, score);
+    renderHighScoreBanner();
     gameover.style.display='grid';
   }
 
-  // Menu handlers
+  // --- Username & Menu enablement
+  function validName(s){
+    return !!s && s.trim().length>=3 && s.trim().length<=16;
+  }
+  nameInput.addEventListener('input', ()=>{
+    const ok = validName(nameInput.value);
+    menuButtons.forEach(b=> b.disabled = !ok);
+  });
   menu.addEventListener('click', (e)=>{
     if(e.target.matches('button[data-mode]')){
-      const m = e.target.getAttribute('data-mode');
-      startGame(m);
+      playerName = nameInput.value.trim();
+      if(!validName(playerName)) return;
+      startGame(e.target.getAttribute('data-mode'));
+      playerLabel.textContent = playerName;
     }
   });
   restartBtn.addEventListener('click', ()=>{
-    // return to mode selection (lets players switch modes too)
     menu.style.display='grid';
     gameover.style.display='none';
+    // keep name prefilled
+    nameInput.value = playerName;
+    nameInput.dispatchEvent(new Event('input'));
   });
 
-  // Initial HUD
+  // --- Leaderboard (localStorage)
+  const LB_KEY = 'hrp_leaderboard_v1';
+  function readLB(){
+    try{
+      const raw = localStorage.getItem(LB_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function writeLB(arr){
+    try{ localStorage.setItem(LB_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+  function saveScore(name, sc){
+    const arr = readLB();
+    arr.push({ name: (name||'Player').slice(0,16), score: sc|0, date: Date.now() });
+    arr.sort((a,b)=> b.score - a.score || a.date - b.date);
+    // keep top 20
+    writeLB(arr.slice(0,20));
+  }
+  function bestScore(){
+    const arr = readLB();
+    return arr.length ? arr[0] : null;
+  }
+  function renderHighScoreBanner(){
+    const best = bestScore();
+    trophy.textContent = best ? `🏆 High Score: ${best.name} — ${best.score}` : '🏆 High Score: —';
+  }
+  function lbHTML(arr){
+    if(!arr.length) return '<p class="small">No scores yet. Be the first!</p>';
+    const rows = arr.map((r,i)=>`
+      <tr>
+        <td class="rank">${i+1}.</td>
+        <td>${escapeHTML(r.name)}</td>
+        <td class="score">${r.score}</td>
+      </tr>`).join('');
+    return `<table><thead><tr><th class="rank">#</th><th>Name</th><th class="score">Score</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function escapeHTML(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  function showLB(container){
+    const arr = readLB();
+    container.innerHTML = lbHTML(arr);
+    container.style.display='block';
+  }
+
+  viewLB.addEventListener('click', ()=> showLB(lbPreview));
+  seeLB.addEventListener('click', ()=> showLB(lbEnd));
+
+  // --- Initial HUD and banner
   renderHUD();
+  nameInput.value = localStorage.getItem('hrp_last_name') || '';
+  nameInput.dispatchEvent(new Event('input'));
+  nameInput.addEventListener('change', ()=> {
+    if(validName(nameInput.value)) localStorage.setItem('hrp_last_name', nameInput.value.trim());
+  });
 
-  // Keep animation frame alive so resizing doesn’t stall, but only updates when running
+  // --- Animation frame
   rafId = requestAnimationFrame(tick);
+  window.addEventListener('resize', ()=>{});
 
-  // Defensive: adjust on resize so bounds stay accurate
-  window.addEventListener('resize', ()=>{/* bounds recomputed each frame */});
 </script>
 </body>
 </html>
