@@ -11,9 +11,6 @@
     --wood:#8b4513;
     --text:#1f2937;
     --panel:#ffffffcc;
-    --ok:#22c55e;
-    --warn:#ef4444;
-    --info:#3b82f6;
   }
   *{box-sizing:border-box}
   body{
@@ -49,6 +46,7 @@
     position:relative; width:min(92vw, 560px); aspect-ratio:5/4; max-height:70vh;
     background:var(--pen); border:12px solid var(--wood); border-radius:16px; overflow:hidden;
     box-shadow:0 12px 30px #0002, inset 0 0 0 4px #0000000f;
+    touch-action:manipulation; /* better mobile taps */
   }
   .fence{
     position:absolute; inset:0; pointer-events:none; background:
@@ -57,29 +55,23 @@
   }
 
   /* Actor wrapper + hit circle */
-  .actor{
-    position:absolute; width:1px; height:1px; /* size comes from children */
-    transition: opacity .35s;
-  }
+  .actor{ position:absolute; width:1px; height:1px; transition: opacity .35s; }
   .emoji{
     position:absolute; left:0; top:0;
     font-size:2rem; transform: translate(-50%,-50%);
-    user-select:none; pointer-events:none; /* clicks handled by .hit */
+    user-select:none; pointer-events:none;
   }
   .hit{
-    --r: 2.6rem;          /* clickable radius (bigger than emoji size) */
+    --r: 2.6rem; /* clickable radius, larger than emoji */
     position:absolute; left:0; top:0; width:var(--r); height:var(--r);
-    transform: translate(calc(-50% + 0px), calc(-50% + 0px));
-    border-radius:50%;
-    cursor:pointer;
-    /* invisible but clickable */
+    transform: translate(-50%, -50%); border-radius:50%; cursor:pointer;
     background: rgba(0,0,0,0);
   }
   .actor:has(.hit:hover) .emoji{ transform: translate(-50%,-50%) scale(1.06); }
 
   .drop{ position:absolute; font-size:1.5rem; pointer-events:none; filter: drop-shadow(0 4px 6px #0003); }
 
-  /* Menus / overlays */
+  /* Overlays */
   .overlay{
     position:fixed; inset:0; display:grid; place-items:center; background:#0008; z-index:10;
     padding:20px;
@@ -98,28 +90,21 @@
   .btn.warn{ background:linear-gradient(180deg, #f97316, #ef4444); color:white; }
   .btn.ghost{ background:#eef2ff; color:#111827; }
   .small{ font-size:.9rem; opacity:.8; }
-
   input[type="text"]{
-    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e5e7eb; font-size:1rem;
-    outline:none;
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e5e7eb; font-size:1rem; outline:none;
   }
 
-  /* Toast */
   .toast{
     position:fixed; top:14px; right:14px; background:#111827; color:#fff; padding:8px 12px; border-radius:10px; font-size:.9rem; opacity:.95; z-index:9;
     box-shadow:0 8px 20px #0006;
   }
 
-  /* Leaderboard list */
-  .lb{
-    text-align:left; margin-top:10px; border-top:1px solid #e5e7eb; padding-top:10px; max-height:220px; overflow:auto;
-  }
+  .lb{ text-align:left; margin-top:10px; border-top:1px solid #e5e7eb; padding-top:10px; max-height:220px; overflow:auto; }
   .lb table{ width:100%; border-collapse:collapse; }
   .lb th, .lb td{ padding:6px 8px; font-size:.95rem; }
   .lb tr:nth-child(even){ background:#f9fafb; }
   .lb .rank{ width:3ch; text-align:right; font-variant-numeric:tabular-nums; }
   .lb .score{ text-align:right; font-variant-numeric:tabular-nums; }
-
 </style>
 </head>
 <body>
@@ -127,7 +112,7 @@
   <div class="topbar">
     <div class="trophy" id="trophy">🏆 High Score: —</div>
   </div>
-  <p class="sub">Click only <b>hens 🐔</b> and <b>roosters 🐓</b>. Anything else costs a life!</p>
+  <p class="sub">Click only <b>hens 🐔</b> and <b>roosters 🐓</b>. Anything else costs a life. <b>Never touch cows 🐄</b>…</p>
 
   <div class="hud">
     <div class="pill">🥚 Eggs: <b id="eggCount">0</b></div>
@@ -164,9 +149,9 @@
   <div class="overlay" id="gameover" style="display:none;">
     <div class="card">
       <h2>Game Over</h2>
-      <p>You ran out of lives.</p>
-      <p><b>Final Eggs:</b> <span id="finalEggs">0</span> &nbsp;•&nbsp;
-         <b>Final Feathers:</b> <span id="finalFeathers">0</span> &nbsp;•&nbsp;
+      <p>You ran out of lives—or a UFO crashed the coop.</p>
+      <p><b>Eggs:</b> <span id="finalEggs">0</span> &nbsp;•&nbsp;
+         <b>Feathers:</b> <span id="finalFeathers">0</span> &nbsp;•&nbsp;
          <b>Score:</b> <span id="finalScore">0</span></p>
       <div class="row" style="margin-top:12px;">
         <button class="btn ghost" id="restart">Play Again</button>
@@ -251,7 +236,7 @@
   ];
   const actors = [];
 
-  // --- Sounds (oscillator only)
+  // --- Sounds (oscillator-only)
   function blip(freq=880, dur=0.08, type='square', vol=0.05){
     try{
       const ctx = blip.ctx || (blip.ctx = new (window.AudioContext||window.webkitAudioContext)());
@@ -259,6 +244,16 @@
       o.type = type; o.frequency.value = freq; g.gain.value = vol;
       o.connect(g).connect(ctx.destination); o.start();
       setTimeout(()=>o.stop(), dur*1000);
+    }catch(e){}
+  }
+  function ufoSound(){
+    try{
+      const ctx = blip.ctx || (blip.ctx = new (window.AudioContext||window.webkitAudioContext)());
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(900, ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(80, ctx.currentTime+1.4);
+      g.gain.value=0.07; o.connect(g).connect(ctx.destination); o.start();
+      setTimeout(()=>o.stop(), 1500);
     }catch(e){}
   }
 
@@ -290,10 +285,15 @@
     const s = Math.random()*(config.speedMax-config.speedMin)+config.speedMin;
     return (Math.random()<0.5? -s : s);
   }
+
   function randomActorType(){
     const isOther = Math.random() < config.otherSpawnRatio;
     if(!isOther){
       return birdTypes[Math.floor(Math.random()*birdTypes.length)];
+    }
+    // 15% of "other" spawns are cows (rare & dangerous)
+    if(Math.random() < 0.15){
+      return { emoji:'🐄', type:'cow' };
     }
     const emoji = otherAnimals[Math.floor(Math.random()*otherAnimals.length)];
     return { emoji, type:'other' };
@@ -314,7 +314,7 @@
 
     const hit = document.createElement('div');
     hit.className = 'hit';
-    hit.title = (data.type==='hen' || data.type==='rooster') ? 'Click!' : 'Do NOT click!';
+    hit.title = (data.type==='hen' || data.type==='rooster') ? 'Click!' : (data.type==='cow' ? 'UFO bait!' : 'Do NOT click!');
 
     const {x,y} = randomStartPos();
     wrap.style.left = x + 'px';
@@ -323,25 +323,16 @@
     wrap.dx = randomSpeed();
     wrap.dy = randomSpeed();
 
-    // Shared click handler on the circular hit area
+    // Cows: slower so they linger (40% speed)
+    if(data.type === 'cow'){
+      wrap.dx *= 0.4;
+      wrap.dy *= 0.4;
+    }
+
+    // Click handler on the circular hit area
     hit.addEventListener('click', () => {
       if(!running) return;
-      const type = wrap.dataset.type;
-      if(type === 'hen'){
-        eggCount++; addPoints(config.basePoint); increaseStreak();
-        renderHUD();
-        dropThing('🥚', wrap.style.left, wrap.style.top);
-        blip(740, .06, 'square', .06);
-      } else if(type === 'rooster'){
-        featherCount++; addPoints(config.basePoint); increaseStreak();
-        renderHUD();
-        dropThing('🪶', wrap.style.left, wrap.style.top);
-        blip(520, .06, 'square', .06);
-      } else {
-        // wrong click
-        resetStreak();
-        loseLife();
-      }
+      handleActorSelection(wrap);
     });
 
     wrap.appendChild(hit);
@@ -385,12 +376,9 @@
   }
 
   // --- Scoring & streaks
-  function addPoints(n){
-    score += n;
-  }
+  function addPoints(n){ score += n; }
   function increaseStreak(){
     streak += 1;
-    // Every 5-in-a-row award +3 bonus
     if(streak>0 && streak % 5 === 0){
       showFloatingBonus('+3', '#16a34a');
       score += 3;
@@ -398,21 +386,16 @@
     }
   }
   function resetStreak(){
-    if(streak>=5){
-      // optional: show streak broken effect
-      showFloatingBonus('Streak Broken', '#ef4444');
-    }
+    if(streak>=5) showFloatingBonus('Streak Broken', '#ef4444');
     streak = 0;
   }
   function showFloatingBonus(text, color){
     const e = document.createElement('div');
     e.textContent = text;
     e.style.position='fixed';
-    e.style.left = '50%';
-    e.style.top = '70px';
+    e.style.left = '50%'; e.style.top = '70px';
     e.style.transform='translateX(-50%)';
-    e.style.background='#fff';
-    e.style.color = color || '#111';
+    e.style.background='#fff'; e.style.color = color || '#111';
     e.style.padding='6px 10px';
     e.style.borderRadius='10px';
     e.style.boxShadow='0 8px 18px #0003';
@@ -432,6 +415,31 @@
     if(lives<=0){ endGame(); }
   }
 
+  // --- UFO crash (cow = instant game over)
+  function triggerUFO(x, y){
+    if(!running) return;
+    running = false;
+    const ufo = document.createElement('div');
+    ufo.textContent = '🛸';
+    Object.assign(ufo.style, {
+      position:'absolute', left:'-100px', top:'-100px',
+      fontSize:'3.2rem', zIndex:99, pointerEvents:'none'
+    });
+    pen.appendChild(ufo);
+    ufoSound();
+
+    const cx = parseFloat(x), cy = parseFloat(y);
+    ufo.animate([
+      { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
+      { transform:`translate(${cx}px, ${cy}px) rotate(720deg) scale(2)`, opacity:0 }
+    ], { duration: 1600, easing:'cubic-bezier(.3,.8,.4,1)'});
+
+    setTimeout(()=>{
+      if(ufo.parentNode) ufo.remove();
+      endGame();
+    }, 1600);
+  }
+
   // --- Movement loop
   function tick(){
     if(!running){ rafId = requestAnimationFrame(tick); return; }
@@ -440,7 +448,7 @@
     actors.forEach(el=>{
       if(el.dataset.leaving) return;
 
-      // chaos mode random turn jitter
+      // chaos jitter
       if(Math.random() < config.chaosTurnChance){
         el.dx += (Math.random() - 0.5) * 0.8;
         el.dy += (Math.random() - 0.5) * 0.8;
@@ -468,6 +476,83 @@
     rafId = requestAnimationFrame(tick);
   }
 
+  // --- Selection logic used by both clicks and aim-assist
+  function handleActorSelection(actor){
+    const type = actor.dataset.type;
+    if(type === 'cow'){
+      triggerUFO(actor.style.left, actor.style.top);
+      return;
+    }
+    if(type === 'hen'){
+      eggCount++; addPoints(config.basePoint); increaseStreak();
+      renderHUD();
+      dropThing('🥚', actor.style.left, actor.style.top);
+      blip(740, .06, 'square', .06);
+    } else if(type === 'rooster'){
+      featherCount++; addPoints(config.basePoint); increaseStreak();
+      renderHUD();
+      dropThing('🪶', actor.style.left, actor.style.top);
+      blip(520, .06, 'square', .06);
+    } else {
+      resetStreak();
+      loseLife();
+    }
+  }
+
+  // --- Aim Assist: tap anywhere selects nearest actor (mobile-friendly)
+  (function enableAimAssist(){
+    const SELECT_RADIUS_PX = 70;     // tweak 60–90 for feel
+    const HIGHLIGHT_MS = 140;
+
+    function penPointFromEvent(ev){
+      const r = pen.getBoundingClientRect();
+      return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+    }
+    function distToActor(p, actor){
+      const ax = parseFloat(actor.style.left);
+      const ay = parseFloat(actor.style.top);
+      return Math.hypot(p.x - ax, p.y - ay);
+    }
+    function flashRing(x, y, color){
+      const ring = document.createElement('div');
+      Object.assign(ring.style, {
+        position:'absolute', left: (x-18)+'px', top:(y-18)+'px',
+        width:'36px', height:'36px', borderRadius:'50%',
+        border: `3px solid ${color}`, opacity:'0.9', pointerEvents:'none', zIndex: 5
+      });
+      pen.appendChild(ring);
+      ring.animate([
+        { transform:'scale(0.9)', opacity:0.9 },
+        { transform:'scale(1.25)', opacity:0.0 }
+      ], { duration: HIGHLIGHT_MS, easing:'ease-out' });
+      setTimeout(()=> ring.remove(), HIGHLIGHT_MS+30);
+    }
+    function nearestActor(p){
+      let best = null, bd = Infinity;
+      for(const a of actors){
+        if(a.dataset.leaving) continue;
+        const d = distToActor(p, a);
+        if(d < bd){ bd = d; best = a; }
+      }
+      return (bd <= SELECT_RADIUS_PX) ? best : null;
+    }
+
+    pen.addEventListener('pointerdown', (ev)=>{
+      if(!running) return;
+      if(ev.button !== 0) return;
+      const p = penPointFromEvent(ev);
+      const target = nearestActor(p);
+      if(!target) return;
+
+      const type = target.dataset.type;
+      const color = (type==='hen'||type==='rooster') ? '#10b981' : (type==='cow' ? '#8b5cf6' : '#ef4444');
+      flashRing(parseFloat(target.style.left), parseFloat(target.style.top), color);
+      handleActorSelection(target);
+      // light haptics on wrong picks
+      if('vibrate' in navigator && (type!=='hen' && type!=='rooster')) navigator.vibrate(40);
+    }, { passive: true });
+  })();
+
   // --- Game flow
   function resetState(){
     eggCount = 0; featherCount = 0; lives = 3; score = 0; streak = 0;
@@ -481,7 +566,6 @@
     resetState();
     modeLabel.textContent = config.label;
 
-    // spawn initial population
     for(let i=0;i<config.numStart;i++){ createActor(); }
 
     running = true;
@@ -501,9 +585,7 @@
   }
 
   // --- Username & Menu enablement
-  function validName(s){
-    return !!s && s.trim().length>=3 && s.trim().length<=16;
-  }
+  function validName(s){ return !!s && s.trim().length>=3 && s.trim().length<=16; }
   nameInput.addEventListener('input', ()=>{
     const ok = validName(nameInput.value);
     menuButtons.forEach(b=> b.disabled = !ok);
@@ -512,14 +594,13 @@
     if(e.target.matches('button[data-mode]')){
       playerName = nameInput.value.trim();
       if(!validName(playerName)) return;
-      startGame(e.target.getAttribute('data-mode'));
       playerLabel.textContent = playerName;
+      startGame(e.target.getAttribute('data-mode'));
     }
   });
   restartBtn.addEventListener('click', ()=>{
     menu.style.display='grid';
     gameover.style.display='none';
-    // keep name prefilled
     nameInput.value = playerName;
     nameInput.dispatchEvent(new Event('input'));
   });
@@ -540,7 +621,6 @@
     const arr = readLB();
     arr.push({ name: (name||'Player').slice(0,16), score: sc|0, date: Date.now() });
     arr.sort((a,b)=> b.score - a.score || a.date - b.date);
-    // keep top 20
     writeLB(arr.slice(0,20));
   }
   function bestScore(){
@@ -562,13 +642,7 @@
     return `<table><thead><tr><th class="rank">#</th><th>Name</th><th class="score">Score</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
   function escapeHTML(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-
-  function showLB(container){
-    const arr = readLB();
-    container.innerHTML = lbHTML(arr);
-    container.style.display='block';
-  }
-
+  function showLB(container){ container.innerHTML = lbHTML(readLB()); container.style.display='block'; }
   viewLB.addEventListener('click', ()=> showLB(lbPreview));
   seeLB.addEventListener('click', ()=> showLB(lbEnd));
 
@@ -583,7 +657,6 @@
   // --- Animation frame
   rafId = requestAnimationFrame(tick);
   window.addEventListener('resize', ()=>{});
-
 </script>
 </body>
 </html>
