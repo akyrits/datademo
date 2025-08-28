@@ -1,507 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Game Hub</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --text: #e5e7eb;
-      --accent: #22c55e;
-      --accent2: #60a5fa;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: radial-gradient(1200px 800px at 50% -200px, #1f2937, var(--bg)); }
-    h1 { margin: 16px 0 6px; font-weight: 800; letter-spacing: .5px; }
-    .sub { color:#9ca3af; margin:0 0 16px; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 12px; }
-    .card { background: linear-gradient(180deg, #111827, #0b1020); border: 1px solid #1f2937; border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-    .grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    @media (max-width: 720px){ .grid{ grid-template-columns: 1fr; } }
-    button { background: #0b1222; color: var(--text); border: 1px solid #1f2937; padding: 10px 16px; border-radius: 10px; cursor: pointer; transition: transform .05s ease, background .2s; }
-    button:hover { background: #121a2e; }
-    button:active { transform: translateY(1px); }
-    .mode button.active{ outline:2px solid var(--accent2); }
-    input[type="text"]{ width:100%; max-width: 260px; padding: 10px 12px; border-radius: 10px; border:1px solid #1f2937; background:#0b1222; color:var(--text); }
-
-    #menu, #snake, #tictactoe, #hangman, #leaderboard { display: none; }
-    #menu { display: block; }
-
-    canvas { background:#000; border-radius:14px; display:block; margin: 14px auto; touch-action: none; }
-    .row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; align-items:center; }
-
-    #board { display:grid; grid-template-columns: repeat(3, minmax(70px, 24vw)); gap:8px; justify-content:center; }
-    .cell { width: min(24vw, 90px); height: min(24vw, 90px); max-width:110px; max-height:110px; background:#0b1222; border:1px solid #1f2937; border-radius:12px; font-size: clamp(28px, 8vw, 44px); display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; }
-    .stats { font-size: 14px; color:#9ca3af; }
-
-    table { width:100%; border-collapse: collapse; }
-    th, td { border:1px solid #1f2937; padding:8px 10px; text-align:left; }
-    th { background:#121a2e; }
-    .pill { padding:6px 10px; border-radius:999px; background:#0b1222; border:1px solid #1f2937; font-size:12px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mini Game Hub</title>
+<style>
+  :root{--bg:#0f172a;--panel:#111827;--text:#e5e7eb;--accent:#22c55e;--accent2:#60a5fa}
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(1200px 800px at 50% -200px,#1f2937,var(--bg))}
+  h1{margin:16px 0 6px;font-weight:800;letter-spacing:.5px}.sub{color:#9ca3af;margin:0 0 16px}.wrap{max-width:960px;margin:0 auto;padding:12px}
+  .card{background:linear-gradient(180deg,#111827,#0b1020);border:1px solid #1f2937;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:720px){.grid{grid-template-columns:1fr}}
+  button{background:#0b1222;color:var(--text);border:1px solid #1f2937;padding:10px 16px;border-radius:10px;cursor:pointer;transition:transform .05s,background .2s}button:hover{background:#121a2e}button:active{transform:translateY(1px)}.mode button.active{outline:2px solid var(--accent2)}
+  input[type=text]{width:100%;max-width:260px;padding:10px 12px;border-radius:10px;border:1px solid #1f2937;background:#0b1222;color:var(--text)}
+  #menu,#snake,#tictactoe,#hangman,#leaderboard{display:none}#menu{display:block}
+  canvas{background:#000;border-radius:14px;display:block;margin:14px auto;touch-action:none}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+  #board{display:grid;grid-template-columns:repeat(3,minmax(70px,24vw));gap:8px;justify-content:center}
+  .cell{width:min(24vw,90px);height:min(24vw,90px);max-width:110px;max-height:110px;background:#0b1222;border:1px solid #1f2937;border-radius:12px;font-size:clamp(28px,8vw,44px);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+  .stats{font-size:14px;color:#9ca3af}
+  table{width:100%;border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 10px;text-align:left}th{background:#121a2e}
+  .pill{padding:6px 10px;border-radius:999px;background:#0b1222;border:1px solid #1f2937;font-size:12px}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>🎮 Mini Game Hub</h1>
-    <p class="sub">Modes, sounds, mobile touch, leaderboards — all in one file.</p>
+<div class="wrap">
+  <h1>🎮 Mini Game Hub</h1>
+  <p class="sub">Modes, sounds, mobile touch, leaderboards — single file, optimized.</p>
 
-    <!-- MENU -->
-    <div id="menu" class="card">
-      <div class="grid">
-        <div>
-          <h3>Player</h3>
-          <div class="row">
-            <input id="username" type="text" placeholder="Enter username" />
-            <span class="pill">Saved locally</span>
-          </div>
-          <h3 style="margin-top:16px">Mode</h3>
-          <div class="row mode">
-            <button onclick="setMode('easy')" id="mode-easy">Easy</button>
-            <button onclick="setMode('medium')" id="mode-medium" class="active">Medium</button>
-            <button onclick="setMode('hard')" id="mode-hard">Hard</button>
-            <button onclick="setMode('chaos')" id="mode-chaos">Chaos</button>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <label><input type="checkbox" id="twoPlayer" /> Two‑player Tic Tac Toe</label>
-          </div>
-        </div>
-        <div>
-          <h3>Games</h3>
-          <div class="row">
-            <button onclick="showGame('snake')">Play Snake</button>
-            <button onclick="showGame('tictactoe')">Play Tic Tac Toe</button>
-            <button onclick="showGame('hangman')">Play Hangman</button>
-            <button onclick="showLeaderboard()">Leaderboard</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SNAKE -->
-    <div id="snake" class="card">
-      <div class="row" style="justify-content:space-between; gap:12px; flex-wrap:wrap">
-        <h3 style="margin:0">Snake</h3>
+  <!-- MENU -->
+  <div id="menu" class="card">
+    <div class="grid">
+      <div>
+        <h3>Player</h3>
         <div class="row">
-          <label class="pill">Mode: <b id="snakeModeLabel">Medium</b></label>
-          <select id="snakeModeSelect" class="pill" onchange="setSnakeMode(this.value)">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-            <option value="chaos">Chaos</option>
-          </select>
+          <input id="username" type="text" placeholder="Enter username"/>
+          <span class="pill">Saved locally</span>
+        </div>
+        <h3 style="margin-top:16px">Mode</h3>
+        <div class="row mode">
+          <button data-mode="easy"  id="mode-easy">Easy</button>
+          <button data-mode="medium" id="mode-medium" class="active">Medium</button>
+          <button data-mode="hard"  id="mode-hard">Hard</button>
+          <button data-mode="chaos" id="mode-chaos">Chaos</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label><input type="checkbox" id="twoPlayer"/> Two-player Tic Tac Toe</label>
         </div>
       </div>
-      <canvas id="snakeCanvas" width="400" height="400"></canvas>
-      <div class="row">
-        <span>Score: <b id="snakeScore">0</b></span>
-        <span>Highscore: <b id="snakeHigh">0</b></span>
-        <span>Timer: <b id="snakeTimer">—</b></span>
-        <span class="pill">Swipe / Arrow Keys</span>
-      </div>
-      <div class="row"><button onclick="backToMenu()">Back to Menu</button></div>
-    </div>
-
-    <!-- TTT -->
-    <div id="tictactoe" class="card">
-      <div class="row" style="justify-content:space-between; gap:12px; flex-wrap:wrap">
-        <h3 style="margin:0">Tic Tac Toe</h3>
-        <label class="pill">Mode: <b id="tttModeLabel">Medium</b></label>
-      </div>
-      <div id="board"></div>
-      <p class="stats">P1 Wins: <b id="playerWins">0</b> • P2/AI Wins: <b id="compWins">0</b> • Ties: <b id="ties">0</b></p>
-      <div class="row"><button onclick="backToMenu()">Back to Menu</button></div>
-    </div>
-
-    <!-- HANGMAN -->
-    <div id="hangman" class="card">
-      <div class="row" style="justify-content:space-between; gap:12px; flex-wrap:wrap">
-        <h3 style="margin:0">Hangman</h3>
+      <div>
+        <h3>Games</h3>
         <div class="row">
-          <label class="pill">Mode: <b id="hangModeLabel">Medium</b></label>
-          <select id="hangCategory" class="pill">
-            <option value="programming" selected>Programming</option>
-            <option value="animals">Animals</option>
-            <option value="countries">Countries</option>
-            <option value="movies">Movies</option>
-          </select>
+          <button data-game="snake">Play Snake</button>
+          <button data-game="tictactoe">Play Tic Tac Toe</button>
+          <button data-game="hangman">Play Hangman</button>
+          <button data-game="leaderboard">Leaderboard</button>
         </div>
       </div>
-      <canvas id="hangmanCanvas" width="260" height="210"></canvas>
-      <p id="wordDisplay"></p>
-      <div class="row">
-        <input id="guessInput" type="text" maxlength="1" placeholder="a" />
-        <button onclick="makeGuess()">Guess</button>
-        <button onclick="useLifeline()">Reveal a Letter</button>
-      </div>
-      <p>Wrong guesses left: <b id="guessesLeft"></b></p>
-      <p id="wrongLetters" class="stats"></p>
-      <div class="row"><button onclick="backToMenu()">Back to Menu</button></div>
-    </div>
-
-    <!-- LEADERBOARD -->
-    <div id="leaderboard" class="card">
-      <h3>🏆 Leaderboard</h3>
-      <table id="leaderboardTable">
-        <thead><tr><th>User</th><th>Snake</th><th>TicTacToe</th><th>Hangman</th></tr></thead>
-        <tbody></tbody>
-      </table>
-      <div class="row"><button onclick="backToMenu()">Back to Menu</button></div>
     </div>
   </div>
 
-  <script>
-    // -------- GLOBAL STATE & UTILS --------
-    let gameMode = 'medium';
-    let currentUser = '';
-
-    const defaultScores = { snake: 0, ttt: 0, hangman: 0 };
-    const users = JSON.parse(localStorage.getItem('hubUsers')||'{}');
-
-    const sounds = {
-      eat: new Audio('https://cdn.jsdelivr.net/gh/jshawl/chime@master/click.wav'),
-      win: new Audio('https://cdn.jsdelivr.net/gh/naptha/tinysound@master/sfx/coin.wav'),
-      lose: new Audio('https://cdn.jsdelivr.net/gh/naptha/tinysound@master/sfx/explosion.wav'),
-      tap: new Audio('https://cdn.jsdelivr.net/gh/naptha/tinysound@master/sfx/click.wav'),
-    };
-    Object.values(sounds).forEach(a=>{ a.volume = 0.35; });
-
-    function saveUsers(){ localStorage.setItem('hubUsers', JSON.stringify(users)); }
-    function getUser(){
-      const name = (document.getElementById('username').value || 'Guest').trim();
-      currentUser = name;
-      if(!users[name]) users[name] = { ...defaultScores };
-      saveUsers();
-    }
-
-    function setMode(mode){
-      gameMode = mode;
-      document.querySelectorAll('.mode button').forEach(b=>b.classList.remove('active'));
-      const btn = document.getElementById('mode-'+mode); if(btn) btn.classList.add('active');
-    }
-    function setSnakeMode(mode){ setMode(mode); document.getElementById('snakeModeLabel').textContent = cap(mode); startSnake(true); }
-    function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
-
-    function backToMenu(){
-      ['snake','tictactoe','hangman','leaderboard'].forEach(id=>document.getElementById(id).style.display='none');
-      document.getElementById('menu').style.display='block';
-    }
-    function showGame(id){
-      getUser();
-      document.getElementById('menu').style.display='none';
-      ['snake','tictactoe','hangman','leaderboard'].forEach(k=>document.getElementById(k).style.display='none');
-      document.getElementById(id).style.display='block';
-      document.getElementById('snakeModeLabel').textContent = cap(gameMode);
-      document.getElementById('tttModeLabel').textContent = cap(gameMode);
-      document.getElementById('hangModeLabel').textContent = cap(gameMode);
-      if(id==='snake') startSnake();
-      if(id==='tictactoe') startTicTacToe();
-      if(id==='hangman') startHangman();
-      if(id==='leaderboard') showLeaderboard();
-    }
-
-    function showLeaderboard(){
-      const tbody = document.querySelector('#leaderboardTable tbody');
-      tbody.innerHTML = '';
-      const entries = Object.entries(users).sort((a,b)=> (b[1].snake||0) - (a[1].snake||0));
-      for(const [name, scores] of entries){
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${name}</td><td>${scores.snake||0}</td><td>${scores.ttt||0}</td><td>${scores.hangman||0}</td>`;
-        tbody.appendChild(tr);
-      }
-    }
-
-    // -------- SNAKE (Chaos extreme — no shrink zone; add timer, gravity pulses, reverse-time, teleports, fake food) --------
-    let snakeLoop = null;
-    function startSnake(keepMode){
-      const cvs = document.getElementById('snakeCanvas');
-      const ctx = cvs.getContext('2d');
-      const grid = 20, W = cvs.width, H = cvs.height;
-      let snake = [{x:200, y:200}], dir = {x:1, y:0}, nextDir = {x:1,y:0};
-      let food = randCell();
-      let bonus=null, poison=null, fake=null;
-      let obstacles=[];
-      let score=0;
-      if(!keepMode){ document.getElementById('snakeModeSelect').value=gameMode; }
-      let speed = ({easy:220, medium:150, hard:100, chaos:55})[gameMode] || 150;
-      let ticks=0, blackout=0;
-      let gravity={x:0,y:0}, gravityTicks=0; // pulses
-      let reverseTicks=0;                      // reverse-time
-      let timeLeft = 20;                       // seconds countdown
-
-      function randCell(){ return { x: Math.floor(Math.random()*(W/grid))*grid, y: Math.floor(Math.random()*(H/grid))*grid } }
-      function wrap(n, max){ return (n+max)%max; }
-
-      function placeBonus(){ if(Math.random() < (gameMode==='chaos'?0.65:0.25)) bonus=randCell(); }
-      function placePoison(){ if(gameMode==='chaos' && Math.random()<0.45) poison=randCell(); }
-      function placeFake(){ if(gameMode==='chaos' && Math.random()<0.40) fake=randCell(); }
-      function spawnObstacles(){
-        if(gameMode!=='chaos') return;
-        const maxObs=12;
-        if(obstacles.length<maxObs && Math.random()<0.7){
-          const v=[-1,0,1];
-          obstacles.push({x:randCell().x,y:randCell().y,vx:v[Math.floor(Math.random()*3)],vy:v[Math.floor(Math.random()*3)]});
-        }
-        obstacles.forEach(o=>{ o.x=wrap(o.x+o.vx*grid,W); o.y=wrap(o.y+o.vy*grid,H); });
-      }
-
-      function draw(){
-        ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-        // obstacles
-        ctx.fillStyle='#4b5563'; obstacles.forEach(o=> ctx.fillRect(o.x,o.y,grid,grid));
-        // items
-        if(poison){ ctx.fillStyle='#8b5cf6'; ctx.fillRect(poison.x,poison.y,grid,grid); }
-        if(fake){ ctx.fillStyle='#3b82f6'; ctx.fillRect(fake.x,fake.y,grid,grid); }
-        ctx.fillStyle='#ef4444'; ctx.fillRect(food.x,food.y,grid,grid);
-        if(bonus){ ctx.fillStyle='#f59e0b'; ctx.fillRect(bonus.x,bonus.y,grid,grid); }
-        // snake
-        ctx.fillStyle='#22c55e'; snake.forEach(p=> ctx.fillRect(p.x,p.y,grid,grid));
-        if(blackout>0){ ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(0,0,W,H); blackout--; }
-        document.getElementById('snakeScore').textContent=String(score);
-        document.getElementById('snakeHigh').textContent=String(users[currentUser]?.snake||0);
-        document.getElementById('snakeTimer').textContent=timeLeft.toFixed(1);
-      }
-
-      function step(){
-        ticks++;
-        dir=nextDir; // apply buffered turn
-
-        // chaos effects
-        if(gameMode==='chaos'){
-          if(Math.random()<0.08) blackout=4; // flicker
-          // random teleport swap with an obstacle (if any)
-          if(obstacles.length && Math.random()<0.08){
-            const i=Math.floor(Math.random()*obstacles.length);
-            const tmp={x:snake[0].x,y:snake[0].y};
-            snake[0].x=obstacles[i].x; snake[0].y=obstacles[i].y;
-            obstacles[i].x=tmp.x; obstacles[i].y=tmp.y;
-          }
-          // gravity pulse
-          if(gravityTicks<=0 && Math.random()<0.08){
-            const dirs=[[1,0],[-1,0],[0,1],[0,-1]]; const d=dirs[Math.floor(Math.random()*4)];
-            gravity={x:d[0],y:d[1]}; gravityTicks=10;
-          } else if(gravityTicks>0){ gravityTicks--; }
-          // reverse-time burst
-          if(reverseTicks<=0 && Math.random()<0.06){ reverseTicks=8; }
-        }
-
-        // calculate head with reverse-time / gravity
-        let stepDir = dir;
-        if(gameMode==='chaos' && reverseTicks>0){ stepDir={x:-dir.x,y:-dir.y}; reverseTicks--; }
-        let head={ x:wrap(snake[0].x+stepDir.x*grid,W), y:wrap(snake[0].y+stepDir.y*grid,H) };
-        if(gameMode==='chaos' && gravityTicks>0){ head.x=wrap(head.x+gravity.x*grid,W); head.y=wrap(head.y+gravity.y*grid,H); }
-
-        // collisions
-        if(snake.some(s=>s.x===head.x&&s.y===head.y) || obstacles.some(o=>o.x===head.x&&o.y===head.y)) { sounds.lose.play(); return gameOver(); }
-        if(poison && head.x===poison.x && head.y===poison.y){ sounds.lose.play(); return gameOver(); }
-
-        snake.unshift(head);
-        if(head.x===food.x && head.y===food.y){
-          score+=1; sounds.eat.play(); timeLeft += (gameMode==='chaos'?3:2);
-          food=randCell(); placeBonus(); placePoison(); placeFake();
-          const delta=({easy:4,medium:7,hard:11,chaos:20})[gameMode]||7;
-          speed=Math.max(24, speed-delta); spawnObstacles();
-        } else if(bonus && head.x===bonus.x && head.y===bonus.y){
-          score+=5; bonus=null; sounds.eat.play(); timeLeft += (gameMode==='chaos'?6:4);
-          speed=Math.max(20, speed-(gameMode==='chaos'?22:12));
-        } else if(fake && head.x===fake.x && head.y===fake.y){
-          score=Math.max(0, score-3); fake=null; sounds.lose.play();
-          snake.splice(-3); timeLeft=Math.max(0, timeLeft-4);
-        } else {
-          snake.pop();
-        }
-
-        // timer tick
-        timeLeft -= (speed/1000);
-        if(timeLeft<=0){ sounds.lose.play(); return gameOver(); }
-
-        draw();
-        snakeLoop=setTimeout(step, speed);
-      }
-
-      function gameOver(){
-        clearTimeout(snakeLoop);
-        const best = users[currentUser]?.snake || 0;
-        if(score>best){ users[currentUser].snake = score; saveUsers(); }
-        alert(`Game Over! Score: ${score}`);
-        backToMenu();
-      }
-
-      // controls
-      window.onkeydown = (e)=>{
-        const k=e.key; const jank=(gameMode==='chaos'&&Math.random()<0.2);
-        const up=jank?'ArrowDown':'ArrowUp', down=jank?'ArrowUp':'ArrowDown', left=jank?'ArrowRight':'ArrowLeft', right=jank?'ArrowLeft':'ArrowRight';
-        if(k===up   && dir.y===0) nextDir={x:0,y:-1};
-        if(k===down && dir.y===0) nextDir={x:0,y: 1};
-        if(k===left && dir.x===0) nextDir={x:-1,y:0};
-        if(k===right&& dir.x===0) nextDir={x: 1,y:0};
-      };
-      let sx=null, sy=null;
-      cvs.addEventListener('touchstart', (ev)=>{ sx=ev.touches[0].clientX; sy=ev.touches[0].clientY; }, {passive:true});
-      cvs.addEventListener('touchmove', (ev)=>{
-        if(sx===null||sy===null) return;
-        const dx=ev.touches[0].clientX-sx, dy=ev.touches[0].clientY-sy;
-        const jank=(gameMode==='chaos'&&Math.random()<0.2);
-        const apply=(ax,ay)=>{ if(Math.abs(ax)>Math.abs(ay)){ if(ax>0&&dir.x===0) nextDir={x:1,y:0}; else if(dir.x===0) nextDir={x:-1,y:0}; } else { if(ay>0&&dir.y===0) nextDir={x:0,y:1}; else if(dir.y===0) nextDir={x:0,y:-1}; } };
-        apply(jank?-dx:dx, jank?-dy:dy); sx=sy=null;
-      }, {passive:true});
-
-      document.getElementById('snakeModeLabel').textContent = cap(gameMode);
-      document.getElementById('snakeModeSelect').value = gameMode;
-      draw();
-      clearTimeout(snakeLoop);
-      snakeLoop=setTimeout(step, speed);
-    }
-
-    // -------- TIC TAC TOE --------
-    let playerWins = 0, compWins = 0, ties = 0;
-    function startTicTacToe(){
-      const twoP = document.getElementById('twoPlayer').checked;
-      const boardEl = document.getElementById('board');
-      document.getElementById('tttModeLabel').textContent = cap(gameMode);
-      let board = Array(9).fill(null);
-      let turn = 'X';
-      boardEl.innerHTML = '';
-      const btns=[];
-      for(let i=0;i<9;i++){
-        const d=document.createElement('div'); d.className='cell'; d.onclick=()=>move(i); boardEl.appendChild(d); btns.push(d);
-      }
-
-      function move(i){
-        if(board[i]) return;
-        board[i]=turn; btns[i].textContent=turn; sounds.tap.play();
-        if(win(turn)) return end(turn);
-        if(full()) return draw();
-        turn = (turn==='X'?'O':'X');
-        if(!twoP && turn==='O') aiTurn();
-      }
-
-      function aiTurn(){
-        let idx;
-        if(gameMode==='easy'){ idx = randomMove(); }
-        else if(gameMode==='medium'){ idx = blockOrRandom(); }
-        else { // hard & chaos
-          idx = minimaxBest(board,'O').index;
-          if(gameMode==='chaos' && Math.random()<0.5){ // frequent extra turn
-            place(idx);
-            if(!win('O') && !full()){
-              const extra = minimaxBest(board,'O').index; if(extra!=null) place(extra);
-            }
-            return;
-          }
-        }
-        place(idx);
-      }
-
-      function place(i){ board[i]='O'; btns[i].textContent='O'; if(win('O')) return end('O'); if(full()) return draw(); turn='X'; }
-      function randomMove(){ const empty = board.map((v,i)=>v?null:i).filter(v=>v!==null); return empty[Math.floor(Math.random()*empty.length)] }
-      function blockOrRandom(){
-        for(const [a,b,c] of wins){ if(board[a]==='O'&&board[b]==='O'&&!board[c]) return c; if(board[a]==='O'&&board[c]==='O'&&!board[b]) return b; if(board[b]==='O'&&board[c]==='O'&&!board[a]) return a; }
-        for(const [a,b,c] of wins){ if(board[a]==='X'&&board[b]==='X'&&!board[c]) return c; if(board[a]==='X'&&board[c]==='X'&&!board[b]) return b; if(board[b]==='X'&&board[c]==='X'&&!board[a]) return a; }
-        return randomMove();
-      }
-      function full(){ return board.every(Boolean); }
-      const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      function win(p){ return wins.some(([a,b,c])=>board[a]===p&&board[b]===p&&board[c]===p); }
-
-      function end(p){
-        if(p==='X'){ playerWins++; users[currentUser].ttt = Math.max(users[currentUser].ttt||0, playerWins); sounds.win.play(); alert('Player 1 wins!'); }
-        else{ compWins++; users[currentUser].ttt = Math.max(users[currentUser].ttt||0, compWins); sounds.lose.play(); alert(twoP? 'Player 2 wins!' : 'Computer wins!'); }
-        updateStats(); saveUsers(); startTicTacToe();
-      }
-      function draw(){ ties++; alert('Tie game!'); updateStats(); startTicTacToe(); }
-      function updateStats(){ document.getElementById('playerWins').textContent=playerWins; document.getElementById('compWins').textContent=compWins; document.getElementById('ties').textContent=ties; }
-
-      function minimaxBest(state, player){
-        const avail = state.map((v,i)=>v?null:i).filter(v=>v!==null);
-        if(checkWinState(state,'X')) return {score:-10};
-        if(checkWinState(state,'O')) return {score:10};
-        if(avail.length===0) return {score:0};
-        const moves=[];
-        for(const i of avail){
-          const move={index:i}; state[i]=player;
-          const res=minimaxBest(state, player==='O'?'X':'O');
-          move.score = res.score * (player==='O'?1:-1);
-          state[i]=null; moves.push(move);
-        }
-        moves.sort((a,b)=>b.score-a.score); return moves[0];
-      }
-      function checkWinState(s,p){ return wins.some(([a,b,c])=> s[a]===p && s[b]===p && s[c]===p ); }
-
-      updateStats();
-    }
-
-    // -------- HANGMAN (categories + lifeline) --------
-    const WORDS = {
-      programming:["javascript","python","hangman","developer","database","variable","function","object","array","promise"],
-      animals:["elephant","giraffe","kangaroo","dolphin","alligator","hamster","salamander","penguin","butterfly","rhinoceros"],
-      countries:["argentina","brazil","canada","denmark","egypt","finland","germany","hungary","indonesia","japan"],
-      movies:["inception","gladiator","coco","avatar","goodfellas","matrix","amelie","rocky","casablanca","psycho"]
-    };
-    let chosenWord, shown, wrong, lives, lifelineUsed;
-    function startHangman(){
-      const cat = document.getElementById('hangCategory').value;
-      const pool = WORDS[cat] || WORDS.programming;
-      const cvs = document.getElementById('hangmanCanvas');
-      const ctx = cvs.getContext('2d');
-      chosenWord = pool[Math.floor(Math.random()*pool.length)];
-      shown = Array.from({length: chosenWord.length}, _=> '_');
-      wrong = []; lifelineUsed=false;
-      lives = Math.max(2, chosenWord.length - 2);
-      updateWord(); updateLives(); draw(0);
-      document.getElementById('wrongLetters').textContent = `Category: ${cap(cat)}`;
-
-      document.getElementById('guessInput').onkeydown = (e)=>{ if(e.key==='Enter') makeGuess(); };
-
-      function draw(stage){
-        ctx.clearRect(0,0,cvs.width,cvs.height);
-        ctx.lineWidth=3; ctx.strokeStyle='#fff';
-        ctx.beginPath(); ctx.moveTo(20,190); ctx.lineTo(180,190); ctx.stroke();
-        if(stage>0){ ctx.beginPath(); ctx.moveTo(50,190); ctx.lineTo(50,20); ctx.stroke(); }
-        if(stage>1){ ctx.beginPath(); ctx.moveTo(50,20); ctx.lineTo(140,20); ctx.stroke(); }
-        if(stage>2){ ctx.beginPath(); ctx.moveTo(140,20); ctx.lineTo(140,45); ctx.stroke(); }
-        if(stage>3){ ctx.beginPath(); ctx.arc(140,60,12,0,Math.PI*2); ctx.stroke(); }
-        if(stage>4){ ctx.beginPath(); ctx.moveTo(140,72); ctx.lineTo(140,118); ctx.stroke(); }
-        if(stage>5){ ctx.beginPath(); ctx.moveTo(140,80); ctx.lineTo(120,100); ctx.stroke(); }
-        if(stage>6){ ctx.beginPath(); ctx.moveTo(140,80); ctx.lineTo(160,100); ctx.stroke(); }
-        if(stage>7){ ctx.beginPath(); ctx.moveTo(140,118); ctx.lineTo(122,150); ctx.stroke(); }
-        if(stage>8){ ctx.beginPath(); ctx.moveTo(140,118); ctx.lineTo(158,150); ctx.stroke(); }
-      }
-      startHangman.draw = draw;
-    }
-
-    function makeGuess(){
-      const input = document.getElementById('guessInput');
-      const letter = (input.value||'').toLowerCase(); input.value='';
-      if(!letter || letter.length!==1) return;
-      if(shown.includes(letter) || wrong.includes(letter)) return;
-      if(chosenWord.includes(letter)){
-        chosenWord.split('').forEach((ch,i)=>{ if(ch===letter) shown[i]=letter; });
-        updateWord(); sounds.eat.play();
-        if(!shown.includes('_')){ users[currentUser].hangman = (users[currentUser].hangman||0) + 1; saveUsers(); sounds.win.play(); alert('You win!'); startHangman(); }
-      } else {
-        wrong.push(letter); updateLives(); startHangman.draw(wrong.length);
-        document.getElementById('wrongLetters').textContent = `Category: ${document.getElementById('hangCategory').value.toUpperCase()} • Wrong: ${wrong.join(', ')}`;
-        if(wrong.length >= lives){ sounds.lose.play(); alert(`Game Over! The word was: ${chosenWord}`); startHangman(); }
-      }
-    }
-    function useLifeline(){ if(lifelineUsed) return; const idx = shown.findIndex(c=>c==='_'); if(idx>=0){ shown[idx]=chosenWord[idx]; lifelineUsed=true; updateWord(); } }
-    function updateWord(){ document.getElementById('wordDisplay').textContent = shown.join(' '); }
-    function updateLives(){ document.getElementById('guessesLeft').textContent = Math.max(0, lives - wrong.length); }
-
-    // -------- Self Tests (console) --------
-    (function selfTests(){
-      const results = [];
-      results.push(['startSnake exists', typeof startSnake === 'function']);
-      results.push(['startTicTacToe exists', typeof startTicTacToe === 'function']);
-      results.push(['startHangman exists', typeof startHangman === 'function']);
-      const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      const board=['X','X','X',null,null,null,null,null,null];
-      results.push(['TTT win pattern', wins.some(([a,b,c])=>board[a]==='X'&&board[b]==='X'&&board[c]==='X')]);
-      console.log('%cMini Game Hub self-tests','color:#60a5fa;font-weight:bold');
-      for(const [n,ok] of results){ console.log((ok?'✅':'❌')+' '+n); }
-    })();
-  </script>
-</body>
-</html>
+  <!-- SNAKE -->
+  <div id="snake" class="card">
+    <div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <h3 style="margin:0">Snake</h3>
+      <div class="row">
+        <label class="pill">Mode: <b id="snakeModeLabel">Medium</b></label>
+        <select id="snakeModeSelect" class="pill">
+          <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option><option value="chaos">Chaos</option>
+        </select>
+      </div>
+    </div>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <div class="row">
+      <span>Score: <b id="snakeScore">0
