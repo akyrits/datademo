@@ -1,155 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Hen and Rooster Pen</title>
 <style>
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: #7cfc00;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
+  :root{
+    --bg:#7cfc00;
+    --pen:#f4f1de;
+    --wood:#8b4513;
+    --text:#1f2937;
+    --panel:#ffffffcc;
+    --ok:#22c55e;
+    --warn:#ef4444;
+    --info:#3b82f6;
+  }
+  *{box-sizing:border-box}
+  body{
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    background: radial-gradient(1200px 800px at 50% -200px, #b3ff9e, var(--bg));
+    min-height:100vh; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text);
+    transition: background-color .2s;
+  }
+  body.hurt { animation: hurtFlash .25s; }
+  @keyframes hurtFlash { 0%{background-color:#ffb3b3;} 100%{background-color:transparent;} }
+
+  h1{ margin:12px 0 0; font-weight:800; letter-spacing:.4px; }
+  .sub { margin:0; color:#374151; opacity:.8; }
+
+  .hud{
+    display:flex; gap:18px; align-items:center; font-size:1.05rem; flex-wrap:wrap;
+    background:var(--panel); padding:8px 12px; border-radius:12px; box-shadow:0 6px 20px #0001;
+  }
+  .pill{ display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; background:#fff; box-shadow:inset 0 0 0 1px #00000014; }
+  .pill b{font-variant-numeric:tabular-nums}
+  .lives{ letter-spacing:2px; }
+  .badge{padding:4px 8px; border-radius:8px; font-size:.9rem; background:#fff; box-shadow:inset 0 0 0 1px #00000014;}
+
+  .pen{
+    position:relative; width:min(92vw, 560px); aspect-ratio:5/4; max-height:70vh;
+    background:var(--pen); border:12px solid var(--wood); border-radius:16px; overflow:hidden;
+    box-shadow:0 12px 30px #0002, inset 0 0 0 4px #0000000f;
+  }
+  .fence{
+    position:absolute; inset:0; pointer-events:none; background:
+      linear-gradient(90deg, #0000 94%, #0000000f 94% 96%, #0000 96%),
+      repeating-linear-gradient(#0000 0 18px, #0000000c 18px 19px);
   }
 
-  .stats {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    display: flex;
-    gap: 20px;
+  .bird, .drop{
+    position:absolute; font-size:2rem; cursor:pointer; user-select:none; transition: transform .08s, opacity .4s;
+    will-change: transform, left, top;
   }
+  .bird:hover{ transform: scale(1.05); }
+  .drop{ font-size:1.5rem; pointer-events:none; filter: drop-shadow(0 4px 6px #0003); }
 
-  .pen {
-    position: relative;
-    width: 500px;
-    height: 400px;
-    background: #f4f1de;
-    border: 10px solid #8b4513;
-    border-radius: 12px;
-    overflow: hidden;
+  /* Menus */
+  .overlay{
+    position:fixed; inset:0; display:grid; place-items:center; background:#0008; z-index:10;
+    padding:20px;
   }
-
-  .bird, .drop {
-    position: absolute;
-    font-size: 2rem;
-    cursor: pointer;
-    user-select: none;
-    transition: opacity 0.5s;
+  .card{
+    width:min(92vw,540px); background:#fff; border-radius:16px; padding:22px; text-align:center;
+    box-shadow:0 20px 50px #0006;
   }
+  .row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
-  .drop {
-    font-size: 1.5rem;
-    pointer-events: none;
+  .btn{
+    border:0; padding:12px 16px; border-radius:12px; cursor:pointer; font-weight:700; font-size:1rem;
+    box-shadow:0 6px 18px #0002; transition: transform .06s, box-shadow .2s, opacity .2s;
+  }
+  .btn:active{ transform: translateY(1px) scale(0.99); }
+  .btn.primary{ background:linear-gradient(180deg, #34d399, #10b981); color:white; }
+  .btn.warn{ background:linear-gradient(180deg, #f97316, #ef4444); color:white; }
+  .btn.ghost{ background:#eef2ff; color:#111827; }
+  .small{ font-size:.9rem; opacity:.8; }
+
+  /* Floating toast */
+  .toast{
+    position:fixed; top:14px; right:14px; background:#111827; color:#fff; padding:8px 12px; border-radius:10px; font-size:.9rem; opacity:.95; z-index:9;
+    box-shadow:0 8px 20px #0006;
   }
 </style>
 </head>
 <body>
-<div class="stats">
-  <div>🥚 Eggs: <span id="eggCount">0</span></div>
-  <div>🪶 Feathers: <span id="featherCount">0</span></div>
-</div>
-<div class="pen" id="pen"></div>
+  <h1>Hen & Rooster Pen</h1>
+  <p class="sub">Click only <b>hens 🐔</b> and <b>roosters 🐓</b>. Anything else costs a life!</p>
+
+  <div class="hud">
+    <div class="pill">🥚 Eggs: <b id="eggCount">0</b></div>
+    <div class="pill">🪶 Feathers: <b id="featherCount">0</b></div>
+    <div class="pill">❤️ Lives: <b class="lives" id="lives">❤️❤️❤️</b></div>
+    <div class="badge">Mode: <span id="modeLabel">—</span></div>
+  </div>
+
+  <div class="pen" id="pen">
+    <div class="fence"></div>
+  </div>
+
+  <!-- Start Menu -->
+  <div class="overlay" id="menu">
+    <div class="card">
+      <h2>Choose Your Mode</h2>
+      <p class="small">Normal is cozy. Chaos is… flappy.</p>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" data-mode="normal">Normal</button>
+        <button class="btn warn" data-mode="chaos">Chaos</button>
+      </div>
+      <p class="small" style="margin-top:10px;">Score eggs and feathers. Avoid the other animals!</p>
+    </div>
+  </div>
+
+  <!-- Game Over -->
+  <div class="overlay" id="gameover" style="display:none;">
+    <div class="card">
+      <h2>Game Over</h2>
+      <p>You ran out of lives.</p>
+      <p><b>Final Eggs:</b> <span id="finalEggs">0</span> &nbsp;•&nbsp;
+         <b>Final Feathers:</b> <span id="finalFeathers">0</span></p>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn ghost" id="restart">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" style="display:none;">Life lost! Only click 🐔 or 🐓</div>
 
 <script>
+  // --- DOM refs
   const pen = document.getElementById('pen');
   const eggCountEl = document.getElementById('eggCount');
   const featherCountEl = document.getElementById('featherCount');
+  const livesEl = document.getElementById('lives');
+  const modeLabel = document.getElementById('modeLabel');
+  const menu = document.getElementById('menu');
+  const gameover = document.getElementById('gameover');
+  const finalEggs = document.getElementById('finalEggs');
+  const finalFeathers = document.getElementById('finalFeathers');
+  const restartBtn = document.getElementById('restart');
+  const toast = document.getElementById('toast');
 
-  let eggCount = 0;
-  let featherCount = 0;
+  // --- Game state
+  let eggCount = 0, featherCount = 0, lives = 3;
+  let mode = null;
+  let running = false;
+  let rafId = null;
 
+  // Pen bounds (minus emoji size padding)
+  function penSize() {
+    const rect = pen.getBoundingClientRect();
+    // leave margin so emojis don't clip the borders
+    return { w: rect.width - 60, h: rect.height - 60 };
+  }
+
+  // --- Entities
   const birdTypes = [
-    { emoji: '🐔', type: 'hen' },
-    { emoji: '🐓', type: 'rooster' }
+    { emoji:'🐔', type:'hen'     },
+    { emoji:'🐓', type:'rooster' }
+  ];
+  const otherAnimals = [
+    '🦆','🐤','🦉','🕊️','🦅','🦢','🦎',
+    '🐮','🐷','🐱','🐶','🐴','🐭','🦊','🦝','🐻','🐸','🐧'
   ];
 
-  const birds = [];
-  const numBirds = 8;
+  const actors = [];
+  let config = {};
 
-  // Create initial birds
-  for (let i = 0; i < numBirds; i++) {
-    createBird();
+  const CONFIGS = {
+    normal: {
+      label: 'Normal',
+      numStart: 8,
+      speedMin: 0.6, speedMax: 1.6,
+      chaosTurnChance: 0.002,
+      leaveChance: 0.0008,
+      otherSpawnRatio: 0.35,   // chance each spawn is "other"
+      maxActors: 14,
+      respawnDelay: [1200, 2600]
+    },
+    chaos: {
+      label: 'Chaos',
+      numStart: 12,
+      speedMin: 1.2, speedMax: 3.0,
+      chaosTurnChance: 0.015,  // random jittery turns
+      leaveChance: 0.0018,
+      otherSpawnRatio: 0.55,
+      maxActors: 20,
+      respawnDelay: [600, 1500]
+    }
+  };
+
+  // --- Sounds (oscillator-only, no assets)
+  function blip(freq=880, dur=0.08, type='square', vol=0.05){
+    try{
+      const ctx = blip.ctx || (blip.ctx = new (window.AudioContext||window.webkitAudioContext)());
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type = type; o.frequency.value = freq; g.gain.value = vol;
+      o.connect(g).connect(ctx.destination); o.start();
+      setTimeout(()=>{ o.stop(); }, dur*1000);
+    }catch(e){/* audio blocked; ignore */}
   }
 
-  function createBird() {
-    const birdData = birdTypes[Math.floor(Math.random() * birdTypes.length)];
-    const bird = document.createElement('div');
-    bird.classList.add('bird');
-    bird.textContent = birdData.emoji;
-    bird.dataset.type = birdData.type;
-    bird.style.left = Math.random() * 450 + 'px';
-    bird.style.top = Math.random() * 350 + 'px';
-    bird.dx = Math.random() < 0.5 ? 1 : -1;
-    bird.dy = Math.random() < 0.5 ? 1 : -1;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.style.display='block';
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>toast.style.display='none', 900);
+  }
 
-    bird.addEventListener('click', () => {
-      if (bird.dataset.type === 'hen') {
-        eggCount++;
-        eggCountEl.textContent = eggCount;
-        dropThing('🥚', bird.style.left, bird.style.top);
+  // --- UI state
+  function renderHUD(){
+    eggCountEl.textContent = eggCount;
+    featherCountEl.textContent = featherCount;
+    livesEl.textContent = '❤️'.repeat(lives) + '🖤'.repeat(3-lives);
+    modeLabel.textContent = CONFIGS[mode]?.label ?? '—';
+  }
+
+  // --- Spawning
+  function randomStartPos(){
+    const {w,h} = penSize();
+    return { x: Math.random()*w + 30, y: Math.random()*h + 30 };
+  }
+  function randomSpeed(){
+    const s = Math.random()*(config.speedMax-config.speedMin)+config.speedMin;
+    return (Math.random()<0.5? -s : s);
+  }
+  function randomActorType(){
+    const isOther = Math.random() < config.otherSpawnRatio;
+    if(!isOther){
+      return birdTypes[Math.floor(Math.random()*birdTypes.length)];
+    }
+    const emoji = otherAnimals[Math.floor(Math.random()*otherAnimals.length)];
+    return { emoji, type:'other' };
+  }
+
+  function createActor() {
+    if(actors.length >= config.maxActors) return null;
+
+    const data = randomActorType();
+    const el = document.createElement('div');
+    el.className = 'bird';
+    el.textContent = data.emoji;
+    el.dataset.type = data.type;
+
+    const {x, y} = randomStartPos();
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+
+    el.dx = randomSpeed();
+    el.dy = randomSpeed();
+
+    el.addEventListener('click', () => {
+      if(!running) return;
+      const type = el.dataset.type;
+      if(type === 'hen'){
+        eggCount++; renderHUD();
+        dropThing('🥚', el.style.left, el.style.top);
+        blip(740, .06, 'square', .06);
+      } else if(type === 'rooster'){
+        featherCount++; renderHUD();
+        dropThing('🪶', el.style.left, el.style.top);
+        blip(520, .06, 'square', .06);
       } else {
-        featherCount++;
-        featherCountEl.textContent = featherCount;
-        dropThing('🪶', bird.style.left, bird.style.top);
+        loseLife();
       }
     });
 
-    pen.appendChild(bird);
-    birds.push(bird);
+    pen.appendChild(el);
+    actors.push(el);
+    return el;
   }
 
-  // Move birds
-  function moveBirds() {
-    birds.forEach(bird => {
-      if (bird.dataset.leaving) return; // skip if leaving
+  function removeActor(el){
+    if(!el || !el.parentNode) return;
+    el.style.opacity='0';
+    setTimeout(()=>{
+      if(el.parentNode) el.parentNode.removeChild(el);
+    }, 280);
+    const i = actors.indexOf(el);
+    if(i>=0) actors.splice(i,1);
+  }
 
-      let x = parseFloat(bird.style.left);
-      let y = parseFloat(bird.style.top);
+  function scheduleRespawn(){
+    const [a,b] = config.respawnDelay;
+    const delay = Math.random()*(b-a)+a;
+    setTimeout(()=>{ if(running) createActor(); }, delay);
+  }
 
-      x += bird.dx;
-      y += bird.dy;
+  function leavePen(el){
+    el.dataset.leaving = '1';
+    el.style.opacity='0';
+    setTimeout(()=>{ removeActor(el); if(running) scheduleRespawn(); }, 280);
+  }
 
-      if (x <= 0 || x >= 460) bird.dx *= -1;
-      if (y <= 0 || y >= 370) bird.dy *= -1;
+  function dropThing(symbol, x, y){
+    const d = document.createElement('div');
+    d.className = 'drop';
+    d.textContent = symbol;
+    d.style.left = x; d.style.top = y;
+    pen.appendChild(d);
+    // float + fade
+    d.animate([
+      { transform:'translateY(0)', opacity:1 },
+      { transform:'translateY(-24px)', opacity:0 }
+    ], { duration: 700, easing:'cubic-bezier(.2,.9,.2,1)'});
+    setTimeout(()=> d.remove(), 720);
+  }
 
-      bird.style.left = x + 'px';
-      bird.style.top = y + 'px';
+  function loseLife(){
+    if(lives<=0) return;
+    lives--; renderHUD();
+    document.body.classList.add('hurt');
+    setTimeout(()=> document.body.classList.remove('hurt'), 200);
+    showToast('Life lost! Only click 🐔 or 🐓');
+    blip(180, .12, 'sawtooth', .06);
 
-      // Random chance to leave the pen
-      if (Math.random() < 0.0008) {
-        leavePen(bird);
+    if(lives<=0){
+      endGame();
+    }
+  }
+
+  // --- Movement loop
+  function tick(){
+    if(!running){ rafId = requestAnimationFrame(tick); return; }
+
+    const {w,h} = penSize();
+    actors.forEach(el=>{
+      if(el.dataset.leaving) return;
+
+      // chaos mode random turn jitter
+      if(Math.random() < config.chaosTurnChance){
+        el.dx += (Math.random() - 0.5) * 0.8;
+        el.dy += (Math.random() - 0.5) * 0.8;
+        // clamp to speed bounds
+        const mag = Math.hypot(el.dx, el.dy) || 1;
+        const max = config.speedMax*1.2;
+        if(mag>max){ el.dx = el.dx/mag*max; el.dy = el.dy/mag*max; }
+      }
+
+      let x = parseFloat(el.style.left);
+      let y = parseFloat(el.style.top);
+
+      x += el.dx; y += el.dy;
+
+      if (x <= 8 || x >= w) el.dx *= -1;
+      if (y <= 8 || y >= h) el.dy *= -1;
+
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+
+      // Random chance to leave the pen (replaced by a new spawn later)
+      if(Math.random() < config.leaveChance){
+        leavePen(el);
       }
     });
-    requestAnimationFrame(moveBirds);
+
+    rafId = requestAnimationFrame(tick);
   }
 
-  moveBirds();
-
-  function leavePen(bird) {
-    bird.dataset.leaving = true;
-    bird.style.opacity = '0';
-    setTimeout(() => {
-      pen.removeChild(bird);
-      birds.splice(birds.indexOf(bird), 1);
-      setTimeout(() => {
-        createBird(); // new bird comes in
-      }, Math.random() * 3000 + 2000); // 2-5 sec later
-    }, 500);
+  // --- Game flow
+  function resetState(){
+    eggCount = 0; featherCount = 0; lives = 3;
+    renderHUD();
+    // purge actors
+    [...actors].forEach(a=>removeActor(a));
   }
 
-  function dropThing(symbol, x, y) {
-    const drop = document.createElement('div');
-    drop.classList.add('drop');
-    drop.textContent = symbol;
-    drop.style.left = x;
-    drop.style.top = y;
-    pen.appendChild(drop);
-    setTimeout(() => drop.remove(), 1500);
+  function startGame(selectedMode){
+    mode = selectedMode;
+    config = CONFIGS[mode];
+    resetState();
+    modeLabel.textContent = config.label;
+
+    // spawn initial population
+    for(let i=0;i<config.numStart;i++){ createActor(); }
+
+    running = true;
+    menu.style.display='none';
+    gameover.style.display='none';
+    if(!rafId) tick();
   }
+
+  function endGame(){
+    running = false;
+    finalEggs.textContent = eggCount;
+    finalFeathers.textContent = featherCount;
+    gameover.style.display='grid';
+  }
+
+  // Menu handlers
+  menu.addEventListener('click', (e)=>{
+    if(e.target.matches('button[data-mode]')){
+      const m = e.target.getAttribute('data-mode');
+      startGame(m);
+    }
+  });
+  restartBtn.addEventListener('click', ()=>{
+    // return to mode selection (lets players switch modes too)
+    menu.style.display='grid';
+    gameover.style.display='none';
+  });
+
+  // Initial HUD
+  renderHUD();
+
+  // Keep animation frame alive so resizing doesn’t stall, but only updates when running
+  rafId = requestAnimationFrame(tick);
+
+  // Defensive: adjust on resize so bounds stay accurate
+  window.addEventListener('resize', ()=>{/* bounds recomputed each frame */});
 </script>
 </body>
 </html>
