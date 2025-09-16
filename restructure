@@ -1,0 +1,13 @@
+git fetch --all --prune
+git switch -c restructure-project
+
+mkdir -p "project/Training data" "project/Test"
+
+git mv -k "Dachshund"  "project/Training data/"  || true
+git mv -k "Tabby Cat"  "project/Training data/"  || true
+git mv -k "Dog"        "project/Test/"           || true
+git mv -k "Cat"        "project/Test/"           || true
+
+git add -A
+git commit -m "Restructure: Training data (Dachshund, Tabby Cat); Test (Cat, Dog) under project/"
+git push -u origin HEAD
