@@ -1,6 +1,14 @@
 # Visualizations & Results
 
-This section presents the key performance metrics and plots from training and evaluating the AlexNet-based dog emotion classifier. Each visualization is followed by a clear interpretation explaining what the results indicate about the model’s behavior, stability, and generalization.
+This section reviews the model’s performance using the default hyperparameters:
+
+- **Optimizer:** Adam  
+- **Pretrained:** True  
+- **Learning Rate:** 1e-4  
+- **Batch Size:** 32  
+- **Device:** GPU (CUDA)  
+
+All experiments shown below modify **only one parameter at a time**, allowing clear comparison of how each hyperparameter affects model performance.
 
 ---
 
@@ -8,16 +16,16 @@ This section presents the key performance metrics and plots from training and ev
 
 ![Training Accuracy](assets/train_acc.png)
 
-Training accuracy rises rapidly across all configurations, reaching approximately **98–100%** within just a few epochs.
+Training accuracy climbs rapidly for all runs and reaches **~98–100%** within a few epochs.
 
-**Key Observations:**
-- **CUDA-accelerated runs** converge the fastest and most smoothly.
-- **Adam** provides more stable learning curves than **SGD**.
-- **RGB models** outperform grayscale in early learning and final accuracy.
-- Grayscale + SGD shows noticeably slower convergence and lower ceilings.
+### Key Points
+- The **default configuration (Adam + GPU + RGB + LR=1e-4)** learns extremely quickly.  
+- Switching to **CPU** or **SGD** slows convergence and slightly lowers final accuracy.  
+- **Grayscale** models consistently learn slower and plateau lower.  
+- **CUDA** provides the smoothest and fastest optimization trajectory.
 
-**Interpretation:**  
-AlexNet learns the training data extremely efficiently. Dog facial/body expression features are highly learnable, and the network quickly captures meaningful emotional cues.
+### Interpretation  
+AlexNet is highly effective at learning emotional cues in dog images. The default configuration is near optimal for training efficiency and stability.
 
 ---
 
@@ -25,15 +33,16 @@ AlexNet learns the training data extremely efficiently. Dog facial/body expressi
 
 ![Validation Accuracy](assets/val_acc.png)
 
-Validation accuracy remains high and stable across most runs, typically between **90–96%**.
+Validation accuracy remains high across all experimental variations, typically **90–96%**.
 
-**Key Observations:**
-- CUDA + RGB runs produce the **highest validation accuracy**.
-- CPU-based runs perform adequately but are more volatile.
-- Grayscale models and SGD optimization introduce **greater fluctuation** and slightly lower peaks.
+### Key Points
+- **GPU + RGB + Adam (default)** produces the highest and most stable validation accuracy.  
+- **CPU** runs maintain competitive accuracy but show more noise.  
+- **SGD** and **grayscale** negatively impact consistency and peak values.  
+- Lower learning rate (1e-4, default) is noticeably more stable than higher LR settings.
 
-**Interpretation:**  
-The model generalizes well to unseen images. Hyperparameter choices (especially optimizer and color mode) significantly impact stability and peak validation performance.
+### Interpretation  
+The model generalizes very well. The differences between runs reveal that optimizer choice, color mode, and device speed materially influence generalization quality.
 
 ---
 
@@ -41,33 +50,34 @@ The model generalizes well to unseen images. Hyperparameter choices (especially 
 
 ![Validation Loss](assets/val_loss.png)
 
-Validation loss trends downward across most runs, confirming that the model is not simply memorizing the training data.
+Validation loss trends downward for the highest-performing runs.
 
-**Key Observations:**
-- **Adam + CUDA + RGB** yields the smoothest and lowest validation loss curves.
-- **SGD + grayscale** configurations show notable instability and periodic spikes.
-- Lower learning rates (0.0001) tend to produce **more controlled, consistent validation loss**.
+### Key Points
+- The **default configuration** shows the lowest and smoothest validation loss.  
+- **SGD** introduces instability and larger loss spikes.  
+- **Grayscale** inputs cause higher variance and slower reduction in validation loss.  
+- Higher LR results in increased fluctuation and slightly worse generalization.
 
-**Interpretation:**  
-The model maintains strong generalization without severe overfitting. Loss patterns reinforce that color information and stable optimization methods improve emotional cue recognition.
+### Interpretation  
+Good generalization with minimal overfitting. The experiments confirm that stable optimization (Adam) and rich input information (RGB) significantly improve emotional classification.
 
 ---
 
-## 🟪 Hyperparameter Comparison (Best Validation Performance)
+## 🟪 Hyperparameter Comparison (Best Validation Accuracy)
 
 ![Best Validation Accuracy](assets/best_val_acc.png)
 
-This comparison highlights which hyperparameters produced the strongest models.
+This comparison plot highlights how modifying a single parameter impacts peak validation accuracy.
 
-**Key Findings:**
-- **CUDA** consistently outperforms CPU-based training.
-- **RGB images** significantly outperform grayscale.
-- **Adam > SGD** for both stability and peak accuracy.
-- A **lower learning rate (0.0001)** produces better performance across runs.
-- Batch size differences are smaller, though **batch_size=16** slightly outperforms larger batches.
+### Key Findings
+- **Device:** GPU > CPU  
+- **Color Mode:** RGB > Grayscale  
+- **Optimizer:** Adam > SGD  
+- **Learning Rate:** 1e-4 (default) > 1e-3  
+- **Batch Size:** Smaller batch sizes slightly improve accuracy, but differences are minor.
 
-**Interpretation:**  
-Model performance is strongly influenced by optimizer, color channels, and compute device. The best-performing configuration was **CUDA + RGB + Adam + LR = 0.0001**, indicating this combination is most effective at capturing subtle dog emotion cues.
+### Interpretation  
+The default configuration is nearly optimal. Results confirm that **compute speed, image richness, and optimizer choice** meaningfully affect model performance.
 
 ---
 
@@ -75,31 +85,34 @@ Model performance is strongly influenced by optimizer, color channels, and compu
 
 ![Confusion Matrix](assets/confusion_matrix.png)
 
-**Matrix Breakdown:**
-- Class 0: **37 correct**, **3 incorrect**
-- Class 1: **38 correct**, **2 incorrect**
+### Breakdown
+- Class 0: **37 correct**, **3 incorrect**  
+- Class 1: **38 correct**, **2 incorrect**  
 
-**Interpretation:**
-- The classifier performs **nearly equally well** on both classes.
-- Only **5 total misclassifications** out of 80 predictions.
-- No evidence of class imbalance or bias.
-- Errors likely stem from ambiguous facial expressions, occlusions, or borderline emotional states.
+### Interpretation
+- Balanced, high performance across both classes.  
+- Only **5 misclassifications** out of 80 predictions.  
+- No class bias or imbalance issues.  
+- Errors likely stem from ambiguous or borderline emotional expressions.
 
 ---
 
 # ⭐ Overall Results Summary
 
-AlexNet demonstrated strong performance on the task of classifying dog emotional states from images. Training accuracy quickly approached perfection, and validation accuracy consistently reached **94–96%** under optimal settings. 
+The AlexNet-based classifier performs exceptionally well on dog emotion recognition. Using the default configuration (Adam, LR=1e-4, pretrained weights, batch size 32, GPU), the model achieves:
 
-Hyperparameter exploration revealed:
+- **Near-perfect training accuracy**  
+- **94–96% validation accuracy**  
+- **Consistently low validation loss**  
+- **Very strong classification balance (confusion matrix)**  
 
-- **CUDA acceleration** significantly boosts performance and stability.  
-- **RGB input** is far more informative than grayscale for emotional cue extraction.  
-- The **Adam optimizer** consistently outperforms SGD.  
-- **Lower learning rates** yield more stable training and improved validation results.  
+Experimentation confirms:
 
-The confusion matrix confirms **high precision and balanced performance across classes**, with only a few misclassifications. These results strongly support the feasibility of using AlexNet-based models as a foundational tool for automated dog emotion detection.
+- **Adam > SGD**  
+- **RGB > Grayscale**  
+- **GPU > CPU**  
+- **Low LR > High LR in stability and generalization**  
+
+These results demonstrate that AlexNet effectively captures emotional cues in dog images and provides a strong foundation for future real-time or multi-label emotion detection systems.
 
 ---
-
-*End of Results Section*
