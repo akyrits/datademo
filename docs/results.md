@@ -1,7 +1,3 @@
----
-title: Visualizations & Results
----
-
 # Visualizations & Results
 
 This section presents the key performance metrics and plots from training and evaluating the AlexNet-based dog emotion classifier. Each visualization is followed by a clear interpretation explaining what the results indicate about the model’s behavior, stability, and generalization.
