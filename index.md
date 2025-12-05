@@ -1,174 +1,174 @@
-[Problem](#problem--motivation) • 
-[Approach](#technical-approach-alexnet-based-classification) • 
-[Visualizations](#visualizations) • 
-[Results](#results) • 
-[Takeaways](#takeaways--future-work) • 
-[Links](#links)
+<link rel="stylesheet" href="style.css">
 
----
+<nav>
+  <a href="#problem">Problem</a>
+  <a href="#approach">Approach</a>
+  <a href="#visualizations">Visualizations</a>
+  <a href="#results">Results</a>
+  <a href="#takeaways">Takeaways</a>
+  <a href="results.html">Full Results Page</a>
+</nav>
 
-# PawSense AI: Real-Time Dog Emotion Detection
+<section id="title">
+<h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+<p><strong>Author:</strong> Alexander Kyritsopoulos<br>
+<strong>Course:</strong> Data Science / Deep Learning Project</p>
 
-**Author:** Alexander Kyritsopoulos  
-**Course:** Data Science / Deep Learning Project  
+<p>Exploring whether transfer learning with AlexNet can reliably detect dog emotional states
+(happy vs. stressed) from images, as a first step toward real-time well-being monitoring.</p>
+</section>
 
-Exploring whether transfer learning with AlexNet can reliably detect dog emotional states
-(happy vs. stressed) from images, as a first step toward real-time well-being monitoring.
+<section id="problem">
+<h2>Problem & Motivation</h2>
 
----
-
-## Problem & Motivation
-
-Modern pet parents care deeply about their dog’s emotional health, but stress and anxiety
+<p>Modern pet parents care deeply about their dog’s emotional health, but stress and anxiety
 are often missed until they show up as problem behaviors (barking, growling, biting) or
-health issues.
+health issues.</p>
 
-**Challenges with the current situation**
+<h3>Challenges</h3>
+<ul>
+  <li>Humans are not great at spotting subtle stress signals like whale eye, ear position, or tension around the muzzle.</li>
+  <li>Owners may miss early signs, especially when away from home.</li>
+  <li>Existing smart cameras track <em>activity</em>, not <em>emotion</em>.</li>
+</ul>
 
-- Humans are not great at spotting subtle stress signals like whale eye, ear position,
-  or tension around the muzzle.
-- Many owners are busy or away from home, so they miss early warning signs.
-- Existing smart cameras focus on **activity** (motion, barking) rather than **emotion**.
+<h3>Goal of PawSense AI</h3>
+<ul>
+  <li>Detect whether a dog looks <strong>relaxed/happy</strong> vs. <strong>stressed/anxious</strong>.</li>
+  <li>Show that deep learning can capture subtle emotional cues.</li>
+  <li>Serve as a foundation for real-time emotion alerts and behavioral insights.</li>
+</ul>
+</section>
 
-**Goal of PawSense AI**
+<section id="approach">
+<h2>Technical Approach: AlexNet-Based Classification</h2>
 
-Build a computer-vision system that can:
+<h3>Dataset</h3>
+<ul>
+  <li>Two classes: <strong>Happy/Relaxed</strong> vs <strong>Stressed/Anxious</strong>.</li>
+  <li>Images curated for clear facial/body cues.</li>
+  <li>Preprocessing: resize to 224×224, normalize using ImageNet statistics, split into train/val/test.</li>
+</ul>
 
-- Detect whether a dog looks **relaxed/happy vs. stressed/anxious** from images.
-- Show that deep learning can capture subtle visual cues in ears, eyes, and posture.
-- Lay the groundwork for real-time alerts and insights (e.g., “your dog looks stressed”).
+<h3>Model Architecture</h3>
+<ul>
+  <li>Base model: <strong>AlexNet pretrained on ImageNet</strong>.</li>
+  <li>Final FC layer modified for 2-class output.</li>
+  <li>ReLU activations, dropout, and softmax classifier.</li>
+</ul>
 
----
+<h3>Default Training Hyperparameters</h3>
+<ul>
+  <li><strong>Optimizer:</strong> Adam</li>
+  <li><strong>Pretrained:</strong> True</li>
+  <li><strong>Learning Rate:</strong> 1e-4</li>
+  <li><strong>Batch Size:</strong> 32</li>
+  <li><strong>Device:</strong> GPU (CUDA)</li>
+  <li><strong>Loss:</strong> Cross-entropy</li>
+  <li><strong>Epochs:</strong> ~10–14 with early stopping</li>
+</ul>
 
-## Technical Approach: AlexNet-Based Classification
+<h3>Experimental Design</h3>
+<p>Each experiment changed <strong>one parameter at a time</strong>, keeping all other defaults constant.  
+This allows clean, interpretable comparisons.</p>
 
-### Dataset
+<p>Examples:</p>
+<ul>
+  <li>Device: GPU vs CPU</li>
+  <li>Color mode: RGB vs grayscale</li>
+  <li>Optimizer: Adam vs SGD</li>
+  <li>Learning rate: 1e-4 vs 1e-3</li>
+  <li>Batch size: 16 vs 32</li>
+</ul>
 
-- Two main classes for this stage: **Happy/Relaxed** vs **Stressed/Anxious**.
-- Images collected from curated online sources and filtered for clear facial/body cues.
-- Preprocessing:
-  - Resize to **224×224** pixels.
-  - Normalize using **ImageNet statistics**.
-  - Split into **training**, **validation**, and **test** sets.
+<p>All training curves and metrics were logged using <strong>Weights & Biases (W&B)</strong>.</p>
+</section>
 
-### Model Architecture
+<section id="visualizations">
+<h2>Visualizations</h2>
 
-- Base model: **AlexNet**, pretrained on ImageNet.
-- Final fully connected layer modified for **2-class output** (happy vs. stressed).
-- ReLU activations, dropout, and softmax output layer for class probabilities.
+<h3>Training Accuracy (Top Runs)</h3>
+<img src="assets/train_acc.png" alt="Training Accuracy">
 
-### Default Training Setup
+<ul>
+  <li>All runs reach high accuracy quickly.</li>
+  <li>The default configuration (GPU + RGB + Adam + LR=1e-4) converges the fastest.</li>
+  <li>Grayscale and SGD learn slower and plateau lower.</li>
+</ul>
 
-These are the default hyperparameters used unless explicitly changed in an experiment:
+<h3>Validation Accuracy</h3>
+<img src="assets/val_acc.png" alt="Validation Accuracy">
 
-- **Optimizer:** Adam  
-- **Pretrained:** True  
-- **Learning Rate:** 1e-4  
-- **Batch Size:** 32  
-- **Device:** GPU (CUDA)  
-- **Loss:** Cross-entropy  
-- **Epochs:** ~10–14 (early stopping based on validation performance)
+<ul>
+  <li>Most models reach 90–96% validation accuracy.</li>
+  <li>GPU + RGB + Adam (default) is the most stable.</li>
+  <li>SGD and grayscale introduce greater variance.</li>
+</ul>
 
-### Experiments
+<h3>Validation Loss</h3>
+<img src="assets/val_loss.png" alt="Validation Loss">
 
-Each experiment in the run list changes **only one parameter at a time**, keeping all others
-at their default values above. Examples:
+<ul>
+  <li>The default configuration shows the lowest and smoothest loss curve.</li>
+  <li>SGD and grayscale cause fluctuations and slower reduction.</li>
+  <li>Lower learning rate (1e-4) performs more consistently.</li>
+</ul>
 
-- Device: GPU vs. CPU
-- Color mode: RGB vs. grayscale
-- Optimizer: Adam vs. SGD
-- Learning rate: 1e-4 vs. 1e-3
-- Batch size: 16 vs. 32
+<h3>Best Validation Accuracy by Hyperparameter</h3>
+<img src="assets/best_val_acc.png" alt="Best Val Acc">
 
-Metrics and plots were logged with **Weights & Biases (W&B)**.
+<ul>
+  <li><strong>GPU > CPU</strong></li>
+  <li><strong>RGB > Grayscale</strong></li>
+  <li><strong>Adam > SGD</strong></li>
+  <li><strong>LR 1e-4 > LR 1e-3</strong></li>
+</ul>
+</section>
 
----
+<section id="results">
+<h2>Results</h2>
 
-## Visualizations
+<p>The AlexNet-based classifier performed strongly across all metrics.  
+Using the default configuration, the model achieved:</p>
 
-### Training Accuracy (Top Runs)
+<ul>
+  <li><strong>94–96% validation accuracy</strong></li>
+  <li><strong>Low, stable validation loss</strong></li>
+  <li><strong>Fast convergence and minimal overfitting</strong></li>
+</ul>
 
-![Training Accuracy](assets/train_acc.png)
+<h3>Confusion Matrix</h3>
+<img src="assets/confusion_matrix.png" alt="Confusion Matrix">
 
-- All runs reach high training accuracy.
-- The **default configuration (GPU + RGB + Adam + LR=1e-4)** converges the fastest and most smoothly.
-- Grayscale and SGD tend to learn more slowly and plateau slightly lower.
+<ul>
+  <li>Class 0: 37 correct, 3 incorrect</li>
+  <li>Class 1: 38 correct, 2 incorrect</li>
+  <li>Only <strong>5 misclassifications</strong> across 80 samples</li>
+  <li>No major class imbalance or bias</li>
+</ul>
 
-### Validation Accuracy
+<p>These results show that transfer learning with AlexNet is an effective baseline for dog emotion recognition.</p>
+</section>
 
-![Validation Accuracy](assets/val_acc.png)
+<section id="takeaways">
+<h2>Takeaways & Future Work</h2>
 
-- Validation accuracy stays in the **90–96%** range for the best runs.
-- GPU + RGB + Adam (default) gives the most stable performance.
-- CPU, grayscale, and SGD introduce more noise and slightly lower peak accuracy.
+<h3>Key Takeaways</h3>
+<ul>
+  <li>AlexNet with transfer learning is highly effective for this task.</li>
+  <li>Color mode, optimizer choice, and device speed meaningfully affect generalization.</li>
+  <li>The model captures subtle emotional cues such as eye tension and ear position.</li>
+</ul>
 
-### Validation Loss
+<h3>Future Improvements</h3>
+<ul>
+  <li>Expand beyond binary emotion classification to <strong>multi-label cues</strong> (ears back, whale eye, lip licking).</li>
+  <li>Train on more diverse dogs, lighting, and real-world scenarios.</li>
+  <li>Integrate real-time webcam/video inference.</li>
+  <li>Explore lightweight architectures (MobileNet, EfficientNet) for deployment.</li>
+</ul>
+</section>
 
-![Validation Loss](assets/val_loss.png)
-
-- The default configuration shows the lowest and smoothest validation loss.
-- SGD and grayscale introduce higher variance and occasional spikes.
-- Lower learning rate (1e-4) is more stable than higher LR settings.
-
-### Hyperparameter Comparison (Best Validation Accuracy)
-
-![Best Validation Accuracy](assets/best_val_acc.png)
-
-- **Device:** GPU > CPU  
-- **Color Mode:** RGB > Grayscale  
-- **Optimizer:** Adam > SGD  
-- **Learning Rate:** 1e-4 (default) > 1e-3  
-
----
-
-## Results
-
-Overall, the AlexNet-based classifier performs strongly on this dataset:
-
-- Best models achieve **~94–96% validation accuracy**.
-- Validation loss remains low and closely follows training loss, indicating good generalization.
-- Transfer learning (pretrained AlexNet) is crucial; it provides strong features out of the box.
-
-From the confusion matrix:
-
-![Confusion Matrix](assets/confusion_matrix.png)
-
-- Class 0: **37 correct**, **3 incorrect**  
-- Class 1: **38 correct**, **2 incorrect**  
-- Only **5 misclassifications** out of 80 predictions, with no major class bias.
-
----
-
-## Takeaways & Future Work
-
-### Key Takeaways
-
-- AlexNet with transfer learning is **effective** for dog emotion classification on this dataset.
-- The model can learn meaningful features from ears, eyes, and facial tension to distinguish
-  happy vs. stressed states.
-- Small experimental changes (optimizer, color mode, LR) can noticeably impact stability and
-  performance.
-
-### Future Directions
-
-- Move from simple “happy vs. stressed” to **multi-label cues** (ears back, whale eye, lip licking).
-- Expand the dataset to include more breeds, lighting conditions, and real-world home environments.
-- Integrate with **live video or smart cameras** for real-time monitoring and alerts.
-- Explore lighter architectures (e.g., MobileNet, EfficientNet) for deployment on edge devices.
-
----
-
-## Links
-
-- **GitHub Repository:**  
-  <https://github.com/akyrits/datademo>
-
-- **GitHub Pages Site:**  
-  <https://akyrits.github.io/datademo/>
-
-- **Detailed Visualizations & Commentary:**  
-  [Full Results Page](results.html)
-
-- **Colab Notebook (training AlexNet):**  
-  <https://colab.research.google.com/drive/1k5iSNhCEPMepvmNki9NIEJMuPeM5QtcU?usp=sharing>
-
+<footer>
+<p>© 2025 PawSense AI — Built for FAU Data Science</p>
+</footer>
