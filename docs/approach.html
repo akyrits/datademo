@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PawSense AI – AlexNet Technical Approach</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">Problem</a>
+    <a href="approach.html">AlexNet Approach</a>
+    <a href="results.html">Results & Takeaways</a>
+  </nav>
+
+  <div class="page-wrapper">
+    <h1>AlexNet Technical Approach</h1>
+    <p class="subtitle">
+      How I adapted a pretrained AlexNet model to classify dog emotions.
+    </p>
+
+    <div class="section-card" id="data">
+      <h2>Dataset & Preprocessing</h2>
+      <ul>
+        <li><strong>Classes:</strong> happy vs. stressed/anxious dogs.</li>
+        <li><strong>Split:</strong> (e.g.) 80% training / 20% validation with stratified sampling.</li>
+        <li><strong>Transforms:</strong>
+          <ul>
+            <li>Resize to 256×256, center crop to 224×224.</li>
+            <li>Random horizontal flips and small rotations (augmentation).</li>
+            <li>Normalize using ImageNet mean and standard deviation.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="section-card" id="architecture">
+      <h2>AlexNet Architecture (Summary)</h2>
+      <p>
+        I start from the standard <strong>AlexNet</strong> architecture pretrained on ImageNet
+        and adapt it for two output classes:
+      </p>
+      <ul>
+        <li><strong>Feature extractor:</strong> 5 convolutional layers with ReLU + max pooling:
+          <ul>
+            <li>Conv1 → ReLU → MaxPool</li>
+            <li>Conv2 → ReLU → MaxPool</li>
+            <li>Conv3 → ReLU</li>
+            <li>Conv4 → ReLU</li>
+            <li>Conv5 → ReLU → MaxPool</li>
+          </ul>
+        </li>
+        <li><strong>Classifier (modified):</strong>
+          <ul>
+            <li>Flatten</li>
+            <li>Fully connected → ReLU → Dropout</li>
+            <li>Fully connected → ReLU → Dropout</li>
+            <li>Final fully connected layer with 2 outputs (happy, stressed)</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        The early convolutional layers can be frozen or fine-tuned with a smaller learning rate, 
+        while the classifier layers are trained more aggressively on the dog emotion data.
+      </p>
+    </div>
+
+    <div class="section-card" id="training">
+      <h2>Training Setup</h2>
+      <ul>
+        <li><strong>Loss function:</strong> Cross-entropy loss.</li>
+        <li><strong>Optimizer:</strong> (e.g.) Adam or SGD with momentum.</li>
+        <li><strong>Learning rate:</strong> (e.g.) 1e-4 to 1e-3.</li>
+        <li><strong>Batch size:</strong> (e.g.) 32.</li>
+        <li><strong>Epochs:</strong> Train for N epochs with early stopping on validation loss.</li>
+        <li><strong>Regularization:</strong> Dropout + data augmentation.</li>
+        <li><strong>Environment:</strong> Google Colab with GPU acceleration.</li>
+      </ul>
+    </div>
+
+    <div class="section-card" id="metrics">
+      <h2>Evaluation Metrics</h2>
+      <ul>
+        <li>Training / validation accuracy per epoch.</li>
+        <li>Training / validation loss per epoch.</li>
+        <li>Confusion matrix on the validation set.</li>
+        <li>Qualitative inspection of misclassified images.</li>
+      </ul>
+      <p>
+        Concrete plots and screenshots of these metrics are shown on the
+        <a href="results.html">Results & Takeaways</a> page.
+      </p>
+    </div>
+
+    <footer>
+      PawSense AI · AlexNet Technical Approach
+    </footer>
+  </div>
+</body>
+</html>
