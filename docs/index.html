@@ -5,6 +5,7 @@
   <title>PawSense AI – Problem & Motivation</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <nav>
     <a href="index.html">Problem</a>
@@ -13,55 +14,56 @@
   </nav>
 
   <div class="page-wrapper">
-    <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+
+    <h1>PawSense AI: Detecting Stress & Emotional States in Dogs</h1>
     <p class="subtitle">
-      Detecting happy vs. stressed dogs from images using AlexNet and transfer learning.
+      A CNN-based approach using transfer learning with AlexNet.
     </p>
 
-    <div class="section-card" id="problem">
+    <div class="section-card">
       <h2>Problem</h2>
       <p>
-        Dogs often show subtle signs of stress or anxiety—pacing, lip licking, pinned ears,
-        or avoiding eye contact—long before humans notice a “behavior problem.”
-        By the time we see barking, destruction, or withdrawal, the dog may have been
-        uncomfortable for a long time.
+        Dogs frequently display subtle signs of stress—pacing, lip licking, pinned ears, 
+        whale eye, a stiff posture—long before humans perceive a “behavior problem.”
+        Many dog bite and shelter intake cases are preceded by unrecognized stress signals.
       </p>
       <p>
-        At the same time, pet cameras and smart collars are becoming common, but they mostly
-        track <strong>where</strong> the dog is, not <strong>how</strong> the dog feels.
-        There is an opportunity to use computer vision to support better, earlier detection of stress.
+        Pet tech (cameras, collars, trackers) is increasing in popularity, 
+        but these systems measure <strong>location</strong> and <strong>activity</strong>, not <strong>emotional state</strong>.
+        A vision-based stress detection system could help owners respond earlier 
+        and promote stronger human–animal relationships.
       </p>
     </div>
 
-    <div class="section-card" id="motivation">
+    <div class="section-card">
       <h2>Motivation</h2>
       <ul>
-        <li><strong>Animal welfare:</strong> Help owners catch stress early and respond with training or environment changes.</li>
-        <li><strong>Practical deployment:</strong> A lightweight CNN could run on existing pet cameras or apps.</li>
-        <li><strong>Learning goal:</strong> Apply transfer learning with AlexNet to a real-world dataset.</li>
+        <li>Improve early detection of stress, preventing escalation.</li>
+        <li>Support dog welfare and behavioral health.</li>
+        <li>Enable real-time monitoring through pet cameras and apps.</li>
+        <li>Apply deep learning skills to a meaningful real-world problem.</li>
       </ul>
-      <p>
-        This project explores whether a fine-tuned AlexNet can reliably distinguish
-        <strong>happy</strong> vs. <strong>stressed/anxious</strong> dogs from still images.
-      </p>
     </div>
 
-    <div class="section-card" id="scope">
+    <div class="section-card">
       <h2>Project Scope</h2>
       <ul>
-        <li>Task: binary image classification – happy vs. stressed dogs.</li>
-        <li>Input: single RGB dog image resized to 224×224.</li>
+        <li>Binary classification: <strong>Happy</strong> vs <strong>Stressed/Anxious</strong>.</li>
+        <li>Input: single image resized to 224×224.</li>
         <li>Output: predicted class + confidence score.</li>
+        <li>Model: transfer learning with pretrained AlexNet.</li>
       </ul>
+
       <p>
-        The next page describes the technical details of the AlexNet model and training pipeline
-        in more depth.
+        The technical details of the AlexNet architecture and training pipeline 
+        are documented on the <a href="approach.html">AlexNet Approach page</a>.
       </p>
     </div>
 
     <footer>
-      PawSense AI · Problem & Motivation
+      PawSense AI · AlexNet Deep Learning Project
     </footer>
+
   </div>
 </body>
 </html>
