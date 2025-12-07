@@ -1,6 +1,6 @@
-/* =========
-   GLOBAL BASE
-   ========= */
+/* ===============================
+   GLOBAL BASE STYLES
+   =============================== */
 
 *,
 *::before,
@@ -15,103 +15,117 @@ html, body {
 
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f4f6fa;
+  background: #f5f7fb;
   color: #2a2e37;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
-/* =========
+/* ===============================
    FIXED NAVIGATION BAR
-   ========= */
+   =============================== */
 
 nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #1e2a44;
-  padding: 0.65rem 1.25rem;
+  background: #1d2a44;
+  padding: 0.7rem 1.4rem;
   z-index: 1000;
+  backdrop-filter: blur(8px);
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  backdrop-filter: blur(6px);
 }
 
 nav a {
   color: #dce7f9;
-  margin-right: 1.2rem;
+  margin-right: 1.4rem;
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.97rem;
+  transition: 0.2s ease;
 }
 
 nav a:hover {
+  color: #ffffff;
   text-decoration: underline;
 }
 
-/* =========
-   PAGE WRAPPER
-   ========= */
+nav a.active {
+  border-bottom: 2px solid #fbbf24;
+  padding-bottom: 0.15rem;
+  color: #ffffff;
+}
+
+/* ===============================
+   MAIN PAGE WRAPPER
+   =============================== */
 
 .page-wrapper {
   max-width: 900px;
   margin: 0 auto;
-  padding: 5rem 1.25rem 3rem; /* top padding clears fixed nav */
+  padding: 5rem 1.4rem 3rem; /* clears the fixed nav */
 }
 
-/* =========
-   HEADERS (color scheme)
-   ========= */
+/* ===============================
+   HERO SECTION
+   =============================== */
+
+.hero {
+  background: linear-gradient(135deg, #e7edff 0%, #f8faff 100%);
+  border-radius: 0.9rem;
+  padding: 1.3rem 1.4rem;
+  margin-bottom: 1.4rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
 
 h1 {
   font-size: 2rem;
-  color: #23395d;   /* deep blue */
-  margin-bottom: 0.4rem;
-}
-
-h2 {
-  font-size: 1.35rem;
-  color: #2f4a7d;   /* softer blue */
-  margin-top: 0.75rem;
-  margin-bottom: 0.3rem;
-}
-
-h3 {
-  font-size: 1.05rem;
-  color: #465a78;
-  margin-bottom: 0.2rem;
+  color: #23395d;
+  margin: 0 0 0.3rem 0;
 }
 
 .subtitle {
-  color: #56647a;
-  margin-bottom: 1rem;
+  color: #52607b;
+  font-size: 1.05rem;
+  margin: 0.2rem 0 0.4rem 0;
 }
 
-/* =========
-   CARDS
-   ========= */
+/* ===============================
+   SECTION CARDS
+   =============================== */
 
 .section-card {
   background: #ffffff;
-  border-radius: 0.7rem;
-  padding: 1rem 1.15rem;
+  border-radius: 0.75rem;
+  padding: 1rem 1.2rem;
   margin-bottom: 1rem;
   border-left: 5px solid #4a7ef5;
   box-shadow: 0 5px 18px rgba(0,0,0,0.08);
 }
 
-/* =========
-   LISTS
-   ========= */
+.section-card h2 {
+  color: #2f4a7d;
+  margin-top: 0.1rem;
+  margin-bottom: 0.4rem;
+}
 
-ul, ol {
-  padding-left: 1.15rem;
-  margin-top: 0.3rem;
+.section-card h3 {
+  color: #465a78;
   margin-bottom: 0.3rem;
 }
 
-/* =========
+/* ===============================
+   LISTS
+   =============================== */
+
+ul, ol {
+  padding-left: 1.25rem;
+  margin: 0.3rem 0;
+}
+
+/* ===============================
    TABLES
-   ========= */
+   =============================== */
 
 table {
   width: 100%;
@@ -153,48 +167,51 @@ tbody tr.total-row {
   font-weight: 700;
 }
 
-/* =========
-   IMAGES
-   ========= */
+/* ===============================
+   IMAGE STYLES
+   =============================== */
 
 .image-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.9rem;
+  gap: 1rem;
   justify-content: center;
 }
 
 .img-small {
   flex: 1 1 220px;
-  max-width: 250px;
-  height: auto;          /* keep natural aspect ratio */
+  max-width: 260px;
+  height: auto;
   object-fit: cover;
   border-radius: 0.6rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .img-small.img-free {
-  max-width: 280px;      /* optional extra room for one image */
   object-fit: contain;
+  max-width: 280px;
 }
 
 .img-wide {
   width: 100%;
-  max-width: 700px;
-  margin: 0.65rem auto;
+  max-width: 720px;
   display: block;
+  margin: 0.7rem auto;
   border-radius: 0.7rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
-/* Preprocessing pipeline diagram */
+/* ===============================
+   PREPROCESSING PIPELINE
+   =============================== */
+
 .pipeline {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
   align-items: center;
   justify-content: center;
-  margin: 1rem 0 0.5rem 0;
+  margin: 1rem 0 0.6rem 0;
 }
 
 .pipeline-step {
@@ -204,19 +221,18 @@ tbody tr.total-row {
   font-size: 0.9rem;
   color: #1f2f4d;
   font-weight: 500;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 7px rgba(0,0,0,0.08);
   white-space: nowrap;
 }
 
 .pipeline-arrow {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #6c7485;
 }
 
-
-/* =========
-   PLOT GRID (used on results page)
-   ========= */
+/* ===============================
+   PLOTTING GRID (Results page)
+   =============================== */
 
 .plot-grid {
   display: grid;
@@ -229,24 +245,18 @@ tbody tr.total-row {
   background: #ffffff;
   border-radius: 0.9rem;
   padding: 0.8rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   text-align: center;
-}
-
-.plot-card h3 {
-  margin-top: 0;
-  font-size: 0.98rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .plot-card img {
   max-width: 100%;
-  height: auto;
   border-radius: 0.6rem;
 }
 
-/* =========
+/* ===============================
    FOOTER
-   ========= */
+   =============================== */
 
 footer {
   margin-top: 2rem;
@@ -255,11 +265,12 @@ footer {
   text-align: center;
 }
 
-/* =========
-   RESPONSIVE TWEAKS
-   ========= */
+/* ===============================
+   RESPONSIVE ADJUSTMENTS
+   =============================== */
 
 @media (max-width: 640px) {
+
   .page-wrapper {
     padding: 4.5rem 1rem 2.5rem;
   }
@@ -270,6 +281,10 @@ footer {
 
   nav a {
     margin-right: 0.8rem;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+  }
+
+  .img-small {
+    max-width: 90%;
   }
 }
