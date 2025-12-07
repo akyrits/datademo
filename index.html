@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PawSense AI – Problem & Motivation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">Problem</a>
+    <a href="approach.html">AlexNet Approach</a>
+    <a href="results.html">Results & Takeaways</a>
+  </nav>
+
+  <div class="page-wrapper">
+    <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+    <p class="subtitle">
+      Detecting happy vs. stressed dogs from images using AlexNet and transfer learning.
+    </p>
+
+    <div class="section-card" id="problem">
+      <h2>Problem</h2>
+      <p>
+        Dogs often show subtle signs of stress or anxiety—pacing, lip licking, pinned ears,
+        or avoiding eye contact—long before humans notice a “behavior problem.”
+        By the time we see barking, destruction, or withdrawal, the dog may have been
+        uncomfortable for a long time.
+      </p>
+      <p>
+        At the same time, pet cameras and smart collars are becoming common, but they mostly
+        track <strong>where</strong> the dog is, not <strong>how</strong> the dog feels.
+        There is an opportunity to use computer vision to support better, earlier detection of stress.
+      </p>
+    </div>
+
+    <div class="section-card" id="motivation">
+      <h2>Motivation</h2>
+      <ul>
+        <li><strong>Animal welfare:</strong> Help owners catch stress early and respond with training or environment changes.</li>
+        <li><strong>Practical deployment:</strong> A lightweight CNN could run on existing pet cameras or apps.</li>
+        <li><strong>Learning goal:</strong> Apply transfer learning with AlexNet to a real-world dataset.</li>
+      </ul>
+      <p>
+        This project explores whether a fine-tuned AlexNet can reliably distinguish
+        <strong>happy</strong> vs. <strong>stressed/anxious</strong> dogs from still images.
+      </p>
+    </div>
+
+    <div class="section-card" id="scope">
+      <h2>Project Scope</h2>
+      <ul>
+        <li>Task: binary image classification – happy vs. stressed dogs.</li>
+        <li>Input: single RGB dog image resized to 224×224.</li>
+        <li>Output: predicted class + confidence score.</li>
+      </ul>
+      <p>
+        The next page describes the technical details of the AlexNet model and training pipeline
+        in more depth.
+      </p>
+    </div>
+
+    <footer>
+      PawSense AI · Problem & Motivation
+    </footer>
+  </div>
+</body>
+</html>
