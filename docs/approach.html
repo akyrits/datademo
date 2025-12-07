@@ -20,19 +20,16 @@
       How raw dog images become “happy vs. stressed” predictions using transfer learning.
     </p>
 
-
     <!-- SAMPLE IMAGES -->
     <div class="section-card">
       <h2>What the Model Sees</h2>
       <p>Below are examples of the types of images used during training:</p>
 
       <div class="image-row">
-        <img src="assets/sample_happy.jpg" class="img-small" alt="Happy dog example" />
-        <img src="assets/sample_stressed.jpg" class="img-small" alt="Stressed dog example" />
+        <img src="assets/sample_happy.png" class="img-small" alt="Happy dog example" />
+        <img src="assets/sample_stressed.png" class="img-small img-free" alt="Stressed dog example" />
       </div>
     </div>
-
-
 
     <!-- DATASET -->
     <div class="section-card">
@@ -40,12 +37,12 @@
 
       <p>
         For this first version of PawSense AI, I built a small but balanced dataset of dog images.
-        Each image is labeled as either <strong>Happy</strong> or <strong>Stressed/Sad</strong> based on
-        visible body language and facial cues (ears, eyes, mouth, posture).
+        Each image is labeled as either <strong>Happy</strong> or <strong>Stressed/Sad</strong>
+        based on visible body language and facial cues (ears, eyes, mouth, posture).
       </p>
 
       <p>
-        The data is split into training, validation, and test sets so I can tune hyperparameters 
+        The data is split into training, validation, and test sets so I can tune hyperparameters
         without “peeking” at the final performance.
       </p>
 
@@ -85,12 +82,10 @@
       </table>
 
       <p>
-        This balanced setup makes it easier to interpret accuracy and helps prevent the model 
+        This balanced setup makes it easier to interpret accuracy and helps prevent the model
         from “cheating” by always predicting the majority class.
       </p>
     </div>
-
-
 
     <!-- PREPROCESSING -->
     <div class="section-card">
@@ -99,103 +94,119 @@
         Before entering AlexNet, each image goes through a structured preprocessing pipeline:
       </p>
 
-      <img src="assets/preprocessing_pipeline.png" class="img-wide" alt="Preprocessing pipeline diagram" />
+      <div class="pipeline">
+        <div class="pipeline-step">Raw dog image</div>
+        <span class="pipeline-arrow">➜</span>
+        <div class="pipeline-step">Resize to 227×227</div>
+        <span class="pipeline-arrow">➜</span>
+        <div class="pipeline-step">Normalize (ImageNet stats)</div>
+        <span class="pipeline-arrow">➜</span>
+        <div class="pipeline-step">Convert to tensor</div>
+        <span class="pipeline-arrow">➜</span>
+        <div class="pipeline-step">Augment (flip/rotate/brightness)</div>
+        <span class="pipeline-arrow">➜</span>
+        <div class="pipeline-step">Feed into AlexNet</div>
+      </div>
 
       <ul>
-        <li>Resize to 227×227×3</li>
-        <li>Normalize to match ImageNet statistics</li>
-        <li>Convert to PyTorch tensor</li>
-        <li>Data augmentation:
-          <ul>
-            <li>Horizontal flips</li>
-            <li>Small rotations</li>
-            <li>Brightness jitter</li>
-          </ul>
-        </li>
+        <li><strong>Resize:</strong> images are resized to 227×227×3.</li>
+        <li><strong>Normalization:</strong> pixel values are scaled to match ImageNet statistics.</li>
+        <li><strong>Tensor conversion:</strong> images are converted into PyTorch tensors.</li>
+        <li><strong>Augmentation:</strong> random flips, small rotations, and brightness jitter to improve robustness.</li>
       </ul>
     </div>
 
-
     <!-- ARCHITECTURE -->
     <div class="section-card">
-      <h2>AlexNet Architecture (Simplified Diagram)</h2>
+      <h2>AlexNet Architecture (Short Version)</h2>
 
       <img src="assets/alexnet_architecture.png" class="img-wide" alt="AlexNet Architecture Diagram" />
 
       <p>
-        AlexNet is composed of 5 convolutional layers followed by 3 fully connected layers.
-        For this project, it serves as a powerful feature extractor that identifies facial tension,
-        ears, eyes, shape cues, and overall posture.
+        AlexNet is a convolutional neural network originally designed for large-scale image
+        classification. In this project, it serves as a feature extractor for canine facial
+        expressions and body cues.
       </p>
-    </div>
 
+      <h3>Feature Extractor</h3>
+      <ul>
+        <li><strong>Conv1:</strong> 96 filters, 11×11 kernel, stride 4 → ReLU → MaxPool</li>
+        <li><strong>Conv2:</strong> 256 filters, 5×5 kernel → ReLU → MaxPool</li>
+        <li><strong>Conv3:</strong> 384 filters, 3×3 kernel → ReLU</li>
+        <li><strong>Conv4:</strong> 384 filters, 3×3 kernel → ReLU</li>
+        <li><strong>Conv5:</strong> 256 filters, 3×3 kernel → ReLU → MaxPool</li>
+      </ul>
+
+      <h3>Classifier Head (Modified)</h3>
+      <ul>
+        <li>Flatten features from the last conv layer.</li>
+        <li>Fully connected layer → ReLU → Dropout.</li>
+        <li>Fully connected layer → ReLU → Dropout.</li>
+        <li>Final fully connected layer with <strong>2 outputs</strong> (Happy, Stressed).</li>
+      </ul>
+    </div>
 
     <!-- TRANSFER LEARNING -->
     <div class="section-card">
       <h2>Transfer Learning Strategy</h2>
-
       <p>
-        Instead of training AlexNet from scratch, the model starts with pretrained ImageNet weights.
-        This gives it strong general vision features before learning canine emotional cues.
+        Training a deep CNN from scratch on a small dog-emotion dataset would overfit quickly.
+        Instead, this project uses transfer learning with AlexNet pretrained on ImageNet.
       </p>
-
       <ul>
-        <li>Load pretrained AlexNet</li>
-        <li>Freeze early convolution layers</li>
-        <li>Replace final classifier with a custom 2-class head</li>
-        <li>Train classifier first, then fine-tune deeper layers</li>
+        <li>Initialize the model with pretrained ImageNet weights.</li>
+        <li>Use the convolutional stack as a fixed or lightly fine-tuned feature extractor.</li>
+        <li>Replace the original 1000-class output layer with a new 2-class classifier.</li>
+        <li>Train the classifier layers first, then optionally fine-tune deeper layers with a smaller learning rate.</li>
       </ul>
-
       <p>
-        This approach significantly improves accuracy on small datasets and reduces overfitting.
+        This approach leverages generic visual features (edges, textures, shapes) learned from millions
+        of images and adapts them to the “happy vs stressed” dog dataset.
       </p>
     </div>
-
 
     <!-- TRAINING CONFIG -->
     <div class="section-card">
       <h2>Training Configuration</h2>
-
       <p>
-        Training was performed in Google Colab on both CPU and GPU to compare performance.
+        I experimented with several training setups in Google Colab, focusing on how optimizer,
+        learning rate, batch size, and device (CPU vs GPU) affected performance.
       </p>
 
+      <h3>Core Settings</h3>
       <ul>
-        <li><strong>Optimizers:</strong> Adam, SGD</li>
-        <li><strong>Loss:</strong> Cross Entropy</li>
-        <li><strong>Batch Sizes:</strong> 16 and 32</li>
-        <li><strong>Learning Rates:</strong> 1e-4, 1e-5</li>
-        <li><strong>Epochs:</strong> ~15–30</li>
-        <li><strong>Input:</strong> RGB (performed better than grayscale)</li>
-        <li><strong>Best device:</strong> GPU (more stable training curves)</li>
+        <li><strong>Loss:</strong> Cross-entropy loss.</li>
+        <li><strong>Optimizers tested:</strong> Adam and SGD.</li>
+        <li><strong>Batch sizes:</strong> 16 and 32.</li>
+        <li><strong>Learning rates:</strong> 1e-4 and 1e-5 for fine-tuning.</li>
+        <li><strong>Epochs:</strong> ~15–30 with early stopping based on validation loss.</li>
+        <li><strong>Input mode:</strong> RGB images (grayscale variants performed worse).</li>
+        <li><strong>Hardware:</strong> CPU and GPU (CUDA) runs for comparison.</li>
       </ul>
     </div>
 
-
     <!-- BEST MODEL -->
     <div class="section-card">
-      <h2>Best Model Configuration</h2>
-
+      <h2>Best-Performing Configuration</h2>
       <p>
-        After testing multiple setups, the strongest configuration was:
+        The final go-to configuration for this project is:
       </p>
-
       <ul>
-        <li>Pretrained AlexNet backbone</li>
-        <li>Custom 2-class classifier head</li>
-        <li>Optimizer: Adam</li>
-        <li>Learning Rate: 1e-4</li>
-        <li>Batch Size: 32</li>
-        <li>Device: GPU</li>
+        <li>Pretrained AlexNet backbone.</li>
+        <li>Custom 2-class classifier head.</li>
+        <li>Optimizer: <strong>Adam</strong>.</li>
+        <li>Learning rate: <strong>1e-4</strong>.</li>
+        <li>Batch size: <strong>32</strong>.</li>
+        <li>Device: <strong>GPU</strong> (Colab CUDA).</li>
       </ul>
-
       <p>
-        This combination yielded the highest validation accuracy and cleanest convergence curve.
+        This setup achieved the best combination of high validation accuracy, fast convergence,
+        and a relatively small gap between training and validation performance.
       </p>
     </div>
 
     <footer>
-      PawSense AI · Technical Approach
+      PawSense AI · AlexNet Technical Approach
     </footer>
 
   </div>
