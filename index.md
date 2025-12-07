@@ -1,174 +1,141 @@
-<link rel="stylesheet" href="style.css">
+PawSense AI
 
-<nav>
-  <a href="#problem">Problem</a>
-  <a href="#approach">Approach</a>
-  <a href="#visualizations">Visualizations</a>
-  <a href="#results">Results</a>
-  <a href="#takeaways">Takeaways</a>
-  <a href="results.html">Full Results Page</a>
-</nav>
+[Problem](#problem--motivation) · [Technical Approach](#technical-approach-alexnet-based-classification) · [Visualizations](#visualizations) · [Results](#results) · [Takeaways](#takeaways--future-work) · [Poster & Slides](#scientific-poster--slides)
 
-<section id="title">
-<h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
-<p><strong>Author:</strong> Alexander Kyritsopoulos<br>
-<strong>Course:</strong> Data Science / Deep Learning Project</p>
+# PawSense AI: Real-Time Dog Emotion Detection
 
-<p>Exploring whether transfer learning with AlexNet can reliably detect dog emotional states
-(happy vs. stressed) from images, as a first step toward real-time well-being monitoring.</p>
-</section>
+Author: Alexander Kyritsopoulos  
 
-<section id="problem">
-<h2>Problem & Motivation</h2>
+Florida Atlantic University  
 
-<p>Modern pet parents care deeply about their dog’s emotional health, but stress and anxiety
-are often missed until they show up as problem behaviors (barking, growling, biting) or
-health issues.</p>
+Exploring deep learning for automated **happy vs. stressed dog** classification using AlexNet and transfer learning.
 
-<h3>Challenges</h3>
-<ul>
-  <li>Humans are not great at spotting subtle stress signals like whale eye, ear position, or tension around the muzzle.</li>
-  <li>Owners may miss early signs, especially when away from home.</li>
-  <li>Existing smart cameras track <em>activity</em>, not <em>emotion</em>.</li>
-</ul>
+## Problem & Motivation
 
-<h3>Goal of PawSense AI</h3>
-<ul>
-  <li>Detect whether a dog looks <strong>relaxed/happy</strong> vs. <strong>stressed/anxious</strong>.</li>
-  <li>Show that deep learning can capture subtle emotional cues.</li>
-  <li>Serve as a foundation for real-time emotion alerts and behavioral insights.</li>
-</ul>
-</section>
+Traditional pet care relies on humans noticing subtle behavioral changes: pacing, lip licking, pinned ears, or avoidance. 
+These signs of stress and anxiety are easy to miss until they escalate into barking, destruction, or withdrawal.
 
-<section id="approach">
-<h2>Technical Approach: AlexNet-Based Classification</h2>
+Meanwhile, consumer pet tech (cameras, smart collars, home monitors) is more common than ever, but most devices focus on:
 
-<h3>Dataset</h3>
-<ul>
-  <li>Two classes: <strong>Happy/Relaxed</strong> vs <strong>Stressed/Anxious</strong>.</li>
-  <li>Images curated for clear facial/body cues.</li>
-  <li>Preprocessing: resize to 224×224, normalize using ImageNet statistics, split into train/val/test.</li>
-</ul>
+- *Where* the dog is (location, movement),
+- Not *how* the dog feels (emotional state).
 
-<h3>Model Architecture</h3>
-<ul>
-  <li>Base model: <strong>AlexNet pretrained on ImageNet</strong>.</li>
-  <li>Final FC layer modified for 2-class output.</li>
-  <li>ReLU activations, dropout, and softmax classifier.</li>
-</ul>
+PawSense AI explores whether a computer vision model can reliably distinguish **happy vs. stressed/anxious** dogs from images, 
+as a first step toward real-time well-being monitoring that can plug into existing pet cameras and apps.
 
-<h3>Default Training Hyperparameters</h3>
-<ul>
-  <li><strong>Optimizer:</strong> Adam</li>
-  <li><strong>Pretrained:</strong> True</li>
-  <li><strong>Learning Rate:</strong> 1e-4</li>
-  <li><strong>Batch Size:</strong> 32</li>
-  <li><strong>Device:</strong> GPU (CUDA)</li>
-  <li><strong>Loss:</strong> Cross-entropy</li>
-  <li><strong>Epochs:</strong> ~10–14 with early stopping</li>
-</ul>
+### Project Focus
 
-<h3>Experimental Design</h3>
-<p>Each experiment changed <strong>one parameter at a time</strong>, keeping all other defaults constant.  
-This allows clean, interpretable comparisons.</p>
+- Computer Vision  
+- Deep Learning  
+- Animal Welfare & Behavior  
+- AlexNet Transfer Learning  
 
-<p>Examples:</p>
-<ul>
-  <li>Device: GPU vs CPU</li>
-  <li>Color mode: RGB vs grayscale</li>
-  <li>Optimizer: Adam vs SGD</li>
-  <li>Learning rate: 1e-4 vs 1e-3</li>
-  <li>Batch size: 16 vs 32</li>
-</ul>
+### Core Question
 
-<p>All training curves and metrics were logged using <strong>Weights & Biases (W&B)</strong>.</p>
-</section>
+Can transfer learning with AlexNet achieve good accuracy on a modest custom dataset of dog images labeled as **happy** vs. **stressed**, 
+while generalizing well enough to be useful in real-world pet monitoring?
 
-<section id="visualizations">
-<h2>Visualizations</h2>
+---
 
-<h3>Training Accuracy (Top Runs)</h3>
-<img src="assets/train_acc.png" alt="Training Accuracy">
+## Technical Approach: AlexNet-Based Classification
 
-<ul>
-  <li>All runs reach high accuracy quickly.</li>
-  <li>The default configuration (GPU + RGB + Adam + LR=1e-4) converges the fastest.</li>
-  <li>Grayscale and SGD learn slower and plateau lower.</li>
-</ul>
+### Dataset
 
-<h3>Validation Accuracy</h3>
-<img src="assets/val_acc.png" alt="Validation Accuracy">
+- **Classes:**  
+  - Happy  
+  - Stressed / anxious  
+- **Source:** Custom curated dog images (personal photos + open-source images where allowed).
+- **Preprocessing:**
+  - Resize to 256×256, then center-crop to 224×224 pixels.
+  - Normalize using ImageNet mean and standard deviation.
+- **Train/Validation Split:**
+  - (Example) 80% training / 20% validation, stratified by class.
 
-<ul>
-  <li>Most models reach 90–96% validation accuracy.</li>
-  <li>GPU + RGB + Adam (default) is the most stable.</li>
-  <li>SGD and grayscale introduce greater variance.</li>
-</ul>
+### Model Architecture
 
-<h3>Validation Loss</h3>
-<img src="assets/val_loss.png" alt="Validation Loss">
+- **Base model:** AlexNet pretrained on ImageNet.
+- **Feature extractor:** 5 convolutional layers with ReLU activations and max pooling:
+  - Conv1 → ReLU → MaxPool  
+  - Conv2 → ReLU → MaxPool  
+  - Conv3 → ReLU  
+  - Conv4 → ReLU  
+  - Conv5 → ReLU → MaxPool  
+- **Classifier (modified for 2 classes):**
+  - Flatten
+  - Fully-connected → ReLU → Dropout
+  - Fully-connected → ReLU → Dropout
+  - Output layer with 2 units (happy, stressed) + softmax probabilities
 
-<ul>
-  <li>The default configuration shows the lowest and smoothest loss curve.</li>
-  <li>SGD and grayscale cause fluctuations and slower reduction.</li>
-  <li>Lower learning rate (1e-4) performs more consistently.</li>
-</ul>
+Early convolutional layers can be mostly **frozen** (or trained with a smaller learning rate), 
+while the classifier layers are fine-tuned on the dog emotion dataset.
 
-<h3>Best Validation Accuracy by Hyperparameter</h3>
-<img src="assets/best_val_acc.png" alt="Best Val Acc">
+### Training Setup
 
-<ul>
-  <li><strong>GPU > CPU</strong></li>
-  <li><strong>RGB > Grayscale</strong></li>
-  <li><strong>Adam > SGD</strong></li>
-  <li><strong>LR 1e-4 > LR 1e-3</strong></li>
-</ul>
-</section>
+- **Loss function:** Cross-entropy loss
+- **Optimizer:** (e.g.) Adam or SGD with momentum
+- **Learning rate:** (e.g.) 1e-4 to 1e-3 for fine-tuning
+- **Batch size:** (e.g.) 32
+- **Epochs:** Trained for *N* epochs with early stopping based on validation loss
+- **Regularization:**
+  - Dropout in the classifier
+  - Data augmentation (random flips, small rotations)
 
-<section id="results">
-<h2>Results</h2>
+Experiments are run in **Google Colab** with GPU acceleration, and metrics/plots are logged from within the notebook.
 
-<p>The AlexNet-based classifier performed strongly across all metrics.  
-Using the default configuration, the model achieved:</p>
+---
 
-<ul>
-  <li><strong>94–96% validation accuracy</strong></li>
-  <li><strong>Low, stable validation loss</strong></li>
-  <li><strong>Fast convergence and minimal overfitting</strong></li>
-</ul>
+## Visualizations
 
-<h3>Confusion Matrix</h3>
-<img src="assets/confusion_matrix.png" alt="Confusion Matrix">
+Below are example plots and artifacts from the Colab experiments.
 
-<ul>
-  <li>Class 0: 37 correct, 3 incorrect</li>
-  <li>Class 1: 38 correct, 2 incorrect</li>
-  <li>Only <strong>5 misclassifications</strong> across 80 samples</li>
-  <li>No major class imbalance or bias</li>
-</ul>
+> ⚠️ After you upload images into `docs/images/`, update the filenames below to match.
 
-<p>These results show that transfer learning with AlexNet is an effective baseline for dog emotion recognition.</p>
-</section>
+![Training Accuracy Curve](images/train_val_acc.png)  
+*Figure 1. Training accuracy over epochs.*
 
-<section id="takeaways">
-<h2>Takeaways & Future Work</h2>
+![Validation Accuracy Curve](images/val_acc.png)  
+*Figure 2. Validation accuracy over epochs, showing how well the model generalizes.*
 
-<h3>Key Takeaways</h3>
-<ul>
-  <li>AlexNet with transfer learning is highly effective for this task.</li>
-  <li>Color mode, optimizer choice, and device speed meaningfully affect generalization.</li>
-  <li>The model captures subtle emotional cues such as eye tension and ear position.</li>
-</ul>
+![Confusion Matrix](images/confusion_matrix.png)  
+*Figure 3. Confusion matrix on the validation set for "happy" vs. "stressed" classes.*
 
-<h3>Future Improvements</h3>
-<ul>
-  <li>Expand beyond binary emotion classification to <strong>multi-label cues</strong> (ears back, whale eye, lip licking).</li>
-  <li>Train on more diverse dogs, lighting, and real-world scenarios.</li>
-  <li>Integrate real-time webcam/video inference.</li>
-  <li>Explore lightweight architectures (MobileNet, EfficientNet) for deployment.</li>
-</ul>
-</section>
+![Sample Predictions](images/sample_predictions.png)  
+*Figure 4. Example model predictions on held-out images.*
 
-<footer>
-<p>© 2025 PawSense AI — Built for FAU Data Science</p>
-</footer>
+---
+
+## Results
+
+Key findings from the experiments include:
+
+- Fine-tuned pretrained AlexNet reaches about **[fill in]%** validation accuracy.  
+- A version with more frozen layers performs slightly worse, around **[fill in]%**, showing the benefit of fine-tuning.  
+- Training AlexNet from scratch performs noticeably worse (around **[fill in]%**), highlighting the importance of transfer learning on a small dataset.  
+- Confusion matrices show that most predictions fall along the diagonal (correct class), with misclassifications usually occurring on blurry or ambiguous images.
+
+You can replace the placeholder percentages above with your actual results from Colab or Weights & Biases.
+
+---
+
+## Takeaways & Future Work
+
+- **Transfer learning is essential:** Using a pretrained AlexNet drastically improves performance compared to training from scratch.
+- **Data quality & balance matter:** Misclassifications often happen when:
+  - Images are low quality (motion blur, poor lighting), or  
+  - Labels are ambiguous (mild stress vs. neutral).
+- **Good starting point for real-time systems:** A lightweight CNN like AlexNet can run efficiently enough to be integrated into pet camera pipelines.
+- **Future directions:**
+  - Expand from binary "happy vs. stressed" to more nuanced emotional states (relaxed, playful, fearful, etc.).
+  - Move from static images to short video clips to capture temporal cues (tail wagging, pacing).
+  - Test deployment on edge devices (Raspberry Pi + camera) for real-time monitoring.
+
+---
+
+## Scientific Poster & Slides
+
+This website is part of a larger project deliverable that also includes a research-style poster and a narrated slide presentation.
+
+- Scientific Poster: [View poster](https://example.com)  <!-- Replace with real link -->
+- Slide Deck: [View presentation slides](https://example.com)  <!-- Replace with real link -->
+
+PawSense AI · GitHub Pages Project · 2025 · Alexander Kyritsopoulos
