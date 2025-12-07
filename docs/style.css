@@ -1,5 +1,5 @@
 /* =========
-   Global Reset & Base
+   GLOBAL BASE
    ========= */
 
 *,
@@ -14,14 +14,14 @@ html, body {
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #e2e8f0 0%, #f7fafc 35%, #ffffff 100%);
-  color: #1a202c;
-  line-height: 1.6;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f4f6fa;
+  color: #2a2e37;
+  line-height: 1.55;
 }
 
 /* =========
-   Fixed Navbar
+   FIXED NAVIGATION BAR
    ========= */
 
 nav {
@@ -29,23 +29,19 @@ nav {
   top: 0;
   left: 0;
   width: 100%;
+  background: #1e2a44;
+  padding: 0.65rem 1.25rem;
   z-index: 1000;
-  padding: 0.75rem 1.5rem;
-  background: rgba(15, 23, 42, 0.9); /* deep navy */
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
 }
 
 nav a {
-  color: #e2e8f0;
-  margin-right: 1.25rem;
+  color: #dce7f9;
+  margin-right: 1.2rem;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
-}
-
-nav a:last-child {
-  margin-right: 0;
 }
 
 nav a:hover {
@@ -53,161 +49,99 @@ nav a:hover {
 }
 
 /* =========
-   Layout
+   PAGE WRAPPER
    ========= */
 
 .page-wrapper {
-  max-width: 960px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 5.5rem 1.5rem 3rem; /* top padding to clear fixed nav */
+  padding: 5rem 1.25rem 3rem; /* reduced whitespace */
 }
 
-/* Headings & Text */
-
-h1, h2, h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #1a202c;
-}
+/* =========
+   HEADERS (new color scheme)
+   ========= */
 
 h1 {
-  font-size: 2.1rem;
-  letter-spacing: 0.02em;
+  font-size: 2rem;
+  color: #23395d;       /* deep blue */
+  margin-bottom: 0.4rem;
 }
 
 h2 {
   font-size: 1.35rem;
+  color: #2f4a7d;       /* softer blue */
+  margin-top: 0.75rem;
+  margin-bottom: 0.3rem;
 }
 
 h3 {
   font-size: 1.05rem;
-  color: #2d3748;
+  color: #465a78;
+  margin-bottom: 0.2rem;
 }
 
 .subtitle {
-  color: #4a5568;
-  margin-bottom: 1.5rem;
+  color: #56647a;
+  margin-bottom: 1rem;
 }
 
 /* =========
-   Cards / Sections
+   CARDS
    ========= */
 
 .section-card {
   background: #ffffff;
-  border-radius: 0.9rem;
-  padding: 1.1rem 1.3rem;
-  margin-bottom: 1.2rem;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  border-left: 6px solid #4c8bf5; /* blue accent bar */
-}
-
-.section-card h2 {
-  margin-top: 0.25rem;
+  border-radius: 0.7rem;
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem; /* reduced spacing */
+  border-left: 5px solid #4a7ef5;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
 }
 
 /* =========
-   Lists
+   LISTS
    ========= */
 
-ul {
-  padding-left: 1.25rem;
-  margin-top: 0.4rem;
-  margin-bottom: 0.4rem;
-}
-
-ol {
-  padding-left: 1.35rem;
-  margin-top: 0.4rem;
-  margin-bottom: 0.4rem;
+ul, ol {
+  padding-left: 1.15rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 
 /* =========
-   Images
-   ========= */
-
-.image-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-/* Small side-by-side images (happy vs stressed) */
-.img-small {
-  flex: 1 1 220px;
-  max-width: 260px;
-  aspect-ratio: 4 / 3;   /* force similar shape */
-  object-fit: cover;     /* crop instead of stretching */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-/* Wide diagrams (architecture, pipeline) */
-.img-wide {
-  width: 100%;
-  max-width: 760px;
-  display: block;
-  margin: 0.75rem auto 0.5rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-}
-
-/* =========
-   Plots / Grid (used on Results page)
-   ========= */
-
-.plot-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-.plot-card {
-  background: #ffffff;
-  border-radius: 0.9rem;
-  padding: 0.8rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  text-align: center;
-}
-
-.plot-card h3 {
-  margin-top: 0;
-  font-size: 0.98rem;
-}
-
-.plot-card img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.6rem;
-}
-
-/* =========
-   Tables (dataset stats, etc.)
+   TABLES
    ========= */
 
 table {
   width: 100%;
+  max-width: 520px;
+  margin: 0.6rem auto;
   border-collapse: collapse;
-  margin-top: 0.75rem;
   font-size: 0.95rem;
 }
 
 th, td {
-  padding: 0.5rem 0.75rem;
-  text-align: center;
+  padding: 0.55rem 0.9rem;
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+
+td:not(:first-child),
+th:not(:first-child) {
+  text-align: right;
 }
 
 thead th {
-  background: #1a365d;
-  color: #e2e8f0;
+  background: #1e2a44;
+  color: #eef3ff;
 }
 
 tbody tr:nth-child(even) {
-  background: #edf2f7;
+  background: #eef1f7;
 }
 
 tbody tr:nth-child(odd) {
@@ -215,40 +149,46 @@ tbody tr:nth-child(odd) {
 }
 
 tbody tr.total-row {
-  font-weight: 600;
-  background: #cbd5f5;
+  background: #cbd8ff;
+  font-weight: 700;
 }
 
 /* =========
-   Footer
+   IMAGES
+   ========= */
+
+.image-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  justify-content: center;
+}
+
+.img-small {
+  flex: 1 1 220px;
+  max-width: 250px;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 0.6rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.img-wide {
+  width: 100%;
+  max-width: 700px;
+  margin: 0.65rem auto;
+  display: block;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+/* =========
+   FOOTER
    ========= */
 
 footer {
   margin-top: 2rem;
-  font-size: 0.8rem;
-  color: #718096;
+  color: #6a7485;
+  font-size: 0.85rem;
   text-align: center;
-}
-
-/* =========
-   Responsive Tweaks
-   ========= */
-
-@media (max-width: 640px) {
-  nav {
-    padding: 0.6rem 1rem;
-  }
-
-  nav a {
-    margin-right: 0.75rem;
-    font-size: 0.9rem;
-  }
-
-  .page-wrapper {
-    padding: 5rem 1rem 2.5rem;
-  }
-
-  h1 {
-    font-size: 1.7rem;
-  }
 }
