@@ -55,22 +55,22 @@ nav a:hover {
 .page-wrapper {
   max-width: 900px;
   margin: 0 auto;
-  padding: 5rem 1.25rem 3rem; /* reduced whitespace */
+  padding: 5rem 1.25rem 3rem; /* top padding clears fixed nav */
 }
 
 /* =========
-   HEADERS (new color scheme)
+   HEADERS (color scheme)
    ========= */
 
 h1 {
   font-size: 2rem;
-  color: #23395d;       /* deep blue */
+  color: #23395d;   /* deep blue */
   margin-bottom: 0.4rem;
 }
 
 h2 {
   font-size: 1.35rem;
-  color: #2f4a7d;       /* softer blue */
+  color: #2f4a7d;   /* softer blue */
   margin-top: 0.75rem;
   margin-bottom: 0.3rem;
 }
@@ -94,7 +94,7 @@ h3 {
   background: #ffffff;
   border-radius: 0.7rem;
   padding: 1rem 1.15rem;
-  margin-bottom: 1rem; /* reduced spacing */
+  margin-bottom: 1rem;
   border-left: 5px solid #4a7ef5;
   box-shadow: 0 5px 18px rgba(0,0,0,0.08);
 }
@@ -167,10 +167,15 @@ tbody tr.total-row {
 .img-small {
   flex: 1 1 220px;
   max-width: 250px;
-  aspect-ratio: 4/3;
+  height: auto;          /* keep natural aspect ratio */
   object-fit: cover;
   border-radius: 0.6rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.img-small.img-free {
+  max-width: 280px;      /* optional extra room for one image */
+  object-fit: contain;
 }
 
 .img-wide {
@@ -183,6 +188,64 @@ tbody tr.total-row {
 }
 
 /* =========
+   PREPROCESSING PIPELINE (diagram)
+   ========= */
+
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0.75rem 0;
+}
+
+.pipeline-step {
+  background: #edf2ff;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  color: #23395d;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  white-space: nowrap;
+}
+
+.pipeline-arrow {
+  font-size: 1.1rem;
+  color: #718096;
+}
+
+/* =========
+   PLOT GRID (used on results page)
+   ========= */
+
+.plot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.plot-card {
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 0.8rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.plot-card h3 {
+  margin-top: 0;
+  font-size: 0.98rem;
+}
+
+.plot-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.6rem;
+}
+
+/* =========
    FOOTER
    ========= */
 
@@ -191,4 +254,23 @@ footer {
   color: #6a7485;
   font-size: 0.85rem;
   text-align: center;
+}
+
+/* =========
+   RESPONSIVE TWEAKS
+   ========= */
+
+@media (max-width: 640px) {
+  .page-wrapper {
+    padding: 4.5rem 1rem 2.5rem;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  nav a {
+    margin-right: 0.8rem;
+    font-size: 0.9rem;
+  }
 }
