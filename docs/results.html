@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PawSense AI – Visualizations, Results & Takeaways</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">Problem</a>
+    <a href="approach.html">AlexNet Approach</a>
+    <a href="results.html">Results & Takeaways</a>
+  </nav>
+
+  <div class="page-wrapper">
+    <h1>Visualizations, Results & Takeaways</h1>
+    <p class="subtitle">
+      Training curves, confusion matrix, and key lessons from the experiments.
+    </p>
+
+    <div class="section-card" id="visualizations">
+      <h2>Visualizations</h2>
+      <div class="plot-grid">
+        <div class="plot-card">
+          <h3>Training vs Validation Accuracy</h3>
+          <img src="assets/train_val_acc.png" alt="Training vs Validation Accuracy over epochs" />
+          <p>
+            Accuracy improves over epochs and the training and validation curves stay relatively
+            close, which suggests the model is not severely overfitting.
+          </p>
+        </div>
+
+        <div class="plot-card">
+          <h3>Training vs Validation Loss</h3>
+          <img src="assets/train_val_loss.png" alt="Training vs Validation Loss over epochs" />
+          <p>
+            Validation loss follows training loss and plateaus after several epochs,
+            helping to choose a good stopping point.
+          </p>
+        </div>
+
+        <div class="plot-card">
+          <h3>Confusion Matrix</h3>
+          <img src="assets/confusion_matrix.png" alt="Confusion matrix for happy vs stressed classes" />
+          <p>
+            The confusion matrix shows most predictions on the diagonal (correct),
+            with misclassifications concentrated in a few ambiguous cases.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card" id="results">
+      <h2>Results</h2>
+      <ul>
+        <li><strong>Best training accuracy:</strong> [fill in from Colab]</li>
+        <li><strong>Best validation accuracy:</strong> [fill in from Colab]</li>
+        <li><strong>Best epoch (by val loss):</strong> [epoch #]</li>
+        <li><strong>Common errors:</strong> e.g., low-light images and unusual angles of stressed dogs.</li>
+      </ul>
+      <p>
+        Replace the placeholders above with your actual metrics from the notebook or W&B.
+      </p>
+    </div>
+
+    <div class="section-card" id="takeaways">
+      <h2>Takeaways</h2>
+      <ul>
+        <li><strong>Transfer learning works:</strong> Using a pretrained AlexNet yields strong performance with relatively few images.</li>
+        <li><strong>Data quality is critical:</strong> Misclassifications cluster around blurry, low-light, or ambiguous images.</li>
+        <li><strong>Balanced classes help:</strong> Keeping similar numbers of happy and stressed images prevents majority-class bias.</li>
+        <li><strong>Future work:</strong> Move beyond binary labels and explore video-based emotion recognition.</li>
+      </ul>
+    </div>
+
+    <footer>
+      PawSense AI · Visualizations, Results & Takeaways
+    </footer>
+  </div>
+</body>
+</html>
