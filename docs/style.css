@@ -187,33 +187,32 @@ tbody tr.total-row {
   box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
-/* =========
-   PREPROCESSING PIPELINE (diagram)
-   ========= */
-
+/* Preprocessing pipeline diagram */
 .pipeline {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
   align-items: center;
   justify-content: center;
-  margin: 0.75rem 0;
+  margin: 1rem 0 0.5rem 0;
 }
 
 .pipeline-step {
-  background: #edf2ff;
+  background: #e7edff;
   border-radius: 999px;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 1rem;
   font-size: 0.9rem;
-  color: #23395d;
+  color: #1f2f4d;
+  font-weight: 500;
   box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   white-space: nowrap;
 }
 
 .pipeline-arrow {
-  font-size: 1.1rem;
-  color: #718096;
+  font-size: 1.2rem;
+  color: #6c7485;
 }
+
 
 /* =========
    PLOT GRID (used on results page)
