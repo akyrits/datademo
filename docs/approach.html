@@ -39,8 +39,14 @@
       <h2>Dataset & Labeling</h2>
 
       <p>
-        The dataset is balanced between <strong>Happy</strong> and <strong>Stressed</strong> dogs.
-        Images were collected across many breeds, lighting conditions, and angles.
+        For this first version of PawSense AI, I built a small but balanced dataset of dog images.
+        Each image is labeled as either <strong>Happy</strong> or <strong>Stressed/Sad</strong> based on
+        visible body language and facial cues (ears, eyes, mouth, posture).
+      </p>
+
+      <p>
+        The data is split into training, validation, and test sets so I can tune hyperparameters 
+        without “peeking” at the final performance.
       </p>
 
       <table>
@@ -50,6 +56,7 @@
             <th>Train</th>
             <th>Validation</th>
             <th>Test</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -58,16 +65,31 @@
             <td>50</td>
             <td>40</td>
             <td>36</td>
+            <td>126</td>
           </tr>
           <tr>
             <td>Stressed / Sad</td>
             <td>50</td>
             <td>40</td>
             <td>36</td>
+            <td>126</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>All images</strong></td>
+            <td><strong>100</strong></td>
+            <td><strong>80</strong></td>
+            <td><strong>72</strong></td>
+            <td><strong>252</strong></td>
           </tr>
         </tbody>
       </table>
+
+      <p>
+        This balanced setup makes it easier to interpret accuracy and helps prevent the model 
+        from “cheating” by always predicting the majority class.
+      </p>
     </div>
+
 
 
     <!-- PREPROCESSING -->
