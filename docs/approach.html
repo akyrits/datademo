@@ -16,144 +16,193 @@
   <div class="page-wrapper">
 
     <h1>Technical Approach: AlexNet for Dog Emotion Classification</h1>
-    <p class="subtitle">A deep learning pipeline built using transfer learning, real-world canine image data, and structured experimentation.</p>
+    <p class="subtitle">
+      From raw dog photos to “happy vs. stressed” predictions using transfer learning.
+    </p>
 
+    <!-- HIGH LEVEL PIPELINE -->
+    <div class="section-card">
+      <h2>High-Level Pipeline</h2>
+      <p>
+        The model follows a simple end-to-end workflow:
+      </p>
+      <ol>
+        <li>Start with a real-world dog image (happy or stressed).</li>
+        <li>Apply preprocessing: resize, normalize, and augment.</li>
+        <li>Feed the image into a pretrained AlexNet feature extractor.</li>
+        <li>Use a custom classifier head to predict <strong>Happy</strong> or <strong>Stressed</strong>.</li>
+        <li>Evaluate performance on a held-out validation/test set.</li>
+      </ol>
+      <p>
+        The rest of this page explains each piece in more detail.
+      </p>
+    </div>
 
     <!-- DATASET -->
     <div class="section-card">
-      <h2>Dataset Overview</h2>
+      <h2>Dataset & Labels</h2>
       <p>
-        The dataset consists of labeled images of dogs expressing two emotional states: 
-        <strong>Happy</strong> and <strong>Stressed/Sad</strong>. Images vary in lighting, breed, background, and angle — 
-        providing natural variability that strengthens generalization.
+        The dataset is a balanced collection of dog images labeled into two classes:
+        <strong>Happy</strong> and <strong>Sad/Stressed</strong>. Images come from a mix of
+        environments, lighting conditions, and breeds so the model doesn’t overfit to one “type” of dog.
       </p>
 
-      <h3>Train / Validation / Test Distribution</h3>
-      <p>Exact counts from the Google Slides dataset table:</p>
-
-      <ul>
-        <li><strong>Happy</strong> — Train: <em>50</em>, Val: <em>40</em>, Test: <em>36</em></li>
-        <li><strong>Sad/Stressed</strong> — Train: <em>50</em>, Val: <em>40</em>, Test: <em>36</em></li>
-      </ul>
+      <h3>Split by Class</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Train</th>
+            <th>Validation</th>
+            <th>Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Happy</td>
+            <td>50</td>
+            <td>40</td>
+            <td>36</td>
+          </tr>
+          <tr>
+            <td>Sad / Stressed</td>
+            <td>50</td>
+            <td>40</td>
+            <td>36</td>
+          </tr>
+        </tbody>
+      </table>
 
       <p>
-        This balanced dataset supports stable training and prevents class bias.
+        Keeping the classes balanced makes it easier to interpret accuracy and prevents the model
+        from “cheating” by always predicting the majority class.
       </p>
     </div>
-
 
     <!-- PREPROCESSING -->
     <div class="section-card">
-      <h2>Image Preprocessing & Input Pipeline</h2>
-
-      <p>The input pipeline (based exactly on your Slides diagram) includes:</p>
-
-      <ul>
-        <li>Convert each image to a <strong>tensor</strong></li>
-        <li>Normalize pixel values</li>
-        <li>Resize to <strong>227×227×3</strong> (AlexNet standard) or 224×224 in some runs</li>
-        <li>Random horizontal flips (augmentation)</li>
-        <li>Random rotations (augmentation)</li>
-        <li>Brightness jitter</li>
-      </ul>
-
+      <h2>Image Preprocessing</h2>
       <p>
-        These transformations reduce overfitting and help AlexNet learn robust visual features. 
+        Before images are fed into AlexNet, they pass through a preprocessing pipeline:
+      </p>
+      <ul>
+        <li><strong>Resize:</strong> images are resized to 227×227×3 (AlexNet’s original input size).</li>
+        <li><strong>Normalization:</strong> pixel values are scaled and normalized to match ImageNet statistics.</li>
+        <li><strong>Tensor conversion:</strong> images are converted into PyTorch tensors.</li>
+        <li><strong>Data augmentation:</strong>
+          <ul>
+            <li>Random horizontal flips</li>
+            <li>Small random rotations</li>
+            <li>Brightness jitter</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        Augmentation helps the model generalize to different lighting, poses, and camera angles
+        that real dogs will appear in.
       </p>
     </div>
 
-
-    <!-- WHAT IS ALEXNET -->
+    <!-- ARCHITECTURE -->
     <div class="section-card">
-      <h2>What Is AlexNet?</h2>
-
+      <h2>AlexNet Architecture (Short Version)</h2>
       <p>
-        AlexNet is a convolutional neural network (CNN) designed for large-scale image recognition. 
-        It processes 227×227×3 images through multiple layers of learned filters, gradually extracting 
-        edges → textures → shapes → complex high-level patterns.
+        AlexNet is a convolutional neural network originally designed for large-scale image
+        classification. In this project, it serves as a powerful feature extractor for canine
+        facial expressions and body cues.
       </p>
 
-      <h3>Layer Summary (from your slide)</h3>
+      <h3>Feature Extractor</h3>
       <ul>
-        <li><strong>Conv Layer 1:</strong> 96 filters, 11×11 kernel, stride 4 → ReLU → MaxPool (3×3)</li>
-        <li><strong>Conv Layer 2:</strong> 256 filters, 5×5 kernel → ReLU → MaxPool</li>
-        <li><strong>Conv Layers 3–5:</strong> 384 → 384 → 256 filters, 3×3 kernels → ReLU</li>
-        <li><strong>Fully Connected Layers:</strong> 4096 → 4096 neurons (with dropout)</li>
-        <li><strong>Final Layer (modified):</strong> 2 output classes (Happy, Sad)</li>
+        <li><strong>Conv1:</strong> 96 filters, 11×11 kernel, stride 4 → ReLU → MaxPool</li>
+        <li><strong>Conv2:</strong> 256 filters, 5×5 kernel → ReLU → MaxPool</li>
+        <li><strong>Conv3:</strong> 384 filters, 3×3 kernel → ReLU</li>
+        <li><strong>Conv4:</strong> 384 filters, 3×3 kernel → ReLU</li>
+        <li><strong>Conv5:</strong> 256 filters, 3×3 kernel → ReLU → MaxPool</li>
+      </ul>
+
+      <h3>Classifier Head (Modified)</h3>
+      <ul>
+        <li>Flatten features from the last conv layer</li>
+        <li>Fully connected layer → ReLU → Dropout</li>
+        <li>Fully connected layer → ReLU → Dropout</li>
+        <li>Final fully connected layer with <strong>2 outputs</strong> (Happy, Stressed)</li>
       </ul>
 
       <p>
-        This architecture is especially good at capturing subtle facial and posture cues — highly relevant for dog emotion recognition.
+        The convolutional layers learn reusable visual features; the final layers are adapted
+        specifically for dog emotion recognition.
       </p>
     </div>
-
 
     <!-- TRANSFER LEARNING -->
     <div class="section-card">
       <h2>Transfer Learning Strategy</h2>
-
-      <p>Your approach directly follows your Slides explanation:</p>
-
+      <p>
+        Training a deep CNN from scratch on a small dog-emotion dataset would overfit quickly.
+        Instead, the project uses transfer learning with AlexNet pretrained on ImageNet.
+      </p>
       <ul>
-        <li>Start with <strong>pretrained AlexNet</strong> (ImageNet weights)</li>
-        <li>Freeze early convolutional layers to keep general visual features</li>
-        <li>Replace the 1000-class classifier with a <strong>2-class</strong> output layer</li>
-        <li>Train only the classifier head initially</li>
-        <li>Optionally fine-tune deeper layers with a lower learning rate</li>
+        <li>Initialize the model with pretrained ImageNet weights.</li>
+        <li>Use the convolutional stack as a fixed (or lightly fine-tuned) feature extractor.</li>
+        <li>Replace the original 1000-class output layer with a new 2-class classifier.</li>
+        <li>Train the new classifier layers first, then optionally fine-tune deeper layers with a smaller learning rate.</li>
       </ul>
-
-      <p>This allows strong performance even with limited dog emotion data.</p>
+      <p>
+        This approach leverages generic visual features (edges, textures, shapes) learned from millions
+        of images and adapts them to the much smaller “happy vs stressed” dog dataset.
+      </p>
     </div>
-
 
     <!-- TRAINING CONFIG -->
     <div class="section-card">
       <h2>Training Configuration</h2>
+      <p>
+        I experimented with several training setups in Google Colab, focusing on how optimizer,
+        learning rate, batch size, and device (CPU vs GPU) affected performance.
+      </p>
 
-      <p>All settings pulled directly from your “Training Results,” “Hyperparameter Experiments,” and “Colab Setup” slides:</p>
-
+      <h3>Core Settings</h3>
       <ul>
-        <li><strong>Optimizers Tested:</strong> Adam and SGD</li>
-        <li><strong>Loss Function:</strong> Cross Entropy Loss</li>
-        <li><strong>Learning Rates:</strong> 1e-4, 1e-5</li>
-        <li><strong>Batch Sizes:</strong> 16 and 32</li>
-        <li><strong>Epochs:</strong> ~15–30 (early stopping based on validation loss)</li>
-        <li><strong>Input Mode:</strong> RGB outperformed grayscale across all runs</li>
-        <li><strong>Runtime Environment:</strong> GPU (Colab CUDA) and CPU were compared</li>
+        <li><strong>Loss:</strong> Cross-entropy loss</li>
+        <li><strong>Optimizers tested:</strong> Adam and SGD</li>
+        <li><strong>Batch sizes:</strong> 16 and 32</li>
+        <li><strong>Learning rates:</strong> 1e-4 and 1e-5 for fine-tuning</li>
+        <li><strong>Epochs:</strong> ~15–30 with early stopping based on validation loss</li>
+        <li><strong>Input mode:</strong> RGB images (grayscale variants performed worse)</li>
+        <li><strong>Hardware:</strong> CPU and GPU (CUDA) runs for comparison</li>
       </ul>
 
       <p>
-        GPU training converged faster, showed smoother accuracy curves, and achieved the highest validation accuracy.
+        Overall, RGB inputs with the Adam optimizer, a learning rate around 1e-4, and a batch size of 32
+        on GPU produced the most stable training curves and highest validation accuracy.
       </p>
     </div>
-
-
 
     <!-- BEST MODEL -->
     <div class="section-card">
-      <h2>Best-Performing Model (from Slides)</h2>
-
-      <p>Based on your hyperparameter experiment slide:</p>
-
-      <ul>
-        <li><strong>Optimizer:</strong> Adam</li>
-        <li><strong>Pretrained:</strong> Yes</li>
-        <li><strong>Learning Rate:</strong> 1e-4</li>
-        <li><strong>Batch Size:</strong> 32</li>
-        <li><strong>Device:</strong> GPU</li>
-      </ul>
-
+      <h2>Best-Performing Configuration</h2>
       <p>
-        This configuration achieved the highest validation accuracy (≈93–94%) and the most stable training behavior.
+        The final “go-to” configuration for this project is:
+      </p>
+      <ul>
+        <li>Pretrained AlexNet backbone</li>
+        <li>Custom 2-class classifier head</li>
+        <li>Optimizer: <strong>Adam</strong></li>
+        <li>Learning rate: <strong>1e-4</strong></li>
+        <li>Batch size: <strong>32</strong></li>
+        <li>Device: <strong>GPU</strong> (Colab CUDA)</li>
+      </ul>
+      <p>
+        This setup achieved the best combination of high validation accuracy, fast convergence,
+        and relatively small gap between training and validation performance.
       </p>
     </div>
 
-
     <footer>
-      PawSense AI · Technical Approach
+      PawSense AI · AlexNet Technical Approach
     </footer>
 
   </div>
-
 </body>
 </html>
