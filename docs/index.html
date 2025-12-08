@@ -80,54 +80,26 @@
 
 
 <!-- Approach Section -->
-<section id="approach" class="padded-section">
-  <h2>Technical Approach: AlexNet & Transfer Learning</h2>
+<section id="overview" class="padded-section">
+  <h2>Quick Project Overview</h2>
 
   <p>
-    This project uses <strong>AlexNet</strong>, a classic convolutional neural network 
-    originally trained on ImageNet (1.2M images). Because AlexNet is already strong at 
-    recognizing general features such as edges, colors, and textures, it can be fine-tuned 
-    for smaller datasets—making it ideal for dog-emotion classification.
+    PawSense AI uses a convolutional neural network (AlexNet) to classify dog images
+    as <strong>happy</strong> or <strong>stressed</strong>. The model is trained using
+    transfer learning and a small balanced dataset of labeled dog images.
   </p>
 
-  <h3>What AlexNet Does</h3>
-  <p>
-    AlexNet processes an input image (227×227×3 RGB) through:
-  </p>
   <ul>
-    <li>5 convolution layers (feature extraction)</li>
-    <li>Max pooling layers (downsampling)</li>
-    <li>ReLU activations (fast training)</li>
-    <li>Dropout (reducing overfitting)</li>
-    <li>3 fully connected layers (final classification)</li>
+    <li>Images are preprocessed (resize, normalize, augment).</li>
+    <li>AlexNet’s pretrained layers extract features such as face shape and posture.</li>
+    <li>A new classifier head predicts “happy” vs “stressed”.</li>
   </ul>
 
-  <div class="summary-box">
-    <h3>Key Concepts</h3>
-    <ul>
-      <li><strong>Kernel:</strong> sliding window that extracts features.</li>
-      <li><strong>Stride:</strong> how far the kernel moves each step.</li>
-      <li><strong>ReLU:</strong> activation <code>max(0, x)</code></li>
-      <li><strong>Max Pooling:</strong> keeps strongest spatial features.</li>
-      <li><strong>Dropout:</strong> reduces overfitting.</li>
-    </ul>
-  </div>
-
-  <h3>Training Workflow</h3>
-  <ol>
-    <li>Load and preprocess image (resize 227×227, normalize, augment if needed).</li>
-    <li>Forward pass through AlexNet.</li>
-    <li>Compute classification loss (cross-entropy).</li>
-    <li>Backpropagate gradients + optimizer update (Adam/SGD).</li>
-    <li>Track accuracy/loss curves with validation data.</li>
-    <li>Use early stopping to prevent overfitting.</li>
-  </ol>
-
   <p>
-    Multiple training configurations were tested: RGB vs. grayscale input, pretrained vs. 
-    non-pretrained weights, Adam vs. SGD, various learning rates, and batch sizes.
+    For the full technical breakdown, see the <a href="approach.html">AlexNet Approach page</a>.
   </p>
 </section>
+
 
 
 <!-- Visualizations Section -->
