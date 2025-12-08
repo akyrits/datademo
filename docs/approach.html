@@ -128,6 +128,46 @@
       <h2>AlexNet Architecture (Short Version)</h2>
 
       <img src="assets/alexnet_architecture.png" class="img-wide" alt="AlexNet Architecture Diagram" />
+<div class="section-card">
+  <h3>Key Concepts Explained Simply</h3>
+
+  <p>
+    Deep learning models like AlexNet rely on a few core operations that help the network
+    learn patterns from images. Here are the most important ones used in this project:
+  </p>
+
+  <h4>ReLU (Rectified Linear Unit)</h4>
+  <p>
+    ReLU is an activation function that replaces negative values with zero:
+    <code>ReLU(x) = max(0, x)</code>.
+  </p>
+  <p>
+    In simple terms: <strong>ReLU helps the model learn faster</strong>.  
+    Instead of slowing down on negative numbers, it ignores them and focuses only on
+    useful signals. This prevents the model from getting “stuck” and makes training
+    more stable and efficient.
+  </p>
+
+  <h4>Max Pooling</h4>
+  <p>
+    MaxPooling reduces the size of the image representation by taking the biggest value
+    in a small window (like 2×2 or 3×3) as it slides across the feature map.
+  </p>
+  <p>
+    In real terms: <strong>MaxPooling keeps the strongest part of a pattern</strong>.  
+    For example, if the dog's eye or ear edge is captured in several nearby pixels, 
+    MaxPool keeps only the clearest version of that edge.  
+    This makes the model:
+    <ul>
+      <li>More efficient</li>
+      <li>Less sensitive to tiny shifts or noise</li>
+      <li>Better at capturing general shapes instead of pixel-level details</li>
+    </ul>
+  </p>
+
+  <h4>Dropout</h4>
+  <p>
+    Dropout randomly “turns off” a small percentage of neu
 
       <p>
         AlexNet is a convolutional neural network originally designed for large-scale image
