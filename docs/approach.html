@@ -7,19 +7,22 @@
 </head>
 
 <body>
-<nav>
-  <div class="nav-inner">
-    <div class="nav-brand">PawSense AI</div>
-    <div class="nav-links">
-      <a href="index.html#problem">Problem</a>
-      <a href="approach.html" class="active">AlexNet Approach</a>
-      <a href="results.html">Results &amp; Takeaways</a>
+
+  <!-- Shared navigation -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-brand">PawSense AI</div>
+      <div class="nav-links">
+        <a href="index.html#problem">Problem</a>
+        <a href="approach.html" class="active">AlexNet Approach</a>
+        <a href="results.html">Results &amp; Takeaways</a>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
   <div class="page-wrapper">
 
+    <!-- Hero -->
     <div class="hero">
       <h1>Technical Approach: AlexNet for Dog Emotion Recognition</h1>
       <p class="subtitle">
@@ -28,19 +31,26 @@
     </div>
 
     <!-- SAMPLE IMAGES -->
-    <div class="section-card">
+    <div class="section-card" id="samples">
       <h2>What the Model Sees</h2>
-      <p>Below are examples of the types of images used during training:</p>
+      <p>
+        The model is trained on images of dogs labeled as <strong>Happy</strong> or
+        <strong>Stressed/Sad</strong>. Below are examples of the types of images used during training:
+      </p>
 
       <div class="image-row">
-        <img src="assets/sample_happy1.jpg" class="img-small" alt="Happy dog example" />
-        <img src="assets/sample_stressed1.jpg" class="img-small img-free" alt="Stressed dog example" />
+        <img src="assets/sample_happy1.jpg"
+             class="img-small"
+             alt="Happy dog example" />
+        <img src="assets/sample_stressed1.jpg"
+             class="img-small"
+             alt="Stressed dog example" />
       </div>
     </div>
 
     <!-- DATASET -->
-    <div class="section-card">
-      <h2>Dataset & Labeling</h2>
+    <div class="section-card" id="dataset">
+      <h2>Dataset &amp; Labeling</h2>
 
       <p>
         For this first version of PawSense AI, I built a small but balanced dataset of dog images.
@@ -97,6 +107,7 @@
     <!-- PREPROCESSING -->
     <div class="section-card">
       <h2>Image Preprocessing Pipeline</h2>
+
       <p>
         Before entering AlexNet, each image goes through a structured preprocessing pipeline:
       </p>
@@ -127,47 +138,9 @@
     <div class="section-card">
       <h2>AlexNet Architecture (Short Version)</h2>
 
-      <img src="assets/alexnet_architecture.png" class="img-wide" alt="AlexNet Architecture Diagram" />
-<div class="section-card">
-  <h3>Key Concepts Explained Simply</h3>
-
-  <p>
-    Deep learning models like AlexNet rely on a few core operations that help the network
-    learn patterns from images. Here are the most important ones used in this project:
-  </p>
-
-  <h4>ReLU (Rectified Linear Unit)</h4>
-  <p>
-    ReLU is an activation function that replaces negative values with zero:
-    <code>ReLU(x) = max(0, x)</code>.
-  </p>
-  <p>
-    In simple terms: <strong>ReLU helps the model learn faster</strong>.  
-    Instead of slowing down on negative numbers, it ignores them and focuses only on
-    useful signals. This prevents the model from getting “stuck” and makes training
-    more stable and efficient.
-  </p>
-
-  <h4>Max Pooling</h4>
-  <p>
-    MaxPooling reduces the size of the image representation by taking the biggest value
-    in a small window (like 2×2 or 3×3) as it slides across the feature map.
-  </p>
-  <p>
-    In real terms: <strong>MaxPooling keeps the strongest part of a pattern</strong>.  
-    For example, if the dog's eye or ear edge is captured in several nearby pixels, 
-    MaxPool keeps only the clearest version of that edge.  
-    This makes the model:
-    <ul>
-      <li>More efficient</li>
-      <li>Less sensitive to tiny shifts or noise</li>
-      <li>Better at capturing general shapes instead of pixel-level details</li>
-    </ul>
-  </p>
-
-  <h4>Dropout</h4>
-  <p>
-    Dropout randomly “turns off” a small percentage of neu
+      <img src="assets/alexnet_architecture.png"
+           class="img-wide"
+           alt="AlexNet Architecture Diagram" />
 
       <p>
         AlexNet is a convolutional neural network originally designed for large-scale image
@@ -186,11 +159,60 @@
 
       <h3>Classifier Head (Modified)</h3>
       <ul>
-        <li>Flatten features from the last conv layer.</li>
+        <li>Flatten features from the last convolutional layer.</li>
         <li>Fully connected layer → ReLU → Dropout.</li>
         <li>Fully connected layer → ReLU → Dropout.</li>
         <li>Final fully connected layer with <strong>2 outputs</strong> (Happy, Stressed).</li>
       </ul>
+    </div>
+
+    <!-- KEY CONCEPTS: RELU, MAXPOOL, DROPOUT -->
+    <div class="section-card">
+      <h2>Key Concepts Explained Simply</h2>
+
+      <p>
+        Deep learning models like AlexNet rely on core operations that help the network
+        learn patterns from images. Here are the most important ones used in this project:
+      </p>
+
+      <h3>ReLU (Rectified Linear Unit)</h3>
+      <p>
+        ReLU is an activation function that replaces negative values with zero:
+        <code>ReLU(x) = max(0, x)</code>.
+      </p>
+      <p>
+        In simple terms: <strong>ReLU helps the model learn faster</strong>.
+        Instead of slowing down on negative numbers, it ignores them and focuses only on
+        useful signals. This prevents the model from getting “stuck” and makes training
+        more stable and efficient.
+      </p>
+
+      <h3>Max Pooling</h3>
+      <p>
+        MaxPooling reduces the size of the image representation by taking the largest value
+        in a small window (like 2×2 or 3×3) as it slides across the feature map.
+      </p>
+      <p>
+        In real terms: <strong>MaxPooling keeps the strongest part of a pattern</strong>.
+        For example, if a dog's eye edge appears across multiple nearby pixels,
+        MaxPool keeps only the clearest version. This makes the model:
+      </p>
+      <ul>
+        <li>More efficient</li>
+        <li>Less sensitive to small shifts in the image</li>
+        <li>Better at recognizing general shapes and features</li>
+      </ul>
+
+      <h3>Dropout</h3>
+      <p>
+        Dropout randomly “turns off” a small percentage of neurons during training.
+      </p>
+      <p>
+        In real terms: <strong>Dropout prevents overfitting</strong>.
+        By disabling different neurons each training step, the model can't rely on a single
+        pathway or memorize training examples. It is forced to learn patterns that
+        generalize — the kinds of cues that truly distinguish a happy dog from a stressed one.
+      </p>
     </div>
 
     <!-- TRANSFER LEARNING -->
@@ -204,19 +226,22 @@
         <li>Initialize the model with pretrained ImageNet weights.</li>
         <li>Use the convolutional stack as a fixed or lightly fine-tuned feature extractor.</li>
         <li>Replace the original 1000-class output layer with a new 2-class classifier.</li>
-        <li>Train the classifier layers first, then optionally fine-tune deeper layers with a smaller learning rate.</li>
+        <li>
+          Train the classifier layers first, then optionally fine-tune deeper layers with a
+          smaller learning rate.
+        </li>
       </ul>
       <p>
-        This approach leverages generic visual features (edges, textures, shapes) learned from millions
-        of images and adapts them to the “happy vs stressed” dog dataset.
+        This approach leverages generic visual features (edges, textures, shapes) learned from
+        millions of images and adapts them to the “happy vs stressed” dog dataset.
       </p>
     </div>
 
-    <!-- TRAINING CONFIG -->
+    <!-- TRAINING CONFIGURATION -->
     <div class="section-card">
       <h2>Training Configuration</h2>
       <p>
-        I experimented with several training setups in Google Colab, focusing on how optimizer,
+        I experimented with several training setups in Google Colab, focusing on how the optimizer,
         learning rate, batch size, and device (CPU vs GPU) affected performance.
       </p>
 
@@ -232,7 +257,7 @@
       </ul>
     </div>
 
-    <!-- BEST MODEL -->
+    <!-- BEST CONFIG -->
     <div class="section-card">
       <h2>Best-Performing Configuration</h2>
       <p>
@@ -249,6 +274,8 @@
       <p>
         This setup achieved the best combination of high validation accuracy, fast convergence,
         and a relatively small gap between training and validation performance.
+        Quantitative results and plots are summarized on the
+        <a href="results.html">Results &amp; Takeaways</a> page.
       </p>
     </div>
 
