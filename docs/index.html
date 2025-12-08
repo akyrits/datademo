@@ -1,319 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>PawSense AI – Detecting Dog Stress with AlexNet</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawSense AI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <!-- Single-page nav: all links go to sections on this page -->
+
+<!-- Navigation -->
 <nav>
+  <a href="#title">Home</a>
   <a href="#problem">Problem</a>
-  <a href="#approach">AlexNet Approach</a>
+  <a href="#motivation">Motivation</a>
+  <a href="#approach">Approach</a>
   <a href="#visualizations">Visualizations</a>
-  <a href="#results">Results & Takeaways</a>
+  <a href="#results">Results</a>
+  <a href="#takeaways">Takeaways</a>
+  <a href="results.html">Full Results Page</a>
 </nav>
 
+<!-- Title Section -->
+<section id="title" class="padded-section">
+  <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+  <p><strong>Author:</strong> Alexander Kyritsopoulos<br>
+  <strong>Course:</strong> Deep Learning Project</p>
 
-  <div class="page-wrapper">
-
-    <!-- HERO / TITLE -->
-    <div class="hero" id="top">
-      <h1>PawSense AI: Detecting Dog Stress & Emotional States</h1>
-      <p class="subtitle">
-        Using transfer learning with AlexNet to classify dog images as <strong>happy</strong> or <strong>stressed</strong>.
-      </p>
-    </div>
-
-    <!-- =========================
-         PROBLEM & MOTIVATION
-         ========================= -->
-    <div class="section-card" id="problem">
-      <h2>Problem & Motivation</h2>
-
-      <p>
-        Dogs often communicate stress and discomfort long before humans recognize there is a problem. 
-        Subtle cues like pinned ears, “whale eye”, stress panting, or a tucked tail can appear well 
-        before overt behaviors like barking, growling, destruction, or withdrawal.
-      </p>
-
-      <p>
-        At the same time, pet cameras and smart devices are becoming common in homes, but they mainly track 
-        <strong>where</strong> a dog is and <strong>how much</strong> it moves, not <strong>how it feels</strong>. 
-        There is an opportunity to use computer vision to support earlier detection of canine stress.
-      </p>
-
-      <h3>Why This Matters</h3>
-      <ul>
-        <li><strong>Animal welfare:</strong> Help owners notice stress early and adjust training, environment, or routine.</li>
-        <li><strong>Safety:</strong> Many bite incidents and reactivity issues are preceded by visible stress signals.</li>
-        <li><strong>Shelter impact:</strong> Dogs in stressful environments may decline behaviorally if early signs are missed.</li>
-      </ul>
-
-      <p>
-        PawSense AI explores whether a fine-tuned AlexNet model can reliably distinguish 
-        <strong>happy</strong> vs. <strong>stressed/sad</strong> dogs from images as a first step toward real-time monitoring.
-      </p>
-    </div>
-
-    <!-- =========================
-         DATASET OVERVIEW
-         ========================= -->
-    <div class="section-card">
-      <h2>Dataset & Labeling</h2>
-
-      <p>
-        I built a small but balanced dataset of dog images labeled into two classes:
-        <strong>Happy</strong> and <strong>Stressed/Sad</strong>. Images come from a mix of breeds, lighting conditions,
-        and environments to avoid overfitting to a single “type” of dog.
-      </p>
-
-      <p>
-        The dataset is split into training, validation, and test sets so I can tune hyperparameters without “peeking”
-        at final performance.
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Class</th>
-            <th>Train</th>
-            <th>Validation</th>
-            <th>Test</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Happy</td>
-            <td>50</td>
-            <td>40</td>
-            <td>36</td>
-            <td>126</td>
-          </tr>
-          <tr>
-            <td>Stressed / Sad</td>
-            <td>50</td>
-            <td>40</td>
-            <td>36</td>
-            <td>126</td>
-          </tr>
-          <tr class="total-row">
-            <td><strong>All images</strong></td>
-            <td><strong>100</strong></td>
-            <td><strong>80</strong></td>
-            <td><strong>72</strong></td>
-            <td><strong>252</strong></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>
-        Keeping the classes balanced makes it easier to interpret accuracy and prevents the model
-        from “cheating” by always predicting the majority class.
-      </p>
-    </div>
-
-    <!-- =========================
-         ALEXNET APPROACH
-         ========================= -->
-    <div class="section-card" id="approach">
-      <h2>What the Model Sees</h2>
-      <p>Examples of the types of images used during training:</p>
-
-      <div class="image-row">
-        <!-- Update filenames if needed to match docs/assets/ -->
-        <img src="assets/sample_happy.png" class="img-small" alt="Happy dog example" />
-        <img src="assets/sample_stressed.png" class="img-small img-free" alt="Stressed dog example" />
-      </div>
-    </div>
-
-    <div class="section-card">
-      <h2>Image Preprocessing Pipeline</h2>
-      <p>Before entering AlexNet, each image goes through a structured preprocessing pipeline:</p>
-
-      <div class="pipeline">
-        <div class="pipeline-step">Raw dog image</div>
-        <span class="pipeline-arrow">➜</span>
-        <div class="pipeline-step">Resize to 227×227</div>
-        <span class="pipeline-arrow">➜</span>
-        <div class="pipeline-step">Normalize (ImageNet stats)</div>
-        <span class="pipeline-arrow">➜</span>
-        <div class="pipeline-step">Convert to tensor</div>
-        <span class="pipeline-arrow">➜</span>
-        <div class="pipeline-step">Augment (flip/rotate/brightness)</div>
-        <span class="pipeline-arrow">➜</span>
-        <div class="pipeline-step">Feed into AlexNet</div>
-      </div>
-
-      <ul>
-        <li><strong>Resize:</strong> images are resized to 227×227×3.</li>
-        <li><strong>Normalization:</strong> scale pixel values to match ImageNet statistics.</li>
-        <li><strong>Tensor conversion:</strong> convert images into PyTorch tensors.</li>
-        <li><strong>Augmentation:</strong> random flips, small rotations, and brightness jitter to improve robustness.</li>
-      </ul>
-    </div>
-
-    <div class="section-card">
-      <h2>AlexNet Architecture (Short Version)</h2>
-
-      <!-- Architecture diagram (update filename if needed) -->
-      <img src="assets/alexnet_architecture.png" class="img-wide" alt="AlexNet Architecture Diagram" />
-
-      <p>
-        AlexNet is a convolutional neural network originally designed for large-scale image classification. 
-        In this project, it serves as a feature extractor for canine facial expressions and body cues.
-      </p>
-
-      <h3>Feature Extractor</h3>
-      <ul>
-        <li><strong>Conv1:</strong> 96 filters, 11×11 kernel, stride 4 → ReLU → MaxPool</li>
-        <li><strong>Conv2:</strong> 256 filters, 5×5 kernel → ReLU → MaxPool</li>
-        <li><strong>Conv3:</strong> 384 filters, 3×3 kernel → ReLU</li>
-        <li><strong>Conv4:</strong> 384 filters, 3×3 kernel → ReLU</li>
-        <li><strong>Conv5:</strong> 256 filters, 3×3 kernel → ReLU → MaxPool</li>
-      </ul>
-
-      <h3>Custom Classifier Head</h3>
-      <ul>
-        <li>Flatten features from the last convolutional layer.</li>
-        <li>Two fully connected layers with ReLU + dropout.</li>
-        <li>Final fully connected layer with <strong>2 outputs</strong> (Happy, Stressed).</li>
-      </ul>
-    </div>
-
-    <div class="section-card">
-      <h2>Transfer Learning Strategy</h2>
-      <p>
-        Training a deep CNN from scratch on a small dog-emotion dataset would overfit quickly.
-        Instead, I use transfer learning with AlexNet pretrained on ImageNet.
-      </p>
-      <ul>
-        <li>Initialize the model with pretrained ImageNet weights.</li>
-        <li>Use the convolutional stack as a fixed or lightly fine-tuned feature extractor.</li>
-        <li>Replace the original 1000-class output layer with a new 2-class classifier.</li>
-        <li>Train the classifier layers first, then optionally fine-tune deeper layers with a smaller learning rate.</li>
-      </ul>
-      <p>
-        This leverages generic visual features (edges, textures, shapes) learned from millions of images and adapts them to the
-        “happy vs stressed” dog dataset.
-      </p>
-    </div>
-
-    <div class="section-card">
-      <h2>Training Configuration</h2>
-      <p>
-        I experimented with several training setups in Google Colab, focusing on how optimizer, learning rate, batch size, 
-        and device (CPU vs GPU) affected performance.
-      </p>
-
-      <h3>Core Settings</h3>
-      <ul>
-        <li><strong>Loss:</strong> Cross-entropy loss.</li>
-        <li><strong>Optimizers tested:</strong> Adam and SGD.</li>
-        <li><strong>Batch sizes:</strong> 16 and 32.</li>
-        <li><strong>Learning rates:</strong> 1e-4 and 1e-5 for fine-tuning.</li>
-        <li><strong>Epochs:</strong> ~15–30 with early stopping based on validation loss.</li>
-        <li><strong>Input mode:</strong> RGB images (grayscale variants performed worse).</li>
-        <li><strong>Hardware:</strong> CPU vs GPU (CUDA) runs for comparison.</li>
-      </ul>
-    </div>
-
-    <!-- =========================
-         RESULTS & TAKEAWAYS
-         ========================= -->
-    <!-- =========================
-         VISUALIZATIONS
-         ========================= -->
-    <div class="section-card" id="visualizations">
-      <h2>Visualizations (Colab Screenshots)</h2>
-      <p>
-        The following plots are exported directly from my Colab training notebook. They show how the
-        model learned over time and how well it separates happy vs stressed images.
-      </p>
-
-      <div class="plot-grid">
-        <div class="plot-card">
-          <h3>Training vs Validation Accuracy</h3>
-          <!-- update file name if needed -->
-          <img src="assets/train_val_acc.png" alt="Train and validation accuracy over epochs" />
-        </div>
-
-        <div class="plot-card">
-          <h3>Training vs Validation Loss</h3>
-          <img src="assets/train_val_loss.png" alt="Train and validation loss over epochs" />
-        </div>
-
-        <div class="plot-card">
-          <h3>Confusion Matrix</h3>
-          <img src="assets/confusion_matrix.png" alt="Confusion matrix for happy vs stressed classes" />
-        </div>
-      </div>
-    </div>
-
-    <!-- =========================
-         RESULTS
-         ========================= -->
-    <div class="section-card" id="results">
-      <h2>Results</h2>
-      <p>
-        The best-performing configuration uses pretrained AlexNet with an Adam optimizer, learning rate
-        1e-4, batch size 32, and GPU acceleration in Colab. On the held-out test set, it achieved:
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Metric</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Test accuracy</td>
-            <td>≈ 0.93</td>
-          </tr>
-          <tr>
-            <td>Happy precision</td>
-            <td>≈ 0.93</td>
-          </tr>
-          <tr>
-            <td>Stressed precision</td>
-            <td>≈ 0.93</td>
-          </tr>
-          <tr class="total-row">
-            <td><strong>Overall impression</strong></td>
-            <td><strong>Consistently high performance on a small dataset</strong></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>
-        The confusion matrix shows that most mistakes are between visually subtle cases where “happy” and
-        “stressed” body language overlap (e.g., panting dogs with partially tense faces).
-      </p>
-    </div>
-
-    <!-- =========================
-         TAKEAWAYS
-         ========================= -->
-    <div class="section-card">
-      <h2>Takeaways & Next Steps</h2>
-      <ul>
-        <li>Transfer learning with AlexNet works well even on a relatively small, balanced dog-emotion dataset.</li>
-        <li>Data augmentation and conservative learning rates help control overfitting.</li>
-        <li>GPU training in Colab speeds up experimentation and produces smoother learning curves than CPU.</li>
-        <li>Misclassifications often occur in “borderline” emotional states, suggesting a need for more nuanced labels.</li>
-        <li>Future work: expand the dataset, add more emotion categories, and explore lighter models for deployment on pet cameras or mobile devices.</li>
-      </ul>
-    </div>
+  <p>
+    PawSense AI explores whether transfer learning using AlexNet can detect
+    <strong>dog emotional states</strong>—specifically <em>happy/relaxed</em> 
+    vs. <em>stressed/anxious</em>—directly from images. The broader goal is to 
+    evaluate whether deep learning can help pet owners better understand their dog’s 
+    well-being through early detection of stress.
+  </p>
+</section>
 
 
-    <footer>
-      PawSense AI · AlexNet Deep Learning Project
-    </footer>
+<!-- Problem Section -->
+<section id="problem" class="padded-section">
+  <h2>Problem Overview</h2>
 
+  <p>
+    Dogs frequently display emotional and physiological stress signals subtly—
+    flattened ears, widened eyes, whale-eye, tucked tail, lip licking, or a frozen posture.
+    Many of these cues occur long before barking, whining, or other obvious signs.
+  </p>
+
+  <p>
+    Unfortunately, owners often miss these early signals. Chronic stress in dogs has been 
+    linked to behavioral issues, reduced quality of life, and worsening anxiety.
+  </p>
+
+  <p>
+    This creates an opportunity for a computer-vision model capable of identifying stress 
+    cues in real time from everyday images.
+  </p>
+</section>
+
+
+<!-- Motivation Section -->
+<section id="motivation" class="padded-section">
+  <h2>Motivation</h2>
+
+  <ul>
+    <li>Pet owners increasingly rely on cameras and smart devices to monitor pets.</li>
+    <li>Stress and anxiety frequently go undetected until severe behavior emerges.</li>
+    <li>No widely available model exists that can distinguish dog emotional states 
+        from simple RGB images.</li>
+    <li>AI-driven early detection could improve training, well-being, and owner awareness.</li>
+    <li>Long-term goal: integrate into pet cameras or vet-tech workflows.</li>
+  </ul>
+
+  <div class="summary-box">
+    <h3>Why This Problem Matters</h3>
+    <ul>
+      <li>Early stress detection could prevent worsening anxiety and behavior issues.</li>
+      <li>Provides actionable insights to owners in everyday environments.</li>
+      <li>Combines computer vision with a real-world, high-impact pet-care application.</li>
+    </ul>
   </div>
+</section>
+
+
+<!-- Approach Section -->
+<section id="approach" class="padded-section">
+  <h2>Technical Approach: AlexNet & Transfer Learning</h2>
+
+  <p>
+    This project uses <strong>AlexNet</strong>, a classic convolutional neural network 
+    originally trained on ImageNet (1.2M images). Because AlexNet is already strong at 
+    recognizing general features such as edges, colors, and textures, it can be fine-tuned 
+    for smaller datasets—making it ideal for dog-emotion classification.
+  </p>
+
+  <h3>What AlexNet Does</h3>
+  <p>
+    AlexNet processes an input image (227×227×3 RGB) through:
+  </p>
+  <ul>
+    <li>5 convolution layers (feature extraction)</li>
+    <li>Max pooling layers (downsampling)</li>
+    <li>ReLU activations (fast training)</li>
+    <li>Dropout (reducing overfitting)</li>
+    <li>3 fully connected layers (final classification)</li>
+  </ul>
+
+  <div class="summary-box">
+    <h3>Key Concepts</h3>
+    <ul>
+      <li><strong>Kernel:</strong> sliding window that extracts features.</li>
+      <li><strong>Stride:</strong> how far the kernel moves each step.</li>
+      <li><strong>ReLU:</strong> activation <code>max(0, x)</code></li>
+      <li><strong>Max Pooling:</strong> keeps strongest spatial features.</li>
+      <li><strong>Dropout:</strong> reduces overfitting.</li>
+    </ul>
+  </div>
+
+  <h3>Training Workflow</h3>
+  <ol>
+    <li>Load and preprocess image (resize 227×227, normalize, augment if needed).</li>
+    <li>Forward pass through AlexNet.</li>
+    <li>Compute classification loss (cross-entropy).</li>
+    <li>Backpropagate gradients + optimizer update (Adam/SGD).</li>
+    <li>Track accuracy/loss curves with validation data.</li>
+    <li>Use early stopping to prevent overfitting.</li>
+  </ol>
+
+  <p>
+    Multiple training configurations were tested: RGB vs. grayscale input, pretrained vs. 
+    non-pretrained weights, Adam vs. SGD, various learning rates, and batch sizes.
+  </p>
+</section>
+
+
+<!-- Visualizations Section -->
+<section id="visualizations" class="padded-section">
+  <h2>Training Visualizations</h2>
+
+  <figure>
+    <img src="assets/train_val_accuracy.png" alt="Training vs validation accuracy">
+    <figcaption>Training vs validation accuracy curves across epochs.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/train_val_loss.png" alt="Training vs validation loss">
+    <figcaption>Training vs validation loss curves indicating overfitting behavior.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/confusion_matrix.png" alt="Confusion matrix for happy vs stressed dog classification">
+    <figcaption>Confusion matrix showing classification performance on validation data.</figcaption>
+  </figure>
+</section>
+
+
+<!-- Results Section -->
+<section id="results" class="padded-section">
+  <h2>Results Summary</h2>
+
+  <ul>
+    <li>Best training accuracy: <strong>[Fill in]</strong></li>
+    <li>Best validation accuracy: <strong>[Fill in]</strong></li>
+    <li>Best epoch (lowest validation loss): <strong>[Fill in]</strong></li>
+    <li>Misclassifications occurred primarily in low-light or ambiguous positions.</li>
+  </ul>
+
+  <h3>Hyperparameter Experiments</h3>
+  <p>A subset of tested configurations:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Run</th><th>Optimizer</th><th>Pretrained</th><th>LR</th><th>Batch</th>
+        <th>Device</th><th>Val Acc</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>GPU-Adam-RGB</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Best overall performance.</td></tr>
+      <tr><td>GPU-Adam-Gray</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Lower performance vs RGB.</td></tr>
+      <tr><td>GPU-SGD-RGB</td><td>SGD</td><td>Yes</td><td>1e-3</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Slower convergence.</td></tr>
+      <tr><td>CPU-Adam-RGB</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>CPU</td><td>[Fill]</td><td>Similar accuracy; much slower.</td></tr>
+      <tr><td>GPU-Adam-NoPre</td><td>Adam</td><td>No</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Underfitting; benefits of pretrained weights.</td></tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- Takeaways Section -->
+<section id="takeaways" class="padded-section">
+  <h2>Project Takeaways</h2>
+
+  <ul>
+    <li>AlexNet transfer learning captures meaningful features for dog emotional cues.</li>
+    <li>Pretrained RGB models perform best, with clearer separation between classes.</li>
+    <li>Misclassified cases suggest lighting, angle, and subtle cues still challenge the model.</li>
+    <li>Larger and more diverse datasets would significantly improve generalization.</li>
+    <li>Future direction: real-time deployment inside pet cameras or mobile apps.</li>
+  </ul>
+</section>
+
+
+<footer>
+  <p>© 2025 PawSense AI · Built with HTML/CSS on GitHub Pages</p>
+</footer>
+
 </body>
 </html>
