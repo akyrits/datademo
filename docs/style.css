@@ -1,23 +1,30 @@
 /* ===============================
-   PAWSENSE THEME (tweak here)
+   PAWSENSE PDF THEME
+   (warm cream + brown + gold)
    =============================== */
+
 :root {
-  --color-bg:        #f3f6fc;   /* page background */
-  --color-surface:   #ffffff;   /* cards / hero */
-  --color-nav:       #091622;   /* top bar (deep navy) */
-  --color-nav-text:  #e2ecff;
-  --color-primary:   #2456ff;   /* main accent blue */
-  --color-primary-soft: #e2e9ff;
-  --color-border:    #e0e5f2;
-  --color-text-main: #1f2933;
-  --color-text-muted:#5b6477;
-  --color-table-header: #0f1f3c;
-  --color-table-total:  #c7d5ff;
-  --shadow-soft:     0 4px 14px rgba(15, 23, 42, 0.08);
+  --bg-page:        #f6efe5;  /* soft cream background from slides */
+  --bg-surface:     #fffaf2;  /* card/hero background */
+  --bg-surface-alt: #f3e5d5;
+
+  --nav-bg:         #3b2a22;  /* deep brown like PDF text accents */
+  --nav-text:       #fdf5ea;
+
+  --text-main:      #2a211c;  /* dark warm brown */
+  --text-muted:     #7a6a5e;
+  --text-heading:   #36261f;
+
+  --accent-gold:    #d5a24a;  /* gold lines/icons in slides */
+  --accent-soft:    #f4e0b8;
+
+  --border-soft:    #e0d2c3;
+
+  --shadow-soft:    0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ===============================
-   GLOBAL BASE STYLES
+   GLOBAL BASE
    =============================== */
 
 *,
@@ -33,13 +40,13 @@ html, body {
 
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text-main);
+  background: var(--bg-page);
+  color: var(--text-main);
   line-height: 1.6;
 }
 
 /* ===============================
-   FIXED NAVIGATION BAR
+   FIXED NAV BAR
    =============================== */
 
 nav {
@@ -47,15 +54,14 @@ nav {
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--color-nav);
+  background: var(--nav-bg);
   padding: 0.7rem 1.4rem;
   z-index: 1000;
-  backdrop-filter: blur(10px);
   box-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
 
 nav a {
-  color: var(--color-nav-text);
+  color: var(--nav-text);
   margin-right: 1.4rem;
   text-decoration: none;
   font-weight: 500;
@@ -69,42 +75,44 @@ nav a:hover {
 }
 
 nav a.active {
-  border-bottom: 2px solid #fbbf24;
+  border-bottom: 2px solid var(--accent-gold);
   padding-bottom: 0.15rem;
   color: #ffffff;
 }
 
 /* ===============================
-   MAIN PAGE WRAPPER
+   LAYOUT WRAPPER
    =============================== */
 
 .page-wrapper {
   max-width: 820px;
   margin: 0 auto;
-  padding: 5rem 1rem 3rem; /* clears the fixed nav */
+  padding: 5rem 1.25rem 3rem;  /* leave room for fixed nav */
 }
 
 /* ===============================
-   HERO SECTION
+   HERO (title area)
    =============================== */
 
 .hero {
-  background: var(--color-surface);
+  background: var(--bg-surface);
   border-radius: 0.9rem;
   padding: 1.4rem 1.6rem;
   margin-bottom: 1.4rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
 }
 
 h1 {
-  font-size: 2rem;
-  color: #0f172a;
-  margin: 0 0 0.3rem 0;
+  font-family: "Georgia", "Times New Roman", serif; /* slide-style heading */
+  font-size: 2.1rem;
+  color: var(--text-heading);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: 0.01em;
 }
 
 .subtitle {
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   font-size: 1.02rem;
   margin: 0.2rem 0 0.4rem 0;
 }
@@ -114,24 +122,43 @@ h1 {
    =============================== */
 
 .section-card {
-  background: var(--color-surface);
+  background: var(--bg-surface);
   border-radius: 0.75rem;
   padding: 1.1rem 1.3rem;
   margin-bottom: 1.1rem;
-  border: 1px solid var(--color-border);
-  border-left: 5px solid var(--color-primary);
-  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  position: relative;
+}
+
+/* thin gold bar on the left like slide separators */
+.section-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--accent-gold);
 }
 
 .section-card h2 {
-  color: #172b4d;
+  font-family: "Georgia", "Times New Roman", serif;
+  color: var(--text-heading);
   margin-top: 0.1rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.45rem;
 }
 
 .section-card h3 {
-  color: #314360;
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #5b4637;
   margin-bottom: 0.3rem;
+}
+
+/* shift inner content right to clear the gold bar */
+.section-card > * {
+  margin-left: 0.4rem;
 }
 
 /* ===============================
@@ -139,18 +166,22 @@ h1 {
    =============================== */
 
 ul, ol {
-  padding-left: 1.25rem;
+  padding-left: 1.3rem;
   margin: 0.3rem 0;
 }
 
+li {
+  margin-bottom: 0.15rem;
+}
+
 /* ===============================
-   TABLES
+   TABLES (dataset + results)
    =============================== */
 
 table {
   width: 100%;
   max-width: 520px;
-  margin: 0.6rem auto;
+  margin: 0.7rem auto;
   border-collapse: collapse;
   font-size: 0.95rem;
 }
@@ -170,20 +201,20 @@ th:not(:first-child) {
 }
 
 thead th {
-  background: var(--color-table-header);
-  color: #eef3ff;
+  background: #3b2a22;
+  color: #f8efe3;
 }
 
 tbody tr:nth-child(even) {
-  background: #eef1f7;
+  background: #f5ebdd;
 }
 
 tbody tr:nth-child(odd) {
-  background: #ffffff;
+  background: #fffaf2;
 }
 
 tbody tr.total-row {
-  background: var(--color-table-total);
+  background: var(--accent-soft);
   font-weight: 700;
 }
 
@@ -202,9 +233,9 @@ tbody tr.total-row {
 .img-small {
   width: 240px;
   height: auto;
-  border-radius: 0.6rem;
+  border-radius: 0.7rem;
   object-fit: cover;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
 .img-small.img-free {
@@ -217,8 +248,8 @@ tbody tr.total-row {
   max-width: 720px;
   display: block;
   margin: 0.7rem auto;
-  border-radius: 0.7rem;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
 }
 
 /* ===============================
@@ -235,23 +266,23 @@ tbody tr.total-row {
 }
 
 .pipeline-step {
-  background: var(--color-primary-soft);
+  background: var(--accent-soft);
   border-radius: 999px;
   padding: 0.45rem 1rem;
   font-size: 0.9rem;
-  color: #102347;
+  color: #4a3726;
   font-weight: 500;
-  box-shadow: 0 3px 7px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 3px 7px rgba(0,0,0,0.08);
   white-space: nowrap;
 }
 
 .pipeline-arrow {
   font-size: 1.1rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
 }
 
 /* ===============================
-   PLOTTING GRID (Results page)
+   PLOT GRID (for results.html)
    =============================== */
 
 .plot-grid {
@@ -262,17 +293,17 @@ tbody tr.total-row {
 }
 
 .plot-card {
-  background: var(--color-surface);
+  background: var(--bg-surface);
   border-radius: 0.9rem;
   padding: 0.8rem;
   text-align: center;
-  border: 1px solid var(--color-border);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
 .plot-card img {
   max-width: 100%;
-  border-radius: 0.6rem;
+  border-radius: 0.7rem;
 }
 
 /* ===============================
@@ -281,13 +312,13 @@ tbody tr.total-row {
 
 footer {
   margin-top: 2rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   font-size: 0.85rem;
   text-align: center;
 }
 
 /* ===============================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE
    =============================== */
 
 @media (max-width: 640px) {
@@ -301,8 +332,12 @@ footer {
   }
 
   nav a {
-    margin-right: 0.8rem;
+    margin-right: 0.9rem;
     font-size: 0.88rem;
+  }
+
+  .image-row {
+    flex-wrap: wrap;
   }
 
   .img-small {
