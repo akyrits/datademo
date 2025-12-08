@@ -453,13 +453,16 @@ footer {
   filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.25));
 }
 
+/* Hero Logo */
 .hero-logo-container {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .hero-logo {
-  height: 120px;
-  width: auto;
-  opacity: 0.95;
+  width: 180px;          /* Scales proportionally */
+  height: auto;
+  opacity: 0.92;
+  filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.15));
+  margin-top: 10px;
 }
