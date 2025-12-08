@@ -1,20 +1,17 @@
-/* ===========================
-   Base styles & layout
-   =========================== */
+/* ============================================
+   GLOBAL THEME & RESETS
+============================================ */
 
 :root {
-  /* Very subtle, warm theme */
-  --bg: #f3eee4;
-  --bg-alt: #ffffff;
+  --bg: #f3efe7;          /* soft, neutral background */
+  --bg-alt: #ffffff;      /* clean white for cards */
   --text: #222222;
   --text-muted: #555555;
-  --nav-bg: #3a2a23;
+  --nav-bg: #3a2a23;      /* dark brown navigation bar */
   --nav-text: #f7f4ef;
-  --accent: #c49b6c;      /* used sparingly */
-  --border: #d6cbbd;
-
+  --border: #d7cec3;
   --max-width: 900px;
-  --nav-height: 56px;
+  --nav-height: 58px;
 }
 
 *,
@@ -29,19 +26,20 @@ html {
 
 body {
   margin: 0;
+  padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
 }
 
-/* Make anchor links not hide under fixed nav */
+/* Prevent fixed nav overlap */
 section {
   scroll-margin-top: calc(var(--nav-height) + 12px);
 }
 
-/* Center main content */
+/* Center content globally */
 .padded-section,
 #title,
 footer {
@@ -50,9 +48,9 @@ footer {
   padding: 32px 16px;
 }
 
-/* ===========================
-   Navigation
-   =========================== */
+/* ============================================
+   NAVIGATION BAR
+============================================ */
 
 nav {
   position: fixed;
@@ -61,100 +59,68 @@ nav {
   right: 0;
   height: var(--nav-height);
   background: var(--nav-bg);
-  color: var(--nav-text);
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 16px;
-  font-size: 0.9rem;
-  z-index: 1000;
+  gap: 18px;
+  padding: 0 20px;
+  z-index: 999;
 }
 
 nav a {
   color: var(--nav-text);
   text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 999px;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  font-size: 0.92rem;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
 nav a:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   nav {
     flex-wrap: wrap;
     height: auto;
-    padding: 8px 10px;
+    padding: 8px;
   }
 }
 
-/* Push first section below nav */
+/* Push title down so it's not under the nav */
 #title {
-  padding-top: calc(var(--nav-height) + 32px);
+  padding-top: calc(var(--nav-height) + 24px);
 }
 
-/* ===========================
-   Typography
-   =========================== */
+/* ============================================
+   TYPOGRAPHY
+============================================ */
 
-h1,
-h2,
-h3 {
-  margin: 0 0 0.5rem;
+h1, h2, h3 {
+  margin: 0 0 0.6rem;
   font-weight: 650;
 }
 
 h1 {
-  font-size: clamp(2rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
 }
 
 h2 {
   font-size: clamp(1.5rem, 2.4vw, 1.8rem);
-  margin-top: 0.5rem;
 }
 
 h3 {
-  font-size: 1.1rem;
-}
-
-p {
-  margin: 0.4rem 0 0.8rem;
+  font-size: 1.15rem;
 }
 
 #title p:first-of-type {
-  font-size: 0.95rem;
   color: var(--text-muted);
 }
 
-/* Lists */
-ul,
-ol {
-  padding-left: 1.2rem;
-  margin: 0.4rem 0 0.8rem;
-}
+/* ============================================
+   SECTION CARDS (SUBTLE, NOT BRIGHT)
+============================================ */
 
-li {
-  margin: 0.15rem 0;
-}
-
-/* Links in content */
-a {
-  color: var(--accent);
-}
-
-a:hover {
-  color: #9b7445;
-}
-
-/* ===========================
-   Section styling
-   =========================== */
-
-/* Very light “card” feel but no bright highlight */
 #problem,
 #motivation,
 #approach,
@@ -163,100 +129,111 @@ a:hover {
 #takeaways {
   background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 24px 16px;
-  margin-bottom: 18px;
+  border-radius: 6px;
+  padding: 24px 18px;
+  margin-bottom: 20px;
 }
 
-/* ===========================
-   Summary / callout boxes
-   =========================== */
+/* ============================================
+   SUMMARY / CALLOUT BOXES
+   (NO more yellow — clean and minimal)
+============================================ */
 
 .summary-box {
-  margin-top: 0.8rem;
-  padding: 10px 12px;
-  background: #fcfbf9;           /* almost white, not yellow */
-  border-left: 3px solid var(--accent);
+  background: #faf9f6;
+  border-left: 3px solid #b08a61;
+  padding: 10px 14px;
+  margin-top: 0.6rem;
   border-radius: 4px;
 }
 
 .summary-box h3 {
-  margin-top: 0;
-  margin-bottom: 0.3rem;
-  font-size: 1rem;
+  margin: 0 0 0.35rem;
 }
 
-/* ===========================
-   Figures / images
-   =========================== */
+/* ============================================
+   IMAGES — THIS FIXES THE HUGE PHOTO
+============================================ */
+
+/* Global default for all images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* HARD CAP for content images */
+.content-image {
+  max-width: 460px;      /* You can change to 400–550px depending on taste */
+  max-height: 380px;
+  object-fit: cover;
+  margin: 0 auto 1rem;   /* centers the image */
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* ============================================
+   FIGURES (for training plots + confusion matrix)
+============================================ */
 
 figure {
-  margin: 1rem 0;
+  margin: 1.2rem 0;
   text-align: center;
 }
 
 figure img {
   max-width: 100%;
   height: auto;
-  display: block;
-  margin: 0 auto;
-
-  /* OPTIONAL: limit how tall images can get */
-  max-height: 450px;     /* adjust to 350 / 400 / 500 if you prefer */
-  object-fit: cover;     /* keeps things visually consistent */
-  border-radius: 4px;
   border: 1px solid var(--border);
+  border-radius: 4px;
 }
 
 figcaption {
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
   font-size: 0.88rem;
   color: var(--text-muted);
 }
 
-
-/* ===========================
-   Tables
-   =========================== */
+/* ============================================
+   TABLES
+============================================ */
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 0.6rem 0 1rem;
+  margin: 1rem 0;
   font-size: 0.9rem;
 }
 
 th,
 td {
   border: 1px solid var(--border);
-  padding: 6px 8px;
+  padding: 6px 10px;
   text-align: left;
 }
 
 thead {
-  background: #eee6d9;
+  background: #e8e2d7;
 }
 
 tbody tr:nth-child(even) {
-  background: #f7f2ea;
+  background: #f6f2eb;
 }
 
-/* Horizontal scroll on narrow screens */
-@media (max-width: 640px) {
+@media (max-width: 650px) {
   table {
     display: block;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 }
 
-/* ===========================
-   Footer
-   =========================== */
+/* ============================================
+   FOOTER
+============================================ */
 
 footer {
-  font-size: 0.85rem;
-  color: var(--text-muted);
   text-align: center;
-  padding-bottom: 40px;
+  padding: 30px 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
 }
