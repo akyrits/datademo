@@ -4,18 +4,17 @@
   <meta charset="UTF-8" />
   <title>PawSense AI – AlexNet Technical Approach</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/PawSense_logo.png" />
 </head>
 
 <body>
-
   <!-- Shared navigation -->
   <nav>
     <div class="nav-inner">
       <div class="nav-brand">
-  <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
-  PawSense AI
-</div>
-
+        <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
+        PawSense AI
+      </div>
       <div class="nav-links">
         <a href="index.html#problem">Problem</a>
         <a href="approach.html" class="active">AlexNet Approach</a>
@@ -33,10 +32,9 @@
         How raw dog images become “happy vs. stressed” predictions using transfer learning.
       </p>
       <p>
-  This page describes the full preprocessing pipeline, the pretrained AlexNet architecture,
-  and the training strategy used to fine-tune the model on dog emotion classification.
-</p>
-
+        This page describes the preprocessing pipeline, pretrained AlexNet architecture, and
+        training strategy used to fine-tune the model on dog emotion classification.
+      </p>
     </div>
 
     <!-- SAMPLE IMAGES -->
@@ -209,7 +207,7 @@
       <ul>
         <li>More efficient</li>
         <li>Less sensitive to small shifts in the image</li>
-        <li>Better at recognizing general shapes and features</li>
+        <li>Better at recognising general shapes and features</li>
       </ul>
 
       <h3>Dropout</h3>
@@ -219,8 +217,8 @@
       <p>
         In real terms: <strong>Dropout prevents overfitting</strong>.
         By disabling different neurons each training step, the model can't rely on a single
-        pathway or memorize training examples. It is forced to learn patterns that
-        generalize — the kinds of cues that truly distinguish a happy dog from a stressed one.
+        pathway or memorise training examples. It is forced to learn patterns that
+        generalise — the kinds of cues that truly distinguish a happy dog from a stressed one.
       </p>
     </div>
 
@@ -283,7 +281,7 @@
       <p>
         This setup achieved the best combination of high validation accuracy, fast convergence,
         and a relatively small gap between training and validation performance.
-        Quantitative results and plots are summarized on the
+        Quantitative results and plots are summarised on the
         <a href="results.html">Results &amp; Takeaways</a> page.
       </p>
     </div>
