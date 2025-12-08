@@ -1,178 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PawSense AI</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>PawSense AI – Problem & Motivation</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <!-- Shared navigation (index / approach / results) -->
+  <nav>
+    <a href="index.html#problem" class="active">Problem</a>
+    <a href="approach.html">AlexNet Approach</a>
+    <a href="results.html">Results &amp; Takeaways</a>
+  </nav>
 
-<!-- Navigation -->
-<nav>
-  <a href="index.html#problem">Problem</a>
-  <a href="approach.html" class="active">AlexNet Approach</a>
-  <a href="results.html">Results &amp; Takeaways</a>
-</nav>
+  <!-- Title / hero -->
+  <section id="title">
+    <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+    <p><strong>Author:</strong> Alexander Kyritsopoulos<br />
+       <strong>Course:</strong> Deep Learning Project</p>
 
+    <p>
+      PawSense AI explores whether transfer learning using AlexNet can detect
+      <strong>dog emotional states</strong>—specifically
+      <em>happy/relaxed</em> vs. <em>stressed/anxious</em>—directly from images.
+      The broader goal is to evaluate whether deep learning can help pet owners
+      better understand their dog’s well-being through early detection of stress.
+    </p>
+  </section>
 
-<!-- Title Section -->
-<section id="title" class="padded-section">
-  <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
-  <p><strong>Author:</strong> Alexander Kyritsopoulos<br>
-  
+  <!-- Problem -->
+  <section id="problem" class="padded-section">
+    <h2>Problem Overview</h2>
 
-  <p>
-    PawSense AI explores whether transfer learning using AlexNet can detect
-    <strong>dog emotional states</strong>—specifically <em>happy/relaxed</em> 
-    vs. <em>stressed/anxious</em>—directly from images. The broader goal is to 
-    evaluate whether deep learning can help pet owners better understand their dog’s 
-    well-being through early detection of stress.
-  </p>
-</section>
+    <p>
+      Dogs frequently display emotional and physiological stress signals subtly—
+      flattened ears, widened eyes, whale-eye, tucked tail, lip licking, or a
+      frozen posture. Many of these cues occur long before barking, whining, or
+      other obvious signs.
+    </p>
 
+    <p>
+      Unfortunately, owners often miss these early signals. Chronic stress in dogs
+      has been linked to behavioral issues, reduced quality of life, and worsening
+      anxiety. Without tools to flag early stress, problems may only be noticed
+      once behavior has already escalated.
+    </p>
 
-<!-- Problem Section -->
-<section id="problem" class="padded-section">
-  <h2>Problem Overview</h2>
+    <p>
+      This creates an opportunity for a computer-vision model capable of identifying
+      stress cues in real time from everyday images, such as those captured by
+      phones or pet cameras.
+    </p>
+  </section>
 
-  <p>
-    Dogs frequently display emotional and physiological stress signals subtly—
-    flattened ears, widened eyes, whale-eye, tucked tail, lip licking, or a frozen posture.
-    Many of these cues occur long before barking, whining, or other obvious signs.
-  </p>
+  <!-- Motivation -->
+  <section id="motivation" class="padded-section">
+    <h2>Motivation</h2>
 
-  <p>
-    Unfortunately, owners often miss these early signals. Chronic stress in dogs has been 
-    linked to behavioral issues, reduced quality of life, and worsening anxiety.
-  </p>
-
-  <p>
-    This creates an opportunity for a computer-vision model capable of identifying stress 
-    cues in real time from everyday images.
-  </p>
-</section>
-
-
-<!-- Motivation Section -->
-<section id="motivation" class="padded-section">
-  <h2>Motivation</h2>
-
-  <ul>
-    <li>Pet owners increasingly rely on cameras and smart devices to monitor pets.</li>
-    <li>Stress and anxiety frequently go undetected until severe behavior emerges.</li>
-    <li>No widely available model exists that can distinguish dog emotional states 
-        from simple RGB images.</li>
-    <li>AI-driven early detection could improve training, well-being, and owner awareness.</li>
-    <li>Long-term goal: integrate into pet cameras or vet-tech workflows.</li>
-  </ul>
-
-  <div class="summary-box">
-    <h3>Why This Problem Matters</h3>
     <ul>
-      <li>Early stress detection could prevent worsening anxiety and behavior issues.</li>
-      <li>Provides actionable insights to owners in everyday environments.</li>
-      <li>Combines computer vision with a real-world, high-impact pet-care application.</li>
+      <li>Pet owners increasingly rely on cameras and smart devices to monitor pets.</li>
+      <li>Stress and anxiety frequently go undetected until severe behavior emerges.</li>
+      <li>
+        No widely available model exists that can distinguish dog emotional states
+        from simple RGB images in everyday environments.
+      </li>
+      <li>
+        AI-driven early detection could improve training decisions, well-being, and
+        owner awareness.
+      </li>
+      <li>
+        Long-term goal: integrate stress detection into pet cameras, mobile apps,
+        or vet-tech workflows.
+      </li>
     </ul>
-  </div>
-</section>
 
+    <div class="summary-box">
+      <h3>Why This Problem Matters</h3>
+      <ul>
+        <li>
+          Early stress detection could prevent worsening anxiety and behavior issues.
+        </li>
+        <li>
+          Provides actionable insights to owners during normal day-to-day life,
+          not just at the vet or trainer.
+        </li>
+        <li>
+          Combines modern computer vision with a real-world, high-impact pet-care
+          application.
+        </li>
+      </ul>
+    </div>
+  </section>
 
-<!-- Approach Section -->
-<section id="overview" class="padded-section">
-  <h2>Quick Project Overview</h2>
+  <!-- Quick overview / bridge to the other pages -->
+  <section id="overview" class="padded-section">
+    <h2>Quick Project Overview</h2>
 
-  <p>
-    PawSense AI uses a convolutional neural network (AlexNet) to classify dog images
-    as <strong>happy</strong> or <strong>stressed</strong>. The model is trained using
-    transfer learning and a small balanced dataset of labeled dog images.
-  </p>
+    <p>
+      To tackle this problem, PawSense AI uses a convolutional neural network
+      called <strong>AlexNet</strong>, fine-tuned via transfer learning on a
+      small, balanced dataset of labeled dog images (happy vs. stressed/sad).
+    </p>
 
-  <ul>
-    <li>Images are preprocessed (resize, normalize, augment).</li>
-    <li>AlexNet’s pretrained layers extract features such as face shape and posture.</li>
-    <li>A new classifier head predicts “happy” vs “stressed”.</li>
-  </ul>
+    <ul>
+      <li>Images are resized, normalized, and lightly augmented before training.</li>
+      <li>
+        AlexNet’s pretrained layers act as a feature extractor for dog faces and
+        body posture.
+      </li>
+      <li>
+        A new classifier head predicts whether each image is more consistent with
+        a <strong>happy/relaxed</strong> dog or a <strong>stressed/anxious</strong> dog.
+      </li>
+    </ul>
 
-  <p>
-    For the full technical breakdown, see the <a href="approach.html">AlexNet Approach page</a>.
-  </p>
-</section>
+    <p>
+      For the full technical breakdown of the architecture, preprocessing pipeline,
+      and training configuration, see the
+      <a href="approach.html">AlexNet Approach page</a>.
+      Visualizations, results, and key takeaways are summarized on the
+      <a href="results.html">Results &amp; Takeaways page</a>.
+    </p>
+  </section>
 
-
-
-<!-- Visualizations Section -->
-<section id="visualizations" class="padded-section">
-  <h2>Training Visualizations</h2>
-
-  <figure>
-    <img src="assets/train_val_accuracy.png" alt="Training vs validation accuracy">
-    <figcaption>Training vs validation accuracy curves across epochs.</figcaption>
-  </figure>
-
-  <figure>
-    <img src="assets/train_val_loss.png" alt="Training vs validation loss">
-    <figcaption>Training vs validation loss curves indicating overfitting behavior.</figcaption>
-  </figure>
-
-  <figure>
-    <img src="assets/confusion_matrix.png" alt="Confusion matrix for happy vs stressed dog classification">
-    <figcaption>Confusion matrix showing classification performance on validation data.</figcaption>
-  </figure>
-</section>
-
-
-<!-- Results Section -->
-<section id="results" class="padded-section">
-  <h2>Results Summary</h2>
-
-  <ul>
-    <li>Best training accuracy: <strong>[Fill in]</strong></li>
-    <li>Best validation accuracy: <strong>[Fill in]</strong></li>
-    <li>Best epoch (lowest validation loss): <strong>[Fill in]</strong></li>
-    <li>Misclassifications occurred primarily in low-light or ambiguous positions.</li>
-  </ul>
-
-  <h3>Hyperparameter Experiments</h3>
-  <p>A subset of tested configurations:</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Run</th><th>Optimizer</th><th>Pretrained</th><th>LR</th><th>Batch</th>
-        <th>Device</th><th>Val Acc</th><th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>GPU-Adam-RGB</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Best overall performance.</td></tr>
-      <tr><td>GPU-Adam-Gray</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Lower performance vs RGB.</td></tr>
-      <tr><td>GPU-SGD-RGB</td><td>SGD</td><td>Yes</td><td>1e-3</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Slower convergence.</td></tr>
-      <tr><td>CPU-Adam-RGB</td><td>Adam</td><td>Yes</td><td>1e-4</td><td>32</td><td>CPU</td><td>[Fill]</td><td>Similar accuracy; much slower.</td></tr>
-      <tr><td>GPU-Adam-NoPre</td><td>Adam</td><td>No</td><td>1e-4</td><td>32</td><td>GPU</td><td>[Fill]</td><td>Underfitting; benefits of pretrained weights.</td></tr>
-    </tbody>
-  </table>
-
-</section>
-
-
-<!-- Takeaways Section -->
-<section id="takeaways" class="padded-section">
-  <h2>Project Takeaways</h2>
-
-  <ul>
-    <li>AlexNet transfer learning captures meaningful features for dog emotional cues.</li>
-    <li>Pretrained RGB models perform best, with clearer separation between classes.</li>
-    <li>Misclassified cases suggest lighting, angle, and subtle cues still challenge the model.</li>
-    <li>Larger and more diverse datasets would significantly improve generalization.</li>
-    <li>Future direction: real-time deployment inside pet cameras or mobile apps.</li>
-  </ul>
-</section>
-
-
-<footer>
-  <p>© 2025 PawSense AI · Built with HTML/CSS on GitHub Pages</p>
-</footer>
-
+  <footer>
+    © 2025 PawSense AI · Problem &amp; Motivation
+  </footer>
 </body>
 </html>
