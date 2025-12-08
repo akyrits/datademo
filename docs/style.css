@@ -335,3 +335,63 @@ footer {
   font-size: 0.9rem;
   color: var(--text-muted);
 }
+/* ===========================
+   Project Resources (Academic Layout)
+=========================== */
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.resource-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+}
+
+.resource-icon {
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.resource-text h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.resource-text p {
+  margin: 4px 0 8px 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.resource-text a {
+  font-weight: 600;
+  color: #1a73e8; /* academic blue */
+  text-decoration: none;
+}
+
+.resource-text a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive 2-column layout for larger screens */
+@media (min-width: 700px) {
+  .resource-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3-column max if you add more items later */
+@media (min-width: 1050px) {
+  .resource-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
