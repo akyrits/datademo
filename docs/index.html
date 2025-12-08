@@ -8,11 +8,13 @@
 
 <body>
   <!-- Single-page nav: all links go to sections on this page -->
-  <nav>
-    <a href="#problem">Problem</a>
-    <a href="#approach">AlexNet Approach</a>
-    <a href="#results">Results & Takeaways</a>
-  </nav>
+<nav>
+  <a href="#problem">Problem</a>
+  <a href="#approach">AlexNet Approach</a>
+  <a href="#visualizations">Visualizations</a>
+  <a href="#results">Results & Takeaways</a>
+</nav>
+
 
   <div class="page-wrapper">
 
@@ -221,17 +223,20 @@
     <!-- =========================
          RESULTS & TAKEAWAYS
          ========================= -->
-    <div class="section-card" id="results">
-      <h2>Results: Accuracy, Loss & Confusion Matrix</h2>
+    <!-- =========================
+         VISUALIZATIONS
+         ========================= -->
+    <div class="section-card" id="visualizations">
+      <h2>Visualizations (Colab Screenshots)</h2>
       <p>
-        Below are key training and validation plots from the best-performing configuration 
-        (pretrained AlexNet, Adam optimizer, learning rate 1e-4, batch size 32, GPU):
+        The following plots are exported directly from my Colab training notebook. They show how the
+        model learned over time and how well it separates happy vs stressed images.
       </p>
 
       <div class="plot-grid">
         <div class="plot-card">
           <h3>Training vs Validation Accuracy</h3>
-          <!-- Update file name to match your asset -->
+          <!-- update file name if needed -->
           <img src="assets/train_val_acc.png" alt="Train and validation accuracy over epochs" />
         </div>
 
@@ -247,31 +252,63 @@
       </div>
     </div>
 
-    <div class="section-card">
-      <h2>Best-Performing Configuration</h2>
-      <ul>
-        <li>Pretrained AlexNet backbone.</li>
-        <li>Custom 2-class classifier head.</li>
-        <li>Optimizer: <strong>Adam</strong>.</li>
-        <li>Learning rate: <strong>1e-4</strong>.</li>
-        <li>Batch size: <strong>32</strong>.</li>
-        <li>Device: <strong>GPU</strong> (Colab CUDA).</li>
-      </ul>
+    <!-- =========================
+         RESULTS
+         ========================= -->
+    <div class="section-card" id="results">
+      <h2>Results</h2>
       <p>
-        This setup produced the highest validation accuracy and the cleanest convergence curves, with a relatively 
-        small gap between training and validation performance.
+        The best-performing configuration uses pretrained AlexNet with an Adam optimizer, learning rate
+        1e-4, batch size 32, and GPU acceleration in Colab. On the held-out test set, it achieved:
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Test accuracy</td>
+            <td>≈ 0.93</td>
+          </tr>
+          <tr>
+            <td>Happy precision</td>
+            <td>≈ 0.93</td>
+          </tr>
+          <tr>
+            <td>Stressed precision</td>
+            <td>≈ 0.93</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Overall impression</strong></td>
+            <td><strong>Consistently high performance on a small dataset</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The confusion matrix shows that most mistakes are between visually subtle cases where “happy” and
+        “stressed” body language overlap (e.g., panting dogs with partially tense faces).
       </p>
     </div>
 
+    <!-- =========================
+         TAKEAWAYS
+         ========================= -->
     <div class="section-card">
       <h2>Takeaways & Next Steps</h2>
       <ul>
-        <li>Even with a small dataset, transfer learning with AlexNet can reliably separate happy vs stressed dog images.</li>
-        <li>Balanced data, careful augmentation, and conservative learning rates help avoid overfitting.</li>
-        <li>GPU training significantly speeds up experimentation and provides smoother learning curves.</li>
-        <li>Next steps include expanding the dataset, adding more nuanced labels (e.g., “relaxed”, “fearful”), and exploring lighter models for on-device deployment.</li>
+        <li>Transfer learning with AlexNet works well even on a relatively small, balanced dog-emotion dataset.</li>
+        <li>Data augmentation and conservative learning rates help control overfitting.</li>
+        <li>GPU training in Colab speeds up experimentation and produces smoother learning curves than CPU.</li>
+        <li>Misclassifications often occur in “borderline” emotional states, suggesting a need for more nuanced labels.</li>
+        <li>Future work: expand the dataset, add more emotion categories, and explore lighter models for deployment on pet cameras or mobile devices.</li>
       </ul>
     </div>
+
 
     <footer>
       PawSense AI · AlexNet Deep Learning Project
