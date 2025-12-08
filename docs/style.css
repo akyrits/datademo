@@ -1,23 +1,20 @@
-/* ------------------------------
-   Base + Theme
------------------------------- */
+/* ===========================
+   Base styles & layout
+   =========================== */
 
 :root {
-  --bg-color: #f8f4ec;
+  /* Very subtle, warm theme */
+  --bg: #f3eee4;
   --bg-alt: #ffffff;
-  --accent: #f4b860;
-  --accent-soft: #ffe4b8;
-  --accent-dark: #d48b32;
-  --text-main: #2f3437;
-  --text-muted: #60686c;
-  --border-soft: #e0d8c8;
-  --nav-height: 64px;
-  --max-width: 960px;
-  --radius-lg: 16px;
-  --radius-md: 10px;
-  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.06);
-  --shadow-subtle: 0 3px 10px rgba(0, 0, 0, 0.05);
-  --transition-fast: 0.2s ease;
+  --text: #222222;
+  --text-muted: #555555;
+  --nav-bg: #3a2a23;
+  --nav-text: #f7f4ef;
+  --accent: #c49b6c;      /* used sparingly */
+  --border: #d6cbbd;
+
+  --max-width: 900px;
+  --nav-height: 56px;
 }
 
 *,
@@ -34,26 +31,28 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  background: radial-gradient(circle at top left, #fffaf2 0, #f7f2e9 45%, #f3ede3 100%);
-  color: var(--text-main);
+  background: var(--bg);
+  color: var(--text);
   line-height: 1.6;
 }
 
-/* Make anchored sections not hide behind fixed nav */
+/* Make anchor links not hide under fixed nav */
 section {
-  scroll-margin-top: calc(var(--nav-height) + 16px);
+  scroll-margin-top: calc(var(--nav-height) + 12px);
 }
 
-/* Layout container */
-.padded-section {
+/* Center main content */
+.padded-section,
+#title,
+footer {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 72px 20px 40px;
+  padding: 32px 16px;
 }
 
-/* ------------------------------
+/* ===========================
    Navigation
------------------------------- */
+   =========================== */
 
 nav {
   position: fixed;
@@ -61,95 +60,74 @@ nav {
   left: 0;
   right: 0;
   height: var(--nav-height);
+  background: var(--nav-bg);
+  color: var(--nav-text);
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 16px;
   padding: 0 16px;
-  background: rgba(255, 253, 248, 0.94);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(224, 216, 200, 0.8);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
   z-index: 1000;
 }
 
 nav a {
-  font-size: 0.92rem;
+  color: var(--nav-text);
   text-decoration: none;
-  color: var(--text-muted);
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 999px;
-  transition: background-color var(--transition-fast), color var(--transition-fast),
-    box-shadow var(--transition-fast), transform var(--transition-fast);
   white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 nav a:hover {
-  background-color: var(--accent-soft);
-  color: var(--text-main);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
-nav a:active {
-  transform: translateY(0);
-}
-
-/* When page is narrow, allow wrapping */
 @media (max-width: 768px) {
   nav {
     flex-wrap: wrap;
-    justify-content: flex-start;
-    padding: 8px 10px;
-    gap: 8px;
     height: auto;
+    padding: 8px 10px;
   }
 }
 
-/* Push content below fixed nav */
+/* Push first section below nav */
 #title {
-  padding-top: calc(var(--nav-height) + 40px);
+  padding-top: calc(var(--nav-height) + 32px);
 }
 
-/* ------------------------------
+/* ===========================
    Typography
------------------------------- */
+   =========================== */
 
 h1,
 h2,
 h3 {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: var(--text-main);
-  margin-top: 0;
+  margin: 0 0 0.5rem;
+  font-weight: 650;
 }
 
 h1 {
-  font-size: clamp(2.1rem, 4vw, 2.7rem);
-  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 3.2vw, 2.4rem);
 }
 
 h2 {
-  font-size: clamp(1.6rem, 3vw, 2rem);
-  margin-bottom: 0.6rem;
+  font-size: clamp(1.5rem, 2.4vw, 1.8rem);
+  margin-top: 0.5rem;
 }
 
 h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.4rem;
+  font-size: 1.1rem;
 }
 
 p {
-  margin: 0.4rem 0 0.6rem;
-  color: var(--text-main);
+  margin: 0.4rem 0 0.8rem;
 }
 
-strong {
-  font-weight: 600;
-}
-
-em {
-  font-style: italic;
+#title p:first-of-type {
+  font-size: 0.95rem;
+  color: var(--text-muted);
 }
 
 /* Lists */
@@ -160,200 +138,117 @@ ol {
 }
 
 li {
-  margin: 0.2rem 0;
+  margin: 0.15rem 0;
 }
 
-/* ------------------------------
-   Title / Hero section
------------------------------- */
-
-#title {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: calc(var(--nav-height) + 32px) 20px 40px;
+/* Links in content */
+a {
+  color: var(--accent);
 }
 
-#title h1 {
-  position: relative;
+a:hover {
+  color: #9b7445;
 }
 
-#title h1::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -8px;
-  width: 80px;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-  opacity: 0.9;
-}
+/* ===========================
+   Section styling
+   =========================== */
 
-#title p:first-of-type {
-  margin-top: 1rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
-
-/* ------------------------------
-   Card / Box styles
------------------------------- */
-
-section {
-  position: relative;
-}
-
+/* Very light “card” feel but no bright highlight */
 #problem,
 #motivation,
 #approach,
 #visualizations,
 #results,
 #takeaways {
-  background-color: rgba(255, 255, 255, 0.84);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(224, 216, 200, 0.7);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 16px;
+  margin-bottom: 18px;
 }
 
-/* Additional padding inside card sections */
-#problem > *,
-#motivation > *,
-#approach > *,
-#visualizations > *,
-#results > *,
-#takeaways > * {
-  padding: 0 20px;
-}
+/* ===========================
+   Summary / callout boxes
+   =========================== */
 
-#problem h2,
-#motivation h2,
-#approach h2,
-#visualizations h2,
-#results h2,
-#takeaways h2 {
-  padding-top: 20px;
-}
-
-/* Summary box / callout */
 .summary-box {
-  margin: 1.2rem 0 0.4rem;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(
-    135deg,
-    rgba(244, 184, 96, 0.12),
-    rgba(255, 248, 236, 0.95)
-  );
-  border: 1px solid rgba(244, 184, 96, 0.4);
-  box-shadow: var(--shadow-subtle);
+  margin-top: 0.8rem;
+  padding: 10px 12px;
+  background: #fcfbf9;           /* almost white, not yellow */
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
 }
 
 .summary-box h3 {
   margin-top: 0;
   margin-bottom: 0.3rem;
+  font-size: 1rem;
 }
 
-.summary-box ul {
-  margin-bottom: 0;
-}
-
-/* ------------------------------
-   Visualizations / Figures
------------------------------- */
+/* ===========================
+   Figures / images
+   =========================== */
 
 figure {
-  margin: 1.2rem 0 1.4rem;
-  padding: 12px 14px 14px;
-  background-color: var(--bg-alt);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-subtle);
+  margin: 1rem 0;
 }
 
 figure img {
-  display: block;
-  width: 100%;
   max-width: 100%;
-  border-radius: 10px;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid var(--border);
 }
 
 figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
 }
 
-/* ------------------------------
-   Tables (Results / Hyperparams)
------------------------------- */
+/* ===========================
+   Tables
+   =========================== */
 
 table {
-  width: calc(100% - 40px);
-  margin: 0.8rem 20px 1.4rem;
+  width: 100%;
   border-collapse: collapse;
+  margin: 0.6rem 0 1rem;
   font-size: 0.9rem;
-  background-color: var(--bg-alt);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-subtle);
-}
-
-thead {
-  background: linear-gradient(90deg, #ffe8c6, #ffd8a0);
 }
 
 th,
 td {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border-soft);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
   text-align: left;
 }
 
-th {
-  font-weight: 600;
-  color: var(--text-main);
-  white-space: nowrap;
+thead {
+  background: #eee6d9;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #fffaf2;
+  background: #f7f2ea;
 }
 
-tbody tr:hover {
-  background-color: #fff3dd;
-}
-
-/* Allow horizontal scroll on small screens */
+/* Horizontal scroll on narrow screens */
 @media (max-width: 640px) {
   table {
     display: block;
-    width: auto;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* ------------------------------
-   Links inside content
------------------------------- */
-
-a {
-  color: var(--accent-dark);
-}
-
-a:hover {
-  color: #a46316;
-}
-
-/* ------------------------------
+/* ===========================
    Footer
------------------------------- */
+   =========================== */
 
 footer {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 30px 20px 40px;
   font-size: 0.85rem;
   color: var(--text-muted);
   text-align: center;
+  padding-bottom: 40px;
 }
