@@ -411,3 +411,9 @@ footer {
   margin: 0;
   padding-left: 18px;
 }
+.abstract {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  max-width: 750px;
+  margin-bottom: 1rem;
+}
