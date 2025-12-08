@@ -10,10 +10,15 @@ This repo contains the code, dataset splits, and GitHub Pages site for my AlexNe
 - 🖼️ **Research Poster:** <https://docs.google.com/presentation/d/1DBaX3-gFoDLoMjOr-b4cxuxg3lNqOjsypCffoRMccm8/edit?slide=id.p#slide=id.p>
 ## Repo Structure
 
-- `index.md` – Problem & motivation (Problem page)
-- `approach.md` – AlexNet technical approach
-- `results.md` – Visualizations, results, and takeaways
-- `assets/plots/` – Training/validation curves and confusion matrices
-- `stage1_happy_vs_sad/` – Dataset split files / metadata
-- `archive/` – Older or non-essential course files
-- `games/` – Older or non-essential course files
+- `docs/` – Source for the GitHub Pages site  
+  - `index.md` – Problem & motivation (landing / Problem page)  
+  - `approach.md` – AlexNet technical approach  
+  - `results.md` – Visualizations, results, and takeaways  
+  - `style.css` – Shared styling for all pages  
+  - `assets/` – All images used on the site (plots, screenshots, etc.)  
+
+- `stage1_happy_vs_sad/` – Dataset split files / metadata for the happy vs. sad dog images  
+
+- `archive/` – Older or non-essential course files that aren’t part of the main deliverable  
+
+- `games/` – Small side projects (e.g., snake game), not part of the main PawSense deliverable  
