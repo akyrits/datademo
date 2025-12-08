@@ -52,6 +52,10 @@ footer {
    NAVIGATION BAR
 ============================================ */
 
+/* ============================================
+   NAVIGATION BAR (IMPROVED)
+============================================ */
+
 nav {
   position: fixed;
   top: 0;
@@ -59,25 +63,74 @@ nav {
   right: 0;
   height: var(--nav-height);
   background: var(--nav-bg);
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 18px;
+  justify-content: space-between;
   padding: 0 20px;
-  z-index: 999;
 }
 
-nav a {
+/* Brand is clearer, brighter, and spaced */
+.nav-brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;        /* brighter for readability */
+  letter-spacing: 0.3px;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  gap: 22px;
+}
+
+.nav-links a {
   color: var(--nav-text);
   text-decoration: none;
-  font-size: 0.92rem;
-  padding: 6px 10px;
-  border-radius: 6px;
+  font-size: 0.98rem;
+  padding: 6px 4px;
+  border-radius: 4px;
+  position: relative;
 }
 
-nav a:hover,
-nav a.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+/* Underline hover effect (cleaner than a pill highlight) */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  background: #ffffff;
+}
+
+/* Responsive nav tweaks */
+@media (max-width: 700px) {
+  .nav-inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .nav-brand {
+    flex-basis: 100%;
+    text-align: center;
+    margin-bottom: 6px;
+  }
 }
 
 @media (max-width: 700px) {
