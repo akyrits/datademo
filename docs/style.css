@@ -1,31 +1,24 @@
-/* ===============================
-   PAWSENSE PDF THEME
-   (warm cream + brown + gold)
-   =============================== */
+/* ------------------------------
+   Base + Theme
+------------------------------ */
 
 :root {
-  --bg-page:        #f6efe5;   /* soft cream background from slides */
-  --bg-surface:     #fffaf2;   /* card/hero background */
-  --bg-surface-alt: #f3e5d5;
-
-  --nav-bg:         #3b2a22;   /* deep brown like PDF accents */
-  --nav-text:       #fdf5ea;
-
-  --text-main:      #2a211c;   /* dark warm brown */
-  --text-muted:     #7a6a5e;
-  --text-heading:   #36261f;
-
-  --accent-gold:    #d5a24a;   /* gold lines/icons in slides */
-  --accent-soft:    #f4e0b8;
-
-  --border-soft:    #e0d2c3;
-
-  --shadow-soft:    0 6px 16px rgba(0, 0, 0, 0.08);
+  --bg-color: #f8f4ec;
+  --bg-alt: #ffffff;
+  --accent: #f4b860;
+  --accent-soft: #ffe4b8;
+  --accent-dark: #d48b32;
+  --text-main: #2f3437;
+  --text-muted: #60686c;
+  --border-soft: #e0d8c8;
+  --nav-height: 64px;
+  --max-width: 960px;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.06);
+  --shadow-subtle: 0 3px 10px rgba(0, 0, 0, 0.05);
+  --transition-fast: 0.2s ease;
 }
-
-/* ===============================
-   GLOBAL BASE
-   =============================== */
 
 *,
 *::before,
@@ -33,344 +26,334 @@
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-}
-
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg-page);
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top left, #fffaf2 0, #f7f2e9 45%, #f3ede3 100%);
   color: var(--text-main);
   line-height: 1.6;
 }
 
-/* ===============================
-   FIXED NAV BAR
-   =============================== */
+/* Make anchored sections not hide behind fixed nav */
+section {
+  scroll-margin-top: calc(var(--nav-height) + 16px);
+}
+
+/* Layout container */
+.padded-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 72px 20px 40px;
+}
+
+/* ------------------------------
+   Navigation
+------------------------------ */
 
 nav {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  background: var(--nav-bg);
-  padding: 0.7rem 1.4rem;
+  right: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: rgba(255, 253, 248, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(224, 216, 200, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
 
 nav a {
-  color: var(--nav-text);
-  margin-right: 1.4rem;
+  font-size: 0.92rem;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: color 0.2s ease, border-bottom 0.2s ease;
-}
-
-nav a:hover {
-  color: #ffffff;
-  text-decoration: underline;
-}
-
-nav a.active {
-  border-bottom: 2px solid var(--accent-gold);
-  padding-bottom: 0.15rem;
-  color: #ffffff;
-}
-
-/* ===============================
-   LAYOUT WRAPPER
-   =============================== */
-
-.page-wrapper {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 5.5rem 1.6rem 4rem;  /* room for nav + more bottom space */
-}
-
-/* ===============================
-   HERO (title area)
-   =============================== */
-
-.hero {
-  background: var(--bg-surface);
-  border-radius: 0.9rem;
-  padding: 1.8rem 1.9rem;      /* more interior breathing room */
-  margin-bottom: 2rem;         /* more space before first section */
-  border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-soft);
-}
-
-h1 {
-  font-family: "Georgia", "Times New Roman", serif; /* slide-style heading */
-  font-size: 2.1rem;
-  color: var(--text-heading);
-  margin: 0 0 0.35rem 0;
-  letter-spacing: 0.01em;
-}
-
-.subtitle {
   color: var(--text-muted);
-  font-size: 1.02rem;
-  margin: 0.2rem 0 0.4rem 0;
-}
-
-/* ===============================
-   SECTION CARDS
-   =============================== */
-
-.section-card {
-  background: var(--bg-surface);
-  border-radius: 0.75rem;
-  padding: 1.4rem 1.5rem;    /* more interior padding */
-  margin-bottom: 1.8rem;     /* more space between cards */
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-  position: relative;
-}
-
-/* thin gold bar like slide separators */
-.section-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1.2rem;
-  bottom: 1.2rem;
-  width: 4px;
+  padding: 6px 10px;
   border-radius: 999px;
-  background: var(--accent-gold);
-}
-
-/* shift content right to clear the bar */
-.section-card > * {
-  margin-left: 0.4rem;
-}
-
-.section-card h2 {
-  font-family: "Georgia", "Times New Roman", serif;
-  color: var(--text-heading);
-  margin-top: 0.1rem;
-  margin-bottom: 0.8rem;     /* more space under section titles */
-}
-
-.section-card h3 {
-  font-family: "Georgia", "Times New Roman", serif;
-  color: #5b4637;
-  margin-top: 0.6rem;
-  margin-bottom: 0.5rem;
-}
-
-/* add a bit more rhythm inside cards */
-.section-card p,
-.section-card ul,
-.section-card ol {
-  margin-bottom: 1rem;
-}
-
-/* ===============================
-   LISTS
-   =============================== */
-
-ul, ol {
-  padding-left: 1.3rem;
-  margin: 0.3rem 0;
-}
-
-li {
-  margin-bottom: 0.15rem;
-}
-
-/* ===============================
-   TABLES (dataset + results)
-   =============================== */
-
-table {
-  width: 100%;
-  max-width: 520px;
-  margin: 0.7rem auto;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-th, td {
-  padding: 0.55rem 0.9rem;
-}
-
-th:first-child,
-td:first-child {
-  text-align: left;
-}
-
-td:not(:first-child),
-th:not(:first-child) {
-  text-align: right;
-}
-
-thead th {
-  background: #3b2a22;
-  color: #f8efe3;
-}
-
-tbody tr:nth-child(even) {
-  background: #f5ebdd;
-}
-
-tbody tr:nth-child(odd) {
-  background: #fffaf2;
-}
-
-tbody tr.total-row {
-  background: var(--accent-soft);
-  font-weight: 700;
-}
-
-/* ===============================
-   IMAGES (dog examples & diagrams)
-   =============================== */
-
-.image-row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1.2rem;
-}
-
-.img-small {
-  width: 240px;
-  height: auto;
-  border-radius: 0.7rem;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-}
-
-.img-small.img-free {
-  object-fit: contain;
-  max-width: 260px;
-}
-
-.img-wide {
-  width: 100%;
-  max-width: 720px;
-  display: block;
-  margin: 0.7rem auto;
-  border-radius: 0.8rem;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-}
-
-/* ===============================
-   PREPROCESSING PIPELINE
-   =============================== */
-
-.pipeline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem 0 0.6rem 0;
-}
-
-.pipeline-step {
-  background: var(--accent-soft);
-  border-radius: 999px;
-  padding: 0.45rem 1rem;
-  font-size: 0.9rem;
-  color: #4a3726;
-  font-weight: 500;
-  box-shadow: 0 3px 7px rgba(0,0,0,0.08);
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    box-shadow var(--transition-fast), transform var(--transition-fast);
   white-space: nowrap;
 }
 
-.pipeline-arrow {
-  font-size: 1.1rem;
-  color: var(--text-muted);
+nav a:hover {
+  background-color: var(--accent-soft);
+  color: var(--text-main);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
-/* ===============================
-   PLOT GRID (Visualizations/Results)
-   =============================== */
+nav a:active {
+  transform: translateY(0);
+}
 
-.plot-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.6rem;               /* more space between plots */
+/* When page is narrow, allow wrapping */
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 8px 10px;
+    gap: 8px;
+    height: auto;
+  }
+}
+
+/* Push content below fixed nav */
+#title {
+  padding-top: calc(var(--nav-height) + 40px);
+}
+
+/* ------------------------------
+   Typography
+------------------------------ */
+
+h1,
+h2,
+h3 {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--text-main);
+  margin-top: 0;
+}
+
+h1 {
+  font-size: clamp(2.1rem, 4vw, 2.7rem);
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  margin-bottom: 0.6rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+p {
+  margin: 0.4rem 0 0.6rem;
+  color: var(--text-main);
+}
+
+strong {
+  font-weight: 600;
+}
+
+em {
+  font-style: italic;
+}
+
+/* Lists */
+ul,
+ol {
+  padding-left: 1.2rem;
+  margin: 0.4rem 0 0.8rem;
+}
+
+li {
+  margin: 0.2rem 0;
+}
+
+/* ------------------------------
+   Title / Hero section
+------------------------------ */
+
+#title {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: calc(var(--nav-height) + 32px) 20px 40px;
+}
+
+#title h1 {
+  position: relative;
+}
+
+#title h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 80px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  opacity: 0.9;
+}
+
+#title p:first-of-type {
   margin-top: 1rem;
-  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
-.plot-card {
-  background: var(--bg-surface);
-  border-radius: 0.9rem;
-  padding: 0.9rem;
-  text-align: center;
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
+/* ------------------------------
+   Card / Box styles
+------------------------------ */
 
-.plot-card h3 {
-  margin-top: 0.2rem;
-  margin-bottom: 0.7rem;
+section {
+  position: relative;
 }
-
-.plot-card img {
-  max-width: 100%;
-  border-radius: 0.7rem;
-}
-
-/* ===============================
-   ANCHOR OFFSET FOR FIXED NAV
-   =============================== */
 
 #problem,
+#motivation,
 #approach,
 #visualizations,
-#results {
-  scroll-margin-top: 90px;   /* keep section titles from hiding under nav */
+#results,
+#takeaways {
+  background-color: rgba(255, 255, 255, 0.84);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(224, 216, 200, 0.7);
 }
 
-/* ===============================
-   FOOTER
-   =============================== */
+/* Additional padding inside card sections */
+#problem > *,
+#motivation > *,
+#approach > *,
+#visualizations > *,
+#results > *,
+#takeaways > * {
+  padding: 0 20px;
+}
+
+#problem h2,
+#motivation h2,
+#approach h2,
+#visualizations h2,
+#results h2,
+#takeaways h2 {
+  padding-top: 20px;
+}
+
+/* Summary box / callout */
+.summary-box {
+  margin: 1.2rem 0 0.4rem;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    rgba(244, 184, 96, 0.12),
+    rgba(255, 248, 236, 0.95)
+  );
+  border: 1px solid rgba(244, 184, 96, 0.4);
+  box-shadow: var(--shadow-subtle);
+}
+
+.summary-box h3 {
+  margin-top: 0;
+  margin-bottom: 0.3rem;
+}
+
+.summary-box ul {
+  margin-bottom: 0;
+}
+
+/* ------------------------------
+   Visualizations / Figures
+------------------------------ */
+
+figure {
+  margin: 1.2rem 0 1.4rem;
+  padding: 12px 14px 14px;
+  background-color: var(--bg-alt);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-subtle);
+}
+
+figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ------------------------------
+   Tables (Results / Hyperparams)
+------------------------------ */
+
+table {
+  width: calc(100% - 40px);
+  margin: 0.8rem 20px 1.4rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: var(--bg-alt);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+}
+
+thead {
+  background: linear-gradient(90deg, #ffe8c6, #ffd8a0);
+}
+
+th,
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fffaf2;
+}
+
+tbody tr:hover {
+  background-color: #fff3dd;
+}
+
+/* Allow horizontal scroll on small screens */
+@media (max-width: 640px) {
+  table {
+    display: block;
+    width: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ------------------------------
+   Links inside content
+------------------------------ */
+
+a {
+  color: var(--accent-dark);
+}
+
+a:hover {
+  color: #a46316;
+}
+
+/* ------------------------------
+   Footer
+------------------------------ */
 
 footer {
-  margin-top: 2.5rem;
-  color: var(--text-muted);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 30px 20px 40px;
   font-size: 0.85rem;
+  color: var(--text-muted);
   text-align: center;
-}
-
-/* ===============================
-   RESPONSIVE
-   =============================== */
-
-@media (max-width: 640px) {
-
-  .page-wrapper {
-    padding: 4.5rem 1.1rem 3rem;
-  }
-
-  h1 {
-    font-size: 1.7rem;
-  }
-
-  nav a {
-    margin-right: 0.9rem;
-    font-size: 0.88rem;
-  }
-
-  .image-row {
-    flex-wrap: wrap;
-  }
-
-  .img-small {
-    width: 100%;
-    max-width: 280px;
-  }
 }
