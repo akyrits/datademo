@@ -2,196 +2,177 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PawSense AI – Problem & Motivation</title>
+  <title>PawSense AI – Real-Time Dog Emotion Detection</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/PawSense_logo.png" />
 </head>
 
 <body>
-  <!-- Shared navigation (index / approach / results) -->
-<nav>
-  <div class="nav-inner">
-    <div class="nav-brand">
-  <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
-  PawSense AI
-</div>
 
-    <div class="nav-links">
-      <a href="index.html#problem" class="active">Problem</a>
-      <a href="approach.html">AlexNet Approach</a>
-      <a href="results.html">Results &amp; Takeaways</a>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
+        PawSense AI
+      </div>
+      <div class="nav-links">
+        <a href="#problem" class="active">Problem</a>
+        <a href="approach.html">AlexNet Approach</a>
+        <a href="results.html">Results &amp; Takeaways</a>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-  <!-- Title / hero -->
-  <section id="title">
+  <!-- Title / Abstract -->
+  <section id="title" class="padded-section">
     <div class="hero-logo-container">
-  <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="hero-logo">
-</div>
+      <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="hero-logo">
+    </div>
+
     <h1>PawSense AI: Real-Time Dog Emotion Detection</h1>
+
     <p class="abstract">
-  PawSense AI evaluates whether transfer learning with a pretrained AlexNet model can
-  distinguish happy versus stressed dog expressions from everyday images. Using a small but
-  balanced dataset and a series of controlled training experiments, the project explores the
-  feasibility of early stress detection as a potential feature for pet-camera or veterinary
-  technology platforms.
-</p>
+      PawSense AI evaluates whether transfer learning with a pretrained AlexNet model can
+      distinguish happy versus stressed dog expressions from everyday images. Using a small but
+      balanced dataset and a series of controlled training experiments, the project explores the
+      feasibility of early stress detection as a potential feature for pet-camera or veterinary
+      technology platforms.
+    </p>
 
-    <p><strong>Author:</strong> Alexander Kyritsopoulos<p/>
-      <p>
-  The following sections summarize the problem motivation, technical approach, and
-  experiment results.
-</p>
+    <p><strong>Author:</strong> Alexander Kyritsopoulos</p>
 
-
+    <p>
+      The following sections summarize the problem motivation, technical approach, and
+      experimental results for this project.
+    </p>
   </section>
 
-  <!-- Problem -->
+  <!-- Problem Overview -->
   <section id="problem" class="padded-section">
-    <h2>Problem Overview</h2>
+    <div id="problem-card">
+      <h2>Problem Overview</h2>
 
-    <p>
-      Dogs frequently display emotional and physiological stress signals subtly—
-      flattened ears, widened eyes, whale-eye, tucked tail, lip licking, or a
-      frozen posture. Many of these cues occur long before barking, whining, or
-      other obvious signs.
-    </p>
+      <p>
+        Dogs frequently display emotional and physiological stress signals subtly—flattened ears,
+        widened eyes, whale-eye, tucked tail, lip licking, or a frozen posture. Many of these cues
+        occur long before barking, whining, or other obvious signs.
+      </p>
 
-    <p>
-      Unfortunately, owners often miss these early signals. Chronic stress in dogs
-      has been linked to behavioral issues, reduced quality of life, and worsening
-      anxiety. Without tools to flag early stress, problems may only be noticed
-      once behavior has already escalated.
-    </p>
+      <p>
+        Unfortunately, owners often miss these early signals. Chronic stress in dogs has been
+        linked to behavioural issues, reduced quality of life, and worsening anxiety. Without tools
+        to flag early stress, problems may only be noticed once behaviour has already escalated.
+      </p>
 
-    <p>
-      This creates an opportunity for a computer-vision model capable of identifying
-      stress cues in real time from everyday images, such as those captured by
-      phones or pet cameras.
-    </p>
+      <p>
+        This creates an opportunity for a computer-vision model capable of identifying stress cues
+        in real time from everyday images, such as those captured by phones or pet cameras.
+      </p>
+    </div>
   </section>
 
   <!-- Motivation -->
   <section id="motivation" class="padded-section">
-    <h2>Motivation</h2>
+    <div id="motivation-card">
+      <h2>Motivation</h2>
 
-    <ul>
-      <li>Pet owners increasingly rely on cameras and smart devices to monitor pets.</li>
-      <li>Stress and anxiety frequently go undetected until severe behavior emerges.</li>
-      <li>
-        No widely available model exists that can distinguish dog emotional states
-        from simple RGB images in everyday environments.
-      </li>
-      <li>
-        AI-driven early detection could improve training decisions, well-being, and
-        owner awareness.
-      </li>
-      <li>
-        Long-term goal: integrate stress detection into pet cameras, mobile apps,
-        or vet-tech workflows.
-      </li>
-    </ul>
-
-    <div class="summary-box">
-      <h3>Why This Problem Matters</h3>
       <ul>
-        <li>
-          Early stress detection could prevent worsening anxiety and behavior issues.
-        </li>
-        <li>
-          Provides actionable insights to owners during normal day-to-day life,
-          not just at the vet or trainer.
-        </li>
-        <li>
-          Combines modern computer vision with a real-world, high-impact pet-care
-          application.
-        </li>
+        <li>Pet owners increasingly rely on cameras and smart devices to monitor pets.</li>
+        <li>Stress and anxiety frequently go undetected until severe behaviour emerges.</li>
+        <li>No widely available model exists that can distinguish dog emotional states from simple RGB images in everyday environments.</li>
+        <li>AI-driven early detection could improve training decisions, well-being, and owner awareness.</li>
+        <li>Long-term goal: integrate stress detection into pet cameras, mobile apps, or vet-tech workflows.</li>
       </ul>
+
+      <div class="summary-box">
+        <h3>Why This Problem Matters</h3>
+        <ul>
+          <li>Early stress detection could prevent worsening anxiety and behaviour issues.</li>
+          <li>Provides actionable insights to owners during normal day-to-day life, not just at the vet or trainer.</li>
+          <li>Combines modern computer vision with a real-world, high-impact pet-care application.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  <!-- Quick overview / bridge to the other pages -->
- <section id="overview" class="padded-section">
-  <h2>Project Summary</h2>
+  <!-- Quick Project Overview / Bridge to Other Pages -->
+  <section id="overview" class="padded-section">
+    <div class="section-card">
+      <h2>Quick Project Overview</h2>
 
-  <p>
-    PawSense AI applies a convolutional neural network (AlexNet) to classify dog images
-    into two emotional states: <strong>happy/relaxed</strong> and
-    <strong>stressed/anxious</strong>. The model is fine-tuned via transfer learning
-    on a small, balanced dataset of labeled dog images.
-  </p>
+      <p>
+        To tackle this problem, PawSense AI uses a convolutional neural network called
+        <strong>AlexNet</strong>, fine-tuned via transfer learning on a small, balanced dataset
+        of labeled dog images (happy vs. stressed/sad).
+      </p>
 
-  <ul>
-    <li>
-      Images are resized, normalized, and lightly augmented before being passed to the model.
-    </li>
-    <li>
-      AlexNet’s pretrained convolutional layers act as a feature extractor for facial
-      expressions and body posture.
-    </li>
-    <li>
-      A custom classifier head produces a binary prediction for the dog’s emotional state.
-    </li>
-  </ul>
+      <ul>
+        <li>Images are resized, normalised, and lightly augmented before training.</li>
+        <li>AlexNet’s pretrained layers act as a feature extractor for dog faces and body posture.</li>
+        <li>A new classifier head predicts whether each image is more consistent with a
+          <strong>happy/relaxed</strong> dog or a <strong>stressed/anxious</strong> dog.</li>
+      </ul>
 
-  <p>
-    Detailed model architecture, preprocessing, and training configuration are documented on the
-    <a href="approach.html">AlexNet Approach</a> page. Visualizations, evaluation metrics,
-    and key findings are presented on the
-    <a href="results.html">Results &amp; Takeaways</a> page.
-  </p>
-</section>
-<section id="resources" class="padded-section">
-  <h2>Project Resources</h2>
-
-  <p>
-    Supporting materials for the PawSense AI project, including the full training notebook,
-    implementation details, and a forthcoming academic poster.
-  </p>
-
-  <div class="resource-grid">
-
-    <!-- Colab Notebook -->
-    <div class="resource-card">
-      <div class="resource-icon">💻</div>
-      <div class="resource-text">
-        <h3>Google Colab Notebook</h3>
-        <p>Complete training pipeline, experiments, and model evaluation.</p>
-        <a href="https://colab.research.google.com/drive/1vqWgXbXIvCMVUqA5BT9Wr3A-1p4I3h9p?usp=sharing" target="_blank">
-          Open Notebook ↗
-        </a>
-      </div>
+      <p>
+        For the full technical breakdown of the architecture, preprocessing pipeline, and training
+        configuration, see the <a href="approach.html">AlexNet Approach page</a>.
+        Visualizations, results, and key takeaways are summarised on the
+        <a href="results.html">Results &amp; Takeaways page</a>.
+      </p>
     </div>
+  </section>
 
-    <!-- Scientific Poster -->
-    <div class="resource-card">
-      <div class="resource-icon">📄</div>
-      <div class="resource-text">
-        <h3>Scientific Poster (PDF)</h3>
-        <p>Conference-style research poster summarizing methodology and results.</p>
-        <a href="#" target="_blank">
-          View Poster (Coming Soon)
-        </a>
+  <!-- Resources (Colab, Poster, GitHub) -->
+  <section id="resources" class="padded-section">
+    <h2>Project Resources</h2>
+
+    <p>
+      Supporting materials for the PawSense AI project, including the full training notebook,
+      implementation details, and a forthcoming academic poster.
+    </p>
+
+    <div class="resource-grid">
+
+      <div class="resource-card">
+        <div class="resource-icon">💻</div>
+        <div class="resource-text">
+          <h3>Google Colab Notebook</h3>
+          <p>Complete training pipeline, experiments, and model evaluation.</p>
+          <a href="YOUR_COLAB_LINK_HERE" target="_blank">
+            Open Notebook ↗
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- GitHub Repository -->
-    <div class="resource-card">
-      <div class="resource-icon">🔗</div>
-      <div class="resource-text">
-        <h3>GitHub Repository</h3>
-        <p>Source code, datasets, and project website for PawSense AI.</p>
-        <a href="https://github.com/akyrits/datademo" target="_blank">
-          View on GitHub ↗
-        </a>
+      <div class="resource-card">
+        <div class="resource-icon">📄</div>
+        <div class="resource-text">
+          <h3>Scientific Poster (PDF)</h3>
+          <p>Conference-style research poster summarising methodology and results.</p>
+          <a href="#" target="_blank">
+            View Poster (Coming Soon)
+          </a>
+        </div>
       </div>
-    </div>
 
-  </div>
-</section>
+      <div class="resource-card">
+        <div class="resource-icon">🔗</div>
+        <div class="resource-text">
+          <h3>GitHub Repository</h3>
+          <p>Source code, dataset splits, and this project website.</p>
+          <a href="https://github.com/akyrits/datademo" target="_blank">
+            View on GitHub ↗
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <footer>
-    © 2025 PawSense AI · Problem &amp; Motivation
+    PawSense AI · Problem &amp; Motivation
   </footer>
+
 </body>
 </html>
