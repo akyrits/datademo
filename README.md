@@ -16,4 +16,4 @@ This repo contains the code, dataset splits, and GitHub Pages site for my AlexNe
 - `assets/plots/` – Training/validation curves and confusion matrices
 - `stage1_happy_vs_sad/` – Dataset split files / metadata
 - `archive/` – Older or non-essential course files
-
+- `games/` – Older or non-essential course files
