@@ -417,3 +417,19 @@ footer {
   max-width: 750px;
   margin-bottom: 1rem;
 }
+/* Logo inside navigation bar */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--nav-text);
+}
+
+.nav-logo {
+  height: 26px;
+  width: auto;
+  margin-right: 8px;
+  opacity: 0.92;
+  filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.25));
+}
