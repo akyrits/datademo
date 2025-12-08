@@ -100,35 +100,36 @@
   </section>
 
   <!-- Quick overview / bridge to the other pages -->
-  <section id="overview" class="padded-section">
-    <h2>Quick Project Overview</h2>
+ <section id="overview" class="padded-section">
+  <h2>Project Summary</h2>
 
-    <p>
-      To tackle this problem, PawSense AI uses a convolutional neural network
-      called <strong>AlexNet</strong>, fine-tuned via transfer learning on a
-      small, balanced dataset of labeled dog images (happy vs. stressed/sad).
-    </p>
+  <p>
+    PawSense AI applies a convolutional neural network (AlexNet) to classify dog images
+    into two emotional states: <strong>happy/relaxed</strong> and
+    <strong>stressed/anxious</strong>. The model is fine-tuned via transfer learning
+    on a small, balanced dataset of labeled dog images.
+  </p>
 
-    <ul>
-      <li>Images are resized, normalized, and lightly augmented before training.</li>
-      <li>
-        AlexNet’s pretrained layers act as a feature extractor for dog faces and
-        body posture.
-      </li>
-      <li>
-        A new classifier head predicts whether each image is more consistent with
-        a <strong>happy/relaxed</strong> dog or a <strong>stressed/anxious</strong> dog.
-      </li>
-    </ul>
+  <ul>
+    <li>
+      Images are resized, normalized, and lightly augmented before being passed to the model.
+    </li>
+    <li>
+      AlexNet’s pretrained convolutional layers act as a feature extractor for facial
+      expressions and body posture.
+    </li>
+    <li>
+      A custom classifier head produces a binary prediction for the dog’s emotional state.
+    </li>
+  </ul>
 
-    <p>
-      For the full technical breakdown of the architecture, preprocessing pipeline,
-      and training configuration, see the
-      <a href="approach.html">AlexNet Approach page</a>.
-      Visualizations, results, and key takeaways are summarized on the
-      <a href="results.html">Results &amp; Takeaways page</a>.
-    </p>
-  </section>
+  <p>
+    Detailed model architecture, preprocessing, and training configuration are documented on the
+    <a href="approach.html">AlexNet Approach</a> page. Visualizations, evaluation metrics,
+    and key findings are presented on the
+    <a href="results.html">Results &amp; Takeaways</a> page.
+  </p>
+</section>
 
   <footer>
     © 2025 PawSense AI · Problem &amp; Motivation
