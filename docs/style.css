@@ -395,3 +395,19 @@ footer {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+.metric-box {
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.metric-box h3 {
+  margin-top: 0;
+}
+
+.metric-box ul {
+  margin: 0;
+  padding-left: 18px;
+}
