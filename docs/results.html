@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PawSense AI – Visualizations, Results & Takeaways</title>
+  <title>PawSense AI – Visualizations, Results &amp; Takeaways</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/PawSense_logo.png" />
 </head>
 
 <body>
@@ -11,10 +12,9 @@
   <nav>
     <div class="nav-inner">
       <div class="nav-brand">
-  <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
-  PawSense AI
-</div>
-
+        <img src="assets/PawSense_logo.png" alt="PawSense AI Logo" class="nav-logo">
+        PawSense AI
+      </div>
       <div class="nav-links">
         <a href="index.html#problem">Problem</a>
         <a href="approach.html">AlexNet Approach</a>
@@ -33,23 +33,21 @@
       </p>
     </div>
 
-    <!-- ================================
-         VISUALIZATIONS
-    ================================= -->
+    <!-- VISUALIZATIONS -->
     <div class="section-card" id="visualizations">
       <h2>Visualizations</h2>
 
       <p>
-        These plots summarize how different training configurations behaved over time and
-        how well the model generalized to validation data.
+        These plots summarise how different training configurations behaved over time and
+        how well the model generalised to validation data.
       </p>
 
       <h3>Training Accuracy Across Runs</h3>
       <figure>
         <img src="assets/train_acc.png" alt="Training accuracy across hyperparameter configurations">
         <figcaption>
-          Training accuracy quickly approaches 0.95–0.99 for most runs. GPU + RGB (AlexNet pretrained)
-          converges fastest and reaches the highest training accuracy.
+          Training accuracy curves generated from the W&amp;B sweep in Google Colab.
+          GPU + RGB (pretrained AlexNet) converges fastest and reaches the highest accuracy.
         </figcaption>
       </figure>
 
@@ -58,7 +56,7 @@
         <img src="assets/val_acc.png" alt="Validation accuracy across hyperparameter configurations">
         <figcaption>
           Validation accuracy peaks around 0.94–0.95 for the best configuration. Grayscale and SGD runs
-          show lower peaks (≈0.85–0.90) and more fluctuation, indicating weaker generalization.
+          show lower peaks (≈0.85–0.90) and more fluctuation, indicating weaker generalisation.
         </figcaption>
       </figure>
 
@@ -66,7 +64,7 @@
       <figure>
         <img src="assets/val_loss.png" alt="Validation loss across hyperparameter configurations">
         <figcaption>
-          Strong configurations stabilize at low validation loss (~0.17–0.22). Grayscale and SGD-based models
+          Strong configurations stabilise at low validation loss (~0.17–0.22). Grayscale and SGD-based models
           exhibit higher and more volatile loss values, consistent with poorer validation accuracy.
         </figcaption>
       </figure>
@@ -81,20 +79,17 @@
       </figure>
     </div>
 
-    <!-- ================================
-         RESULTS
-    ================================= -->
+    <!-- RESULTS -->
     <div class="section-card" id="results">
       <h2>Results</h2>
 
       <p>
-        A Weights &amp; Biases sweep was used to compare device (CPU vs GPU), color mode
-        (RGB vs grayscale), and optimizer (Adam vs SGD). The experiments consistently show
-        that pretrained AlexNet with RGB input, Adam optimization, and GPU acceleration
+        A Weights &amp; Biases sweep was used to compare device (CPU vs GPU), colour mode
+        (RGB vs grayscale), and optimiser (Adam vs SGD). The experiments consistently show
+        that pretrained AlexNet with RGB input, Adam optimisation, and GPU acceleration
         provides the strongest and most stable performance.
       </p>
 
-      <!-- Metric summary box -->
       <div class="metric-box">
         <h3>Performance Summary (Best Model)</h3>
         <ul>
@@ -106,9 +101,8 @@
         </ul>
       </div>
 
-      <!-- Academic-style results table -->
       <h3>Comparison of Training Configurations</h3>
-      <p>The table below summarizes the relative performance of the main configurations tested.</p>
+      <p>The table below summarises the relative performance of the main configurations tested.</p>
 
       <table>
         <thead>
@@ -136,7 +130,7 @@
           </tr>
           <tr>
             <td>RGB + GPU + SGD</td>
-            <td>Pretrained AlexNet, SGD optimizer (lr = 1e-3)</td>
+            <td>Pretrained AlexNet, SGD optimiser (lr = 1e-3)</td>
             <td>≈ 0.90</td>
           </tr>
           <tr>
@@ -150,14 +144,14 @@
       <h3>Interpretation</h3>
 
       <p>
-        The best-performing model is the RGB + GPU + Adam configuration. RGB images preserve color and
-        texture cues (e.g., eye redness, tongue color, fur contrast) that are relevant to dog emotion;
+        The best-performing model is the RGB + GPU + Adam configuration. RGB images preserve colour and
+        texture cues (e.g., eye redness, tongue colour, fur contrast) that are relevant to dog emotion;
         converting to grayscale removes these signals and consistently reduces accuracy.
       </p>
 
       <p>
         GPU training not only speeds up experimentation but also produces slightly more stable validation
-        curves compared with CPU runs. This may be due to more consistent numerical behavior for batch
+        curves compared with CPU runs. This may be due to more consistent numerical behaviour for batch
         operations and better handling of larger mini-batches.
       </p>
 
@@ -168,9 +162,7 @@
       </p>
     </div>
 
-    <!-- ================================
-         TAKEAWAYS
-    ================================= -->
+    <!-- TAKEAWAYS -->
     <div class="section-card" id="takeaways">
       <h2>Key Takeaways &amp; Next Steps</h2>
 
@@ -180,12 +172,12 @@
           achieving ≈0.95 validation accuracy on a modest-size dataset.
         </li>
         <li>
-          <strong>Color information matters:</strong> RGB inputs significantly outperform grayscale,
-          suggesting that many emotional cues are encoded in color and subtle shading.
+          <strong>Colour information matters:</strong> RGB inputs significantly outperform grayscale,
+          suggesting that many emotional cues are encoded in colour and subtle shading.
         </li>
         <li>
           <strong>Adam + GPU is the preferred training setup,</strong> providing fast convergence and
-          stable generalization.
+          stable generalisation.
         </li>
         <li>
           <strong>Overfitting is present but manageable</strong> through dropout, data augmentation,
