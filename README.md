@@ -7,7 +7,7 @@ This repo contains the code, dataset splits, and GitHub Pages site for my AlexNe
 - 🔗 **Live site (GitHub Pages):** <https://akyrits.github.io/datademo/index.html>
 - 📓 **Colab notebook:** <https://colab.research.google.com/drive/1vqWgXbXIvCMVUqA5BT9Wr3A-1p4I3h9p#scrollTo=CwEyUmOnT2oH>
 - 📊 **Weights & Biases project:** <https://wandb.ai/akyritsopoulos/happy-vs-sad?nw=nwuserakyritsopoul2025>
-- 🖼️ **Research Poster:** <https://docs.google.com/presentation/d/1DBaX3-gFoDLoMjOr-b4cxuxg3lNqOjsypCffoRMccm8/edit?slide=id.p#slide=id.p>
+- 🖼️ **Research Poster / Presentation:** <https://docs.google.com/presentation/d/1DBaX3-gFoDLoMjOr-b4cxuxg3lNqOjsypCffoRMccm8/edit?slide=id.p#slide=id.p> and <https://docs.google.com/presentation/d/1V7_VpSkA6Icjyih_J9zzfuNPF_ctcuWqPZbJQOhQNpc/edit?usp=sharing>
 ## Repo Structure
 
 - `docs/` – Source for the GitHub Pages site  
